@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=PerenkeGain
+GenericName=Editor de audio (clon PolderbitS)
+Comment=Editor estilo PolderbitS: waveform, splitter por silencio, filtros vinilo/casete y EQ 31 bandas
+Exec=PerenkeGain %F
+Icon=perenkegain
+Terminal=false
+Type=Application
+Categories=AudioVideo;Music;
+MimeType=audio/wav;audio/mpeg;audio/flac;audio/ogg;
+StartupWMClass=PerenkeGain
+Version=1.0

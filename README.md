@@ -1,5 +1,7 @@
 # PerenkeGain — clon open del Editor PolderbitS
 
+![PerenkeGain](assets/logo-256.png)
+
 Solo **editor** (sin grabador). Reinterpretación moderna del
 `PolderbitS Sound Recorder and Editor 9.0` orientada a digitalizar
 vinilos/casetes: abrir WAV/MP3, ver waveform estéreo, splitter por

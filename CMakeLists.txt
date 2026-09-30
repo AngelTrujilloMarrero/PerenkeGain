@@ -17,6 +17,8 @@ juce_add_gui_app(PerenkeGain
   PRODUCT_NAME "PerenkeGain"
   COMPANY_NAME "PerenkeGain"
   BUNDLE_ID "com.perenkegain.editor"
+  ICON_BIG "${CMAKE_CURRENT_SOURCE_DIR}/assets/logo-512.png"
+  ICON_SMALL "${CMAKE_CURRENT_SOURCE_DIR}/assets/logo-48.png"
 )
 
 juce_generate_juce_header(PerenkeGain)
