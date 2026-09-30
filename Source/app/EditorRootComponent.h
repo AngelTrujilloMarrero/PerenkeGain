@@ -1,29 +1,46 @@
 #pragma once
 #include <JuceHeader.h>
+#include "types/Text.h"
 #include "audio/AudioEngine.h"
 #include "audio/WaveformComponent.h"
-#include "audio/TrackMarkersComponent.h"
 #include "audio/TransportComponent.h"
-#include "ui/AdvancedPanel.h"
+#include "app/EditorController.h"
+#include "app/PlaybackTicker.h"
+#include "ui/FileInfoBar.h"
+#include "ui/CyanProgressBar.h"
+#include "ui/HelpButton.h"
+#include "ui/BottomDockComponent.h"
 
 namespace pg {
 
-// Contenedor raíz del editor: layout + cableado abrir/play/stop.
+// Layout fiel al Editor de Sonido PolderbitS original (capturas Malavida).
 class EditorRootComponent : public juce::Component {
 public:
   EditorRootComponent();
   void resized() override;
 
 private:
-  void openFile();
-
   AudioEngine engine;
   WaveformComponent wave;
-  TrackMarkersComponent markers;
+  FileInfoBar info;
+  CyanProgressBar cyan;
   TransportComponent transport;
-  AdvancedPanel advanced;
-  juce::TextButton openButton{"Abrir audio..."};
-  std::unique_ptr<juce::FileChooser> chooser;
+  HelpButton helpBtn;
+  BottomDockComponent dock;
+  EditorController controller;
+  PlaybackTicker ticker;
+
+  juce::Label filePath;
+  juce::TextButton openB{"Abrir..."}, saveB{"Guardar como..."},
+      splitB{"Dividir..."}, eqB{"Ecualizador..."}, advB{"Avanzado..."},
+      closeB{"Cerrar"}, skipB{PG_T("→5")}, collapseB{PG_T("▲")};
+  juce::ToggleButton cutBox{"Iniciar Corte"},
+      fadeIn{"Fade In / Punto de Inicio"}, fadeOut{"Fade Out / Punto del Final"};
+  juce::Label escalaTitle;
+  juce::Slider escala;
+
+  void wireButtons();
+  void layoutRows();
 };
 
 } // namespace pg

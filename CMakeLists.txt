@@ -29,6 +29,15 @@ target_sources(PerenkeGain PRIVATE
   Source/Main.cpp
   Source/app/MainWindow.cpp
   Source/app/EditorRootComponent.cpp
+  Source/app/EditorController.cpp
+  Source/app/PlaybackTicker.cpp
+  Source/app/DialogLauncher.cpp
+  Source/ui/RetroLookAndFeel.cpp
+  Source/ui/HelpButton.cpp
+  Source/ui/FileInfoBar.cpp
+  Source/ui/CyanProgressBar.cpp
+  Source/ui/HelpInfoPanel.cpp
+  Source/ui/BottomDockComponent.cpp
   Source/app/ApplicationState.cpp
   Source/audio/AudioEngine.cpp
   Source/audio/WaveformComponent.cpp

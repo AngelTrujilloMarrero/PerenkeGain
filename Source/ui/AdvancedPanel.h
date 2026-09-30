@@ -3,15 +3,18 @@
 
 namespace pg {
 
-// Panel Advanced: toggles Click/Crackle/Noise/EQ + A/B original.
+// Contenido del diálogo "Avanzado": filtros con A/B, como el original.
 class AdvancedPanel : public juce::Component {
 public:
   AdvancedPanel();
+  void paint(juce::Graphics &g) override;
   void resized() override;
 
-private:
-  juce::ToggleButton click{"Click/Crackle vinilo"}, noise{"Noise casete"},
-      eq{"EQ 31 bandas"}, ab{"Escuchar filtrado (A/B)"};
+  juce::ToggleButton click{"Quitar chasquidos y crujidos (vinilo)"};
+  juce::ToggleButton noise{"Reducir ruido de fondo (casete)"};
+  juce::ToggleButton eq{"Ecualizador de 31 bandas"};
+  juce::ToggleButton ab{"Escuchar resultado filtrado (A/B)"};
+  juce::TextButton reset{"Original"};
 };
 
 } // namespace pg

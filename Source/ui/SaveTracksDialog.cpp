@@ -1,4 +1,5 @@
 #include "ui/SaveTracksDialog.h"
+#include "types/Text.h"
 
 namespace pg {
 
@@ -11,7 +12,7 @@ SaveTracksDialog::SaveTracksDialog() {
   addAndMakeVisible(album);
   addAndMakeVisible(track);
   addAndMakeVisible(save);
-  album.setTextToShowWhenEmpty("Álbum", juce::Colours::grey);
+  album.setTextToShowWhenEmpty(PG_T("Álbum"), juce::Colours::grey);
   track.setTextToShowWhenEmpty("Pista", juce::Colours::grey);
 }
 

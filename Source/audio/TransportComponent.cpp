@@ -3,18 +3,17 @@
 namespace pg {
 
 TransportComponent::TransportComponent() {
-  for (auto *b : {&play, &stop, &trim, &fadeIn, &fadeOut})
-    addAndMakeVisible(b);
+  for (auto *b : {&play, &stop, &toEnd}) {
+    b->setTooltip(b->getButtonText());
+    addAndMakeVisible(*b);
+  }
 }
 
 void TransportComponent::resized() {
   auto r = getLocalBounds();
-  int w = r.getWidth() / 5;
-  play.setBounds(r.removeFromLeft(w).reduced(4));
-  stop.setBounds(r.removeFromLeft(w).reduced(4));
-  trim.setBounds(r.removeFromLeft(w).reduced(4));
-  fadeIn.setBounds(r.removeFromLeft(w).reduced(4));
-  fadeOut.setBounds(r.reduced(4));
+  int s = juce::jmin(r.getHeight(), 30);
+  for (auto *b : {&play, &stop, &toEnd})
+    b->setBounds(r.removeFromLeft(s).reduced(1));
 }
 
 } // namespace pg

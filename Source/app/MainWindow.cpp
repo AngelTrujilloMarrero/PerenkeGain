@@ -4,12 +4,13 @@
 namespace pg {
 
 MainWindow::MainWindow()
-    : DocumentWindow("PerenkeGain Editor",
-                     juce::Colours::darkgrey.darker(0.85f),
+    : DocumentWindow("Editor de Sonido PolderbitS - PerenkeGain",
+                     juce::Colour(0xFFD4D0C8),
                      DocumentWindow::allButtons) {
+  setUsingNativeTitleBar(true);
   setResizable(true, true);
   setContentOwned(new EditorRootComponent(), true);
-  centreWithSize(1100, 720);
+  centreWithSize(900, 720);
   setVisible(true);
 }
 

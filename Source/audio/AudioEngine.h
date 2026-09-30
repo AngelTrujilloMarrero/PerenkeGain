@@ -14,12 +14,16 @@ public:
   void play();
   void stop();
   void togglePlayPause();
+  void setCurrentPosition(double sec);
   bool isPlaying() const;
   bool hasFile() const { return reader != nullptr; }
   double getLengthSec() const;
   double getPositionSec() const;
+  juce::String getFileName() const { return fileName.getFileName(); }
+  juce::String getSourceInfo();
 
 private:
+  juce::File fileName;
   juce::AudioFormatManager formats;
   juce::AudioDeviceManager devices;
   juce::AudioSourcePlayer player;

@@ -1,45 +1,131 @@
 #include "app/EditorRootComponent.h"
+#include "ui/RetroLookAndFeel.h"
 
 namespace pg {
 
-EditorRootComponent::EditorRootComponent() {
-  addAndMakeVisible(markers);
-  addAndMakeVisible(wave);
+EditorRootComponent::EditorRootComponent()
+    : controller(engine, wave, info),
+      ticker(engine, info, cyan, wave) {
+  addAndMakeVisible(filePath);
+  filePath.setColour(juce::Label::backgroundColourId, juce::Colours::white);
+  filePath.setColour(juce::Label::textColourId, juce::Colours::black);
+  filePath.setFont(juce::Font(juce::FontOptions(12.0f)));
+  filePath.setText("Sin archivo", juce::dontSendNotification);
+
   addAndMakeVisible(transport);
-  addAndMakeVisible(advanced);
-  addAndMakeVisible(openButton);
+  addAndMakeVisible(helpBtn);
+  addAndMakeVisible(info);
+  addAndMakeVisible(cyan);
+  addAndMakeVisible(wave);
+  addAndMakeVisible(dock);
+  for (auto *b : {&openB, &saveB, &splitB, &eqB, &advB, &closeB, &skipB,
+                  &collapseB})
+    addAndMakeVisible(*b);
+  for (auto *c : {&cutBox, &fadeIn, &fadeOut})
+    addAndMakeVisible(*c);
+  addAndMakeVisible(escalaTitle);
+  escalaTitle.setText("Escala:", juce::dontSendNotification);
+  escalaTitle.setFont(juce::Font(juce::FontOptions(12.0f)));
+  addAndMakeVisible(escala);
+  escala.setRange(1.0, 50.0, 1.0);
+  escala.setValue(10.0);
+  escala.setSliderStyle(juce::Slider::LinearHorizontal);
+  escala.setTextBoxStyle(juce::Slider::TextBoxLeft, false, 46, 20);
+  escala.onValueChange = [this] {
+    wave.setVerticalZoom((float)escala.getValue() / 10.0f);
+  };
 
-  openButton.onClick = [this] { openFile(); };
-  transport.play.onClick = [this] { engine.play(); };
+  controller.onFileLoaded = [this](const juce::String &path) {
+    filePath.setText(path, juce::dontSendNotification);
+  };
+  dock.onHelpContinue = [this] {
+    dock.setVisible(false);
+    layoutRows();
+  };
+  wireButtons();
+
+  // Arranque con archivo por línea de comandos: PerenkeGain archivo.wav
+  if (auto *app = juce::JUCEApplication::getInstance()) {
+    const auto &params = app->getCommandLineParameterArray();
+    if (!params.isEmpty()) {
+      auto f = juce::File(params[0]);
+      if (f.existsAsFile())
+        controller.openFilePath(f);
+    }
+  }
+}
+
+void EditorRootComponent::wireButtons() {
+  openB.onClick = [this] { controller.openAudio(); };
+  saveB.onClick = [this] { controller.openSave(); };
+  splitB.onClick = [this] { controller.openSplitter(); };
+  eqB.onClick = [this] {
+    dock.showEqualizer();
+    dock.setVisible(true);
+    layoutRows();
+  };
+  advB.onClick = [this] { controller.openAdvanced(); };
+  closeB.onClick = [this] { controller.quitEditor(); };
+  helpBtn.onClick = [this] {
+    dock.showHelp();
+    dock.setVisible(true);
+    layoutRows();
+  };
+  collapseB.onClick = [this] {
+    dock.setVisible(!dock.isVisible());
+    layoutRows();
+  };
+  skipB.onClick = [this] {
+    engine.setCurrentPosition(
+        juce::jmin(engine.getPositionSec() + 5.0, engine.getLengthSec()));
+  };
+  transport.play.onClick = [this] {
+    if (engine.hasFile()) {
+      if (engine.isPlaying())
+        engine.stop();
+      else
+        engine.play();
+    }
+  };
   transport.stop.onClick = [this] { engine.stop(); };
+  transport.toEnd.onClick = [this] {
+    engine.setCurrentPosition(engine.getLengthSec());
+  };
+  cutBox.onClick = [this] { controller.addMarkerAtPlayhead(); };
 }
 
-void EditorRootComponent::openFile() {
-  chooser = std::make_unique<juce::FileChooser>(
-      "Abrir audio", juce::File{}, "*.wav;*.mp3;*.flac;*.ogg");
-  chooser->launchAsync(
-      juce::FileBrowserComponent::openMode |
-          juce::FileBrowserComponent::canSelectFiles,
-      [this](const juce::FileChooser &fc) {
-        auto f = fc.getResult();
-        if (f != juce::File{}) {
-          engine.loadFile(f);
-          wave.openFile(f);
-          markers.setRegions({});
-        }
-      });
+void EditorRootComponent::layoutRows() {
+  auto r = getLocalBounds().reduced(3);
+  auto row1 = r.removeFromTop(32);
+  helpBtn.setBounds(row1.removeFromRight(32).reduced(2));
+  transport.setBounds(row1.removeFromRight(110).reduced(2, 0));
+  filePath.setBounds(row1.reduced(0, 2));
+  info.setBounds(r.removeFromTop(38));
+  auto row3 = r.removeFromTop(26).reduced(0, 2);
+  collapseB.setBounds(row3.removeFromRight(30));
+  skipB.setBounds(row3.removeFromRight(46));
+  cyan.setBounds(row3.reduced(0, 3));
+
+  if (dock.isVisible())
+    dock.setBounds(r.removeFromBottom(dock.preferredHeight()));
+
+  auto right = r.removeFromRight(160);
+  for (auto *b : {&openB, &saveB, &splitB, &eqB, &advB, &closeB}) {
+    b->setBounds(right.removeFromTop(30).reduced(4, 3));
+    right.removeFromTop(4);
+  }
+
+  auto left = r.removeFromLeft(190).reduced(0, 6);
+  left.removeFromTop(4);
+  cutBox.setBounds(left.removeFromTop(26));
+  fadeIn.setBounds(left.removeFromTop(26));
+  fadeOut.setBounds(left.removeFromTop(26));
+  left.removeFromTop(8);
+  escalaTitle.setBounds(left.removeFromTop(24).removeFromLeft(60));
+  escala.setBounds(left.removeFromTop(26).removeFromTop(24));
+  wave.setBounds(r.reduced(4, 6));
 }
 
-void EditorRootComponent::resized() {
-  auto b = getLocalBounds();
-  auto top = b.removeFromTop(36);
-  openButton.setBounds(top.removeFromLeft(180).reduced(4));
-  markers.setBounds(top.reduced(0, 4));
-  auto right = b.removeFromRight(230);
-  advanced.setBounds(right.reduced(4));
-  auto bottom = b.removeFromBottom(64);
-  transport.setBounds(bottom.reduced(4));
-  wave.setBounds(b.reduced(4));
-}
+void EditorRootComponent::resized() { layoutRows(); }
 
 } // namespace pg
