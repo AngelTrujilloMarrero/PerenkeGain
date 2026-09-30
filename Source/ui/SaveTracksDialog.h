@@ -10,7 +10,7 @@ public:
   void resized() override;
 
 private:
-  juce::ComboBox format{"WAV", "MP3", "FLAC"};
+  juce::ComboBox format;
   juce::TextEditor album, track;
   juce::TextButton save{"Guardar pistas"};
 };

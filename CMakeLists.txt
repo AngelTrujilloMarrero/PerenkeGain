@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(PerenkeGain VERSION 0.1.0 LANGUAGES CXX)
+project(PerenkeGain VERSION 0.1.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -19,6 +19,8 @@ juce_add_gui_app(PerenkeGain
   BUNDLE_ID "com.perenkegain.editor"
   ICON_BIG "${CMAKE_CURRENT_SOURCE_DIR}/assets/logo-512.png"
   ICON_SMALL "${CMAKE_CURRENT_SOURCE_DIR}/assets/logo-48.png"
+  NEEDS_WEB_BROWSER TRUE
+  NEEDS_CURL TRUE
 )
 
 juce_generate_juce_header(PerenkeGain)

@@ -12,7 +12,7 @@ public:
   void resized() override;
 
 private:
-  juce::Slider threshold{-60.0, -45.0}, minSilence{0.5, 5.0}, minTrack{5.0, 120.0};
+  juce::Slider threshold, minSilence, minTrack;
   juce::ToggleButton middle{"Cortar en medio del silencio"};
 };
 
