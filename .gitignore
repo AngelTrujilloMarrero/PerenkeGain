@@ -1,0 +1,33 @@
+# Binarios y builds
+build/
+cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+*.o
+*.a
+*.so
+*.dylib
+PerenkeGain
+PerenkeGain_artefacts/
+
+# JUCE
+JuceLibraryCode/
+*.jucer.bak
+
+# SQLite / temporales audio
+*.db
+*.wav
+*.mp3
+*.flac
+*.ogg
+tmp_audio/
+
+# IDEs
+.vscode/
+.idea/
+*.code-workspace
+.DS_Store
+
+# Credenciales: nunca commitear tokens
+.git-credentials
+.env

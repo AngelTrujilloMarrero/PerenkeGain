@@ -1,0 +1,19 @@
+name: build
+on: [push, pull_request]
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deps
+        run: sudo apt-get update && sudo apt-get install -y ninja-build libasound2-dev libjack-dev libfreetype6-dev libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev mesa-common-dev
+      - uses: lukka/get-cmake@latest
+      - run: cmake --preset linux-release
+      - run: cmake --build --preset linux-release
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: lukka/get-cmake@latest
+      - run: cmake --preset macos-release
+      - run: cmake --build --preset macos-release
