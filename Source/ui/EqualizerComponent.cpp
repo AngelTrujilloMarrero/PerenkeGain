@@ -32,6 +32,8 @@ EqualizerComponent::EqualizerComponent() {
   mk(intensityTitle, "Intensidad por banda (%)");
   mk(masterTitle, "Intensidad general:");
   mk(freqLabelsTitle, "20 Hz ... 20 kHz (1/3 octava)");
+  mk(metersTitle, "Nivel por banda");
+  addAndMakeVisible(meters);
 }
 
 int EqualizerComponent::colW() const {
@@ -50,13 +52,12 @@ void EqualizerComponent::paint(juce::Graphics &g) {
   r.removeFromTop(46);
   g.setFont(juce::Font(juce::FontOptions(8.0f)));
   g.setColour(juce::Colours::black);
-  int h = getHeight() / 3;
   for (size_t i = 0; i < 31; ++i) {
     float f = kEq31Freqs[i];
     juce::String t = f >= 1000.f
                          ? juce::String(juce::roundToInt(f / 1000.f)) + "k"
                          : juce::String(juce::roundToInt(f));
-    g.drawText(t, 8 + int(i) * colW(), h * 2 - 4, colW(), 12,
+    g.drawText(t, 8 + int(i) * colW(), freqLabelsTop + 1, colW(), 12,
                juce::Justification::centred, false);
   }
 }
@@ -65,12 +66,17 @@ void EqualizerComponent::resized() {
   auto r = getLocalBounds().reduced(8);
   r.removeFromTop(22);
   gainTitle.setBounds(r.removeFromTop(16).removeFromLeft(260));
-  auto gainsRow = r.removeFromTop(int(getHeight() * 0.30));
+  auto gainsRow = r.removeFromTop(int(getHeight() * 0.24));
   intensityTitle.setBounds(r.removeFromTop(14).removeFromLeft(320));
-  auto intRow = r.removeFromTop(int(getHeight() * 0.30));
+  auto intRow = r.removeFromTop(int(getHeight() * 0.24));
   auto freqs = r.removeFromTop(14);
-  freqLabelsTitle.setBounds(freqs.removeFromRight(260));
-  r.removeFromTop(4);
+  freqLabelsTop = freqs.getY();
+  auto titleRow = r.removeFromTop(16);
+  metersTitle.setBounds(titleRow.removeFromLeft(140));
+  freqLabelsTitle.setBounds(titleRow.removeFromRight(260));
+  auto metersRow = r.removeFromTop(int(getHeight() * 0.14));
+  meters.setBounds(metersRow);
+  r.removeFromTop(2);
   masterTitle.setBounds(r.removeFromLeft(160).reduced(0, 6));
   master.setBounds(r.reduced(0, 4));
 

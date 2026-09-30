@@ -38,6 +38,8 @@ target_sources(PerenkeGain PRIVATE
   Source/ui/CyanProgressBar.cpp
   Source/ui/HelpInfoPanel.cpp
   Source/ui/BottomDockComponent.cpp
+  Source/ui/EqBandMetersComponent.cpp
+  Source/dsp/BandLevelAnalyzer.cpp
   Source/app/ApplicationState.cpp
   Source/audio/AudioEngine.cpp
   Source/audio/WaveformComponent.cpp

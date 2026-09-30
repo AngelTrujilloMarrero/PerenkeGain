@@ -1,5 +1,7 @@
 #pragma once
 #include <JuceHeader.h>
+#include "audio/AnalyzingSourcePlayer.h"
+#include "dsp/BandLevelAnalyzer.h"
 
 namespace pg {
 
@@ -22,13 +24,17 @@ public:
   juce::String getFileName() const { return fileName.getFileName(); }
   juce::String getSourceInfo();
 
+  // Medidores por banda del ecualizador (alimentados por la salida).
+  BandLevelAnalyzer &bandAnalyzer() { return bands; }
+
 private:
   juce::File fileName;
   juce::AudioFormatManager formats;
   juce::AudioDeviceManager devices;
-  juce::AudioSourcePlayer player;
+  AnalyzingSourcePlayer player;
   juce::AudioTransportSource transport;
   std::unique_ptr<juce::AudioFormatReaderSource> reader;
+  BandLevelAnalyzer bands;
 };
 
 } // namespace pg

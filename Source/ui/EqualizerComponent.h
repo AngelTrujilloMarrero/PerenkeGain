@@ -1,11 +1,13 @@
 #pragma once
 #include <JuceHeader.h>
 #include "types/EqTypes.h"
+#include "ui/EqBandMetersComponent.h"
 
 namespace pg {
 
 // EQ gráfica 31 bandas estilo PolderbitS Advanced:
-// fila superior de ganancia (-12..+12 dB) e inferior de intensidad (0..100).
+// fila superior de ganancia (-12..+12 dB), inferior de intensidad (0..100)
+// y fila de medidores de nivel por banda.
 class EqualizerComponent : public juce::Component {
 public:
   EqualizerComponent();
@@ -14,11 +16,15 @@ public:
   Eq31State getState() const;
   void setState(const Eq31State &s);
 
+  EqBandMetersComponent meters; // se enlaza con el analizador desde el root
+
 private:
   std::array<juce::Slider, 31> gains;
   std::array<juce::Slider, 31> intensities;
   juce::Slider master;
-  juce::Label gainTitle, intensityTitle, masterTitle, freqLabelsTitle;
+  juce::Label gainTitle, intensityTitle, masterTitle, freqLabelsTitle,
+      metersTitle;
+  int freqLabelsTop = 0;
   int colW() const;
 };
 
