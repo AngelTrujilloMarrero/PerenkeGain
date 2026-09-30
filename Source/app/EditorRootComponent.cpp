@@ -42,7 +42,7 @@ EditorRootComponent::EditorRootComponent()
     dock.setVisible(false);
     layoutRows();
   };
-  dock.eq.meters.attach(&engine.bandAnalyzer());
+  dock.eq.mixer.attach(&engine.bandAnalyzer());
   wireButtons();
 
   // Arranque con archivo por línea de comandos: PerenkeGain archivo.wav

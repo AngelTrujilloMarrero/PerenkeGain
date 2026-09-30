@@ -4,22 +4,13 @@
 namespace pg {
 
 EqualizerComponent::EqualizerComponent() {
-  for (size_t i = 0; i < 31; ++i) {
-    gains[i].setRange(-12.0, 12.0, 0.5);
-    gains[i].setValue(0.0);
-    gains[i].setSliderStyle(juce::Slider::LinearVertical);
-    gains[i].setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-    addAndMakeVisible(gains[i]);
-    intensities[i].setRange(0.0, 100.0, 5.0);
-    intensities[i].setValue(100.0);
-    intensities[i].setSliderStyle(juce::Slider::LinearVertical);
-    intensities[i].setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-    addAndMakeVisible(intensities[i]);
-  }
   master.setRange(0.0, 100.0, 5.0);
   master.setValue(100.0);
   master.setSliderStyle(juce::Slider::LinearHorizontal);
   master.setTextBoxStyle(juce::Slider::TextBoxRight, false, 56, 20);
+  master.setColour(juce::Slider::textBoxTextColourId, juce::Colours::white);
+  master.setColour(juce::Slider::textBoxBackgroundColourId,
+                   juce::Colour(0xFF14151A));
   addAndMakeVisible(master);
 
   auto mk = [this](juce::Label &l, const juce::String &t) {
@@ -28,12 +19,20 @@ EqualizerComponent::EqualizerComponent() {
     l.setInterceptsMouseClicks(false, false);
     addAndMakeVisible(l);
   };
-  mk(gainTitle, "Ganancia (dB)");
-  mk(intensityTitle, "Intensidad por banda (%)");
   mk(masterTitle, "Intensidad general:");
   mk(freqLabelsTitle, "20 Hz ... 20 kHz (1/3 octava)");
-  mk(metersTitle, "Nivel por banda");
-  addAndMakeVisible(meters);
+  readout.setFont(juce::Font(juce::FontOptions(11.0f, juce::Font::bold)));
+  readout.setText("--", juce::dontSendNotification);
+  readout.setColour(juce::Label::backgroundColourId, juce::Colour(0xFF14151A));
+  readout.setColour(juce::Label::textColourId, juce::Colour(0xFF7CFF3C));
+  readout.setColour(juce::Label::outlineColourId, juce::Colours::black);
+  readout.setInterceptsMouseClicks(false, false);
+  addAndMakeVisible(readout);
+
+  addAndMakeVisible(mixer);
+  mixer.onReadout = [this](const juce::String &s) {
+    readout.setText(s, juce::dontSendNotification);
+  };
 }
 
 int EqualizerComponent::colW() const {
@@ -41,17 +40,15 @@ int EqualizerComponent::colW() const {
 }
 
 void EqualizerComponent::paint(juce::Graphics &g) {
-  g.setColour(retro::face());
+  g.setColour(juce::Colour(0xFF1E2028)); // panel oscuro tipo mesa digital
   g.fillAll();
-  g.setColour(juce::Colours::black);
+  g.setColour(juce::Colour(0xFFF2F3F6));
   g.setFont(juce::Font(juce::FontOptions(12.0f, juce::Font::bold)));
   g.drawText("Ecualizador de 31 bandas", getLocalBounds().removeFromTop(22),
              juce::Justification::centred);
-  // Etiquetas de frecuencia por columna.
-  auto r = getLocalBounds().reduced(8);
-  r.removeFromTop(46);
+  // Etiquetas de frecuencia bajo las tiras.
   g.setFont(juce::Font(juce::FontOptions(8.0f)));
-  g.setColour(juce::Colours::black);
+  g.setColour(juce::Colour(0xFF9AA0AC));
   for (size_t i = 0; i < 31; ++i) {
     float f = kEq31Freqs[i];
     juce::String t = f >= 1000.f
@@ -64,34 +61,25 @@ void EqualizerComponent::paint(juce::Graphics &g) {
 
 void EqualizerComponent::resized() {
   auto r = getLocalBounds().reduced(8);
-  r.removeFromTop(22);
-  gainTitle.setBounds(r.removeFromTop(16).removeFromLeft(260));
-  auto gainsRow = r.removeFromTop(int(getHeight() * 0.24));
-  intensityTitle.setBounds(r.removeFromTop(14).removeFromLeft(320));
-  auto intRow = r.removeFromTop(int(getHeight() * 0.24));
+  auto titleRow = r.removeFromTop(22);
+  readout.setBounds(titleRow.removeFromLeft(230).reduced(4, 3));
+  freqLabelsTitle.setBounds(titleRow.removeFromRight(260).reduced(0, 5));
+  auto mixerRow = r.removeFromTop(int(getHeight() * 0.70));
+  mixer.setBounds(mixerRow);
   auto freqs = r.removeFromTop(14);
   freqLabelsTop = freqs.getY();
-  auto titleRow = r.removeFromTop(16);
-  metersTitle.setBounds(titleRow.removeFromLeft(140));
-  freqLabelsTitle.setBounds(titleRow.removeFromRight(260));
-  auto metersRow = r.removeFromTop(int(getHeight() * 0.14));
-  meters.setBounds(metersRow);
-  r.removeFromTop(2);
-  masterTitle.setBounds(r.removeFromLeft(160).reduced(0, 6));
-  master.setBounds(r.reduced(0, 4));
-
-  int w = gainsRow.getWidth() / 31;
-  for (size_t i = 0; i < 31; ++i) {
-    gains[i].setBounds(gainsRow.removeFromLeft(w).reduced(1, 0));
-    intensities[i].setBounds(intRow.removeFromLeft(w).reduced(1, 0));
-  }
+  r.removeFromTop(4);
+  auto masterRow = r.removeFromTop(28);
+  masterTitle.setBounds(masterRow.removeFromLeft(160).reduced(0, 6));
+  master.setBounds(masterRow.reduced(0, 4));
 }
 
 Eq31State EqualizerComponent::getState() const {
   Eq31State s{};
   for (size_t i = 0; i < 31; ++i) {
-    s.bands[i].gainDb = (float)gains[i].getValue();
-    s.bands[i].intensity = (float)intensities[i].getValue() / 100.f;
+    s.bands[i].gainDb = mixer.gainDb((int)i);
+    s.bands[i].intensity = 1.0f; // fuera de la UI: siempre al 100 %
+    s.bands[i].enabled = !mixer.isMuted((int)i);
   }
   s.masterIntensity = (float)master.getValue() / 100.f;
   return s;
@@ -99,9 +87,8 @@ Eq31State EqualizerComponent::getState() const {
 
 void EqualizerComponent::setState(const Eq31State &s) {
   for (size_t i = 0; i < 31; ++i) {
-    gains[i].setValue(s.bands[i].gainDb, juce::dontSendNotification);
-    intensities[i].setValue(s.bands[i].intensity * 100.0,
-                            juce::dontSendNotification);
+    mixer.setGainDb((int)i, s.bands[i].gainDb);
+    mixer.setMuted((int)i, !s.bands[i].enabled);
   }
   master.setValue(s.masterIntensity * 100.0, juce::dontSendNotification);
 }

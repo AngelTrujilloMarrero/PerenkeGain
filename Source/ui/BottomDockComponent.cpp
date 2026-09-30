@@ -33,7 +33,8 @@ void BottomDockComponent::showEqualizer() {
 }
 
 void BottomDockComponent::paint(juce::Graphics &g) {
-  g.setColour(retro::face());
+  // Modo ecualizador: panel oscuro tipo mesa digital moderna.
+  g.setColour(helpMode ? retro::face() : juce::Colour(0xFF1A1C22));
   g.fillAll();
 }
 
