@@ -11,7 +11,9 @@ pause() {
 }
 
 if [ -x "$BIN" ]; then
-  echo "Iniciando PerenkeGain..."
+  echo "Abriendo la ventana de PerenkeGain..."
+  echo "(esta ventana se queda abierta mientras usas el programa;"
+  echo " cierra PerenkeGain para terminar)"
   "$BIN" "$@"
   echo "PerenkeGain terminó con código $?."
   pause

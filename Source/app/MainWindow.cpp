@@ -1,7 +1,5 @@
 #include "app/MainWindow.h"
-#include "audio/WaveformComponent.h"
-#include "audio/TransportComponent.h"
-#include "ui/AdvancedPanel.h"
+#include "app/EditorRootComponent.h"
 
 namespace pg {
 
@@ -10,13 +8,8 @@ MainWindow::MainWindow()
                      juce::Colours::darkgrey.darker(0.85f),
                      DocumentWindow::allButtons) {
   setResizable(true, true);
-  centreWithSize(1100, 700);
-
-  auto *root = new juce::Component();
-  root->addAndMakeVisible(*new WaveformComponent());
-  root->addAndMakeVisible(*new TransportComponent());
-  root->addAndMakeVisible(*new AdvancedPanel());
-  setContentOwned(root, true);
+  setContentOwned(new EditorRootComponent(), true);
+  centreWithSize(1100, 720);
   setVisible(true);
 }
 

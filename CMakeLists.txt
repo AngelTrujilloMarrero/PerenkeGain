@@ -28,6 +28,7 @@ juce_generate_juce_header(PerenkeGain)
 target_sources(PerenkeGain PRIVATE
   Source/Main.cpp
   Source/app/MainWindow.cpp
+  Source/app/EditorRootComponent.cpp
   Source/app/ApplicationState.cpp
   Source/audio/AudioEngine.cpp
   Source/audio/WaveformComponent.cpp
