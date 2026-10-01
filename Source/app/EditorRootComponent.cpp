@@ -7,14 +7,10 @@
 namespace pg {
 
 EditorRootComponent::EditorRootComponent()
-    : controller(engine, wave, info),
-      ticker(engine, info, cyan, wave) {
-  addAndMakeVisible(filePath);
-  filePath.setColour(juce::Label::backgroundColourId, juce::Colours::white);
-  filePath.setColour(juce::Label::textColourId, juce::Colours::black);
-  filePath.setFont(juce::Font(juce::FontOptions(12.0f)));
-  filePath.setText("Sin archivo", juce::dontSendNotification);
-
+    : playlistComp(engine, playlist), mixer(engine, playlist),
+      waveformWindow(engine, markerModel),
+      controller(engine, markerModel, playlist),
+      ticker(engine, cyan, progressPct) {
   updateBanner.onShowDetails = [this] { openUpdateDialog(); };
   updateBanner.onDismiss = [this] {
     updateBanner.setVisible(false);
@@ -22,38 +18,36 @@ EditorRootComponent::EditorRootComponent()
   };
   addChildComponent(updateBanner);
 
-  addAndMakeVisible(transport);
-  addAndMakeVisible(info);
+  addAndMakeVisible(filePath);
+  filePath.setColour(juce::Label::backgroundColourId, juce::Colours::white);
+  filePath.setColour(juce::Label::textColourId, juce::Colours::black);
+  filePath.setFont(juce::Font(juce::FontOptions(12.0f)));
+  filePath.setText(PG_T("Sin archivo"), juce::dontSendNotification);
+
+  addAndMakeVisible(mixer);
   addAndMakeVisible(cyan);
-  addAndMakeVisible(wave);
-  addAndMakeVisible(meter);
+  addAndMakeVisible(progressPct);
+  progressPct.setFont(juce::Font(juce::FontOptions(12.0f, juce::Font::bold)));
+  progressPct.setColour(juce::Label::backgroundColourId,
+                        juce::Colour(0xFF14151A));
+  progressPct.setColour(juce::Label::textColourId, juce::Colour(0xFF7CFF3C));
+  progressPct.setJustificationType(juce::Justification::centred);
+  progressPct.setInterceptsMouseClicks(false, false);
+  addAndMakeVisible(search);
+  addAndMakeVisible(playlistComp);
   addAndMakeVisible(dock);
-  for (auto *b : {&openB, &saveB, &splitB, &advB, &closeB, &skipB})
+  for (auto *b : {&addB, &waveB, &batchB, &closeB})
     addAndMakeVisible(*b);
-  for (auto *c : {&cutBox, &fadeIn, &fadeOut})
-    addAndMakeVisible(*c);
-  addAndMakeVisible(escalaTitle);
-  escalaTitle.setText("Escala:", juce::dontSendNotification);
-  escalaTitle.setFont(juce::Font(juce::FontOptions(12.0f)));
-  addAndMakeVisible(escala);
-  escala.setRange(1.0, 50.0, 1.0);
-  escala.setValue(10.0);
-  escala.setSliderStyle(juce::Slider::LinearHorizontal);
-  escala.setTextBoxStyle(juce::Slider::TextBoxLeft, false, 46, 20);
-  escala.onValueChange = [this] {
-    wave.setVerticalZoom((float)escala.getValue() / 10.0f);
-  };
+
+  dock.eq.mixer.attach(&engine.bandAnalyzer());
+  dock.leveler.setEngine(&engine);
+  dock.eq.onStateChanged = [this] { engine.setEqState(dock.eq.getState()); };
+  engine.setEqState(dock.eq.getState());
 
   controller.onFileLoaded = [this](const juce::String &path) {
     filePath.setText(path, juce::dontSendNotification);
   };
-  dock.eq.mixer.attach(&engine.bandAnalyzer());
-  meter.attach(&engine.bandAnalyzer());
-  dock.leveler.setEngine(&engine);
-  // El EQ del panel afecta al audio en reproducción.
-  dock.eq.onStateChanged = [this] { engine.setEqState(dock.eq.getState()); };
-  engine.setEqState(dock.eq.getState());
-  wireButtons();
+  wire();
 
   // Arranque con archivo por línea de comandos: PerenkeGain archivo.wav
   if (auto *app = juce::JUCEApplication::getInstance()) {
@@ -61,12 +55,70 @@ EditorRootComponent::EditorRootComponent()
     if (!params.isEmpty()) {
       auto f = juce::File(params[0]);
       if (f.existsAsFile())
-        controller.openFilePath(f);
+        enqueue(f);
     }
   }
 
-  // Al arrancar: comprobar en segundo plano si hay una version nueva.
   checkForUpdates();
+}
+
+void EditorRootComponent::wire() {
+  mixer.deck(0).onActivated = [this](int d) { activateDeck(d); };
+  mixer.deck(1).onActivated = [this](int d) { activateDeck(d); };
+  search.onDownloaded = [this](const juce::File &f) { enqueue(f); };
+  playlistComp.onSendToDeck = [this](int deck, const juce::File &f) {
+    mixer.deck(deck).loadIntoDeck(f);
+  };
+
+  waveformWindow.editor().onRequestSplit = [this] {
+    controller.openSplitter();
+  };
+  waveformWindow.editor().onRequestSave = [this] { controller.openSave(); };
+
+  addB.onClick = [this] { addLocalFiles(); };
+  waveB.onClick = [this] {
+    waveformWindow.setVisible(true);
+    waveformWindow.toFront(true);
+  };
+  batchB.onClick = [this] { controller.openBatchNormalize(); };
+  closeB.onClick = [this] { controller.quitEditor(); };
+
+  cyan.onSeekFraction = [this](double f) {
+    const int d = engine.activeDeck();
+    if (engine.hasFile(d))
+      engine.setCurrentPosition(d, f * engine.getLengthSec(d));
+  };
+}
+
+void EditorRootComponent::activateDeck(int deck) {
+  controller.setActiveFile(engine.getFile(deck));
+}
+
+int EditorRootComponent::firstEmptyDeck() const {
+  for (int d = 0; d < AudioEngine::kDecks; ++d)
+    if (!engine.hasFile(d))
+      return d;
+  return -1;
+}
+
+void EditorRootComponent::enqueue(const juce::File &file) {
+  if (!file.existsAsFile())
+    return;
+  playlist.add(file);
+  // Solo carga si hay un deck libre; asi no se detiene lo que suena.
+  const int d = firstEmptyDeck();
+  if (d >= 0)
+    mixer.deck(d).loadIntoDeck(file);
+}
+
+void EditorRootComponent::addLocalFiles() {
+  picker.chooseFiles(PG_T("Añadir canciones"),
+                     "*.wav;*.mp3;*.flac;*.ogg;*.aiff;*.aif", juce::File{},
+                     [this](const juce::Array<juce::File> &files) {
+                       // Llena los decks libres en orden (A, B, ...).
+                       for (const auto &f : files)
+                         enqueue(f);
+                     });
 }
 
 void EditorRootComponent::checkForUpdates() {
@@ -90,71 +142,27 @@ void EditorRootComponent::openUpdateDialog() {
   dialogs::show(PG_T("Actualizaci\u00f3n de PerenkeGain"), dlg, 500, 440);
 }
 
-void EditorRootComponent::wireButtons() {
-  openB.onClick = [this] { controller.openAudio(); };
-  saveB.onClick = [this] { controller.openSave(); };
-  splitB.onClick = [this] { controller.openSplitter(); };
-  advB.onClick = [this] { controller.openBatchNormalize(); };
-  closeB.onClick = [this] { controller.quitEditor(); };
-  skipB.onClick = [this] {
-    engine.setCurrentPosition(
-        juce::jmin(engine.getPositionSec() + 5.0, engine.getLengthSec()));
-  };
-  transport.play.onClick = [this] {
-    if (engine.hasFile()) {
-      if (engine.isPlaying())
-        engine.stop();
-      else
-        engine.play();
-    }
-  };
-  transport.stop.onClick = [this] { engine.stop(); };
-  transport.toEnd.onClick = [this] {
-    engine.setCurrentPosition(engine.getLengthSec());
-  };
-  cutBox.onClick = [this] { controller.addMarkerAtPlayhead(); };
-  // Clic simple sobre la onda: salta a esa posición.
-  wave.onSeek = [this](double sec) {
-    if (engine.hasFile())
-      engine.setCurrentPosition(sec);
-  };
-  // Clic/arrastre sobre la barra cian: salta a esa fracción del tema.
-  cyan.onSeekFraction = [this](double f) {
-    if (engine.hasFile())
-      engine.setCurrentPosition(f * engine.getLengthSec());
-  };
-}
-
 void EditorRootComponent::layoutRows() {
   auto r = getLocalBounds().reduced(3);
   if (updateBanner.isVisible())
     updateBanner.setBounds(r.removeFromTop(36).reduced(0, 2));
-  auto row1 = r.removeFromTop(32);
-  transport.setBounds(row1.removeFromRight(110).reduced(2, 0));
-  filePath.setBounds(row1.reduced(0, 2));
-  info.setBounds(r.removeFromTop(38));
-  auto row3 = r.removeFromTop(26).reduced(0, 2);
-  skipB.setBounds(row3.removeFromRight(46));
-  cyan.setBounds(row3.reduced(0, 3));
+  mixer.setBounds(r.removeFromTop(258));
 
+  auto toolbar = r.removeFromTop(30);
+  auto right = toolbar.removeFromRight(540);
+  closeB.setBounds(right.removeFromRight(90).reduced(3, 2));
+  batchB.setBounds(right.removeFromRight(160).reduced(3, 2));
+  waveB.setBounds(right.removeFromRight(170).reduced(3, 2));
+  addB.setBounds(right.removeFromRight(110).reduced(3, 2));
+  filePath.setBounds(toolbar.reduced(2));
+
+  auto cyanRow = r.removeFromTop(26).reduced(0, 3);
+  progressPct.setBounds(cyanRow.removeFromRight(52));
+  cyan.setBounds(cyanRow);
   dock.setBounds(r.removeFromBottom(dock.preferredHeight()));
-
-  auto right = r.removeFromRight(160);
-  auto rightButtons = {&openB, &saveB, &splitB, &advB, &closeB};
-  const int slot = juce::jmax(1, right.getHeight() / (int)rightButtons.size());
-  for (auto *b : rightButtons)
-    b->setBounds(right.removeFromTop(slot).reduced(4, 2));
-
-  auto left = r.removeFromLeft(190).reduced(0, 6);
-  left.removeFromTop(4);
-  cutBox.setBounds(left.removeFromTop(26));
-  fadeIn.setBounds(left.removeFromTop(26));
-  fadeOut.setBounds(left.removeFromTop(26));
-  left.removeFromTop(8);
-  escalaTitle.setBounds(left.removeFromTop(24).removeFromLeft(60));
-  escala.setBounds(left.removeFromTop(26).removeFromTop(24));
-  meter.setBounds(r.removeFromRight(40).reduced(2, 6));
-  wave.setBounds(r.reduced(4, 6));
+  // Centro: buscador (solo 3 resultados) arriba y lista de reproduccion abajo.
+  search.setBounds(r.removeFromTop(116));
+  playlistComp.setBounds(r);
 }
 
 void EditorRootComponent::resized() { layoutRows(); }

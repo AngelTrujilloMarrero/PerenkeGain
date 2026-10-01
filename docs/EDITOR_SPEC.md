@@ -3,21 +3,39 @@
 ## Layout (oscuro + bandeja retro)
 
 ```
-+--------------------------------------------------+
-| Ruta | Transporte (Play/Stop)                     |
-+--------------------------------------------------+
-| Info del fichero (formato, Hz, canales)          |
-+--------------------------------------------------+
-| Barra cian de progreso            Skip | ▲        |
-+--------------------------------------------------+
-| Fade In / Fade Out |        Waveform L/R     | L/R |
-| Escala             |   marcadores + selección |master|
-+--------------------------------------------------+
-| Bandeja inferior:                                |
-|   EQ 31 bandas (+ intensidad general / volumen)  |
-|   Nivelador de sonoridad (LUFS)                  |
-+--------------------------------------------------+
++-----------------------------------------------------------+
+| Deck A: título + tiempo | Transición + XFDER  | Deck B    |
+| selector ▼ [▶][■]       | AUTOMIX + MASTER    | selector ▼ |
++-----------------------------------------------------------+
+| [Añadir] [Editor de onda] [Normalizar lote] [Cerrar] | Ruta|
++-----------------------------------------------------------+
+| Barra cian de progreso                                     |
++-----------------------------------------------------------+
+| Buscador de YouTube: [consulta] [Buscar][Limpiar][Carpeta] |
+|   hasta 3 resultados (info de descarga en la fila)          |
+| Lista de reproducción: pistas con deck (A/B), arrastrar,    |
+|   Subir/Bajar/Quitar, enviar a A/B                           |
++-----------------------------------------------------------+
+| Bandeja inferior:                                           |
+|   EQ 31 bandas (+ intensidad general / volumen)            |
+|   Nivelador de sonoridad (LUFS)                            |
++-----------------------------------------------------------+
 ```
+
+La **edición de onda (onda, corte/fade, escala, medidor master, Dividir y
+Guardar como)** se abre en una **ventana independiente y redimensionable**
+desde `Editor de onda...`.
+
+## Reproductor, buscador y descarga
+
+- Mesa con dos decks (título, tiempo posición/duración, selector y transporte),
+  crossfader, **volumen master + medidor** y **Automix** (transición con fade
+  corto/largo o corte) en el centro.
+- `Añadir...` incorpora ficheros locales (selección múltiple).
+- El **buscador de YouTube** (en la ventana principal) usa `yt-dlp` con
+  `ytsearch`: lista resultados y `Descargar` extrae el elegido a MP3 con
+  `ffmpeg`, lo normaliza y lo añade al reproductor.
+- `Guardar como` vive en la ventana de onda (exporta los tramos marcados).
 
 ## EQ 31 bandas
 

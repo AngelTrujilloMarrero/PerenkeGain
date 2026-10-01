@@ -13,7 +13,8 @@ public:
   void paint(juce::Graphics &g) override;
   void resized() override;
 
-  int preferredHeight() const { return 510; }
+  // EQ (~232 px) + nivelador (84).
+  int preferredHeight() const { return 316; }
 
   EqualizerComponent eq;
   LevelerPanel leveler;

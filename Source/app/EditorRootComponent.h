@@ -2,13 +2,16 @@
 #include <JuceHeader.h>
 #include "types/Text.h"
 #include "audio/AudioEngine.h"
-#include "audio/WaveformComponent.h"
-#include "audio/TransportComponent.h"
 #include "app/EditorController.h"
+#include "app/MarkerModel.h"
+#include "app/PlaylistModel.h"
 #include "app/PlaybackTicker.h"
-#include "ui/FileInfoBar.h"
+#include "app/WaveformWindow.h"
 #include "ui/CyanProgressBar.h"
-#include "ui/MasterLevelBar.h"
+#include "ui/FilePicker.h"
+#include "ui/MixerBarComponent.h"
+#include "ui/PlaylistComponent.h"
+#include "ui/YouTubeSearchPanel.h"
 #include "ui/BottomDockComponent.h"
 #include "ui/UpdateBannerComponent.h"
 #include "updater/UpdateChecker.h"
@@ -16,8 +19,9 @@
 
 namespace pg {
 
-// Layout principal del editor: barra superior, onda, controles y bandeja
-// inferior con ecualizador y nivelador.
+// Ventana principal: mesa DJ (dos decks + crossfader) arriba, buscador de
+// YouTube, informacion y la bandeja con ecualizador y nivelador. La edicion de
+// onda vive en una ventana aparte (WaveformWindow).
 class EditorRootComponent : public juce::Component {
 public:
   EditorRootComponent();
@@ -25,12 +29,15 @@ public:
 
 private:
   AudioEngine engine;
-  WaveformComponent wave;
-  FileInfoBar info;
+  PlaylistModel playlist;
+  MarkerModel markerModel;
   CyanProgressBar cyan;
-  TransportComponent transport;
-  MasterLevelBar meter;
+  juce::Label progressPct;
   BottomDockComponent dock;
+  YouTubeSearchPanel search;
+  PlaylistComponent playlistComp;
+  MixerBarComponent mixer;
+  WaveformWindow waveformWindow;
   EditorController controller;
   PlaybackTicker ticker;
   UpdateBannerComponent updateBanner;
@@ -38,16 +45,16 @@ private:
   updater::UpdateInfo pendingUpdate;
 
   juce::Label filePath;
-  juce::TextButton openB{"Abrir..."}, saveB{"Guardar como..."},
-      splitB{"Dividir..."}, advB{"Normalizar lote..."}, closeB{"Cerrar"},
-      skipB{PG_T("→5")};
-  juce::ToggleButton cutBox{"Iniciar Corte"},
-      fadeIn{"Fade In / Punto de Inicio"}, fadeOut{"Fade Out / Punto del Final"};
-  juce::Label escalaTitle;
-  juce::Slider escala;
+  juce::TextButton addB{PG_T("Añadir...")}, waveB{"Editor de onda..."},
+      batchB{"Normalizar lote..."}, closeB{"Cerrar"};
+  FilePicker picker;
 
-  void wireButtons();
+  void wire();
   void layoutRows();
+  void activateDeck(int deck);
+  int firstEmptyDeck() const; // deck libre; -1 si ambos tienen pista
+  void enqueue(const juce::File &file);
+  void addLocalFiles();
   void checkForUpdates();
   void showUpdateAvailable(const updater::UpdateInfo &info);
   void openUpdateDialog();

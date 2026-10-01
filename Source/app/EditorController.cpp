@@ -7,37 +7,15 @@
 #include "dsp/TrackSplitterService.h"
 #include "storage/AudioFileLoader.h"
 #include "storage/ExportManager.h"
-#include <algorithm>
 
 namespace pg {
 
-EditorController::EditorController(AudioEngine &e, WaveformComponent &w,
-                                   FileInfoBar &f)
-    : engine(e), wave(w), info(f) {}
+EditorController::EditorController(AudioEngine &e, MarkerModel &m,
+                                   PlaylistModel &p)
+    : engine(e), markers(m), playlist(p) {}
 
-void EditorController::openAudio() {
-  chooser = std::make_unique<juce::FileChooser>(
-      "Abrir archivo de sonido", juce::File{},
-      "*.wav;*.mp3;*.flac;*.ogg;*.aac");
-  chooser->launchAsync(
-      juce::FileBrowserComponent::openMode |
-          juce::FileBrowserComponent::canSelectFiles,
-      [this](const juce::FileChooser &fc) {
-        auto file = fc.getResult();
-        if (file == juce::File{})
-          return;
-        openFilePath(file);
-      });
-}
-
-void EditorController::openFilePath(const juce::File &file) {
-  engine.loadFile(file);
-  wave.openFile(file);
-  currentFile = file;
-  markers.clear();
-  wave.setMarkers(markers);
-  info.setFile({}, engine.getLengthSec());
-  info.setQuality(engine.getSourceInfo());
+void EditorController::setActiveFile(const juce::File &file) {
+  markers.setFile(file);
   if (onFileLoaded)
     onFileLoaded(file.getFullPathName());
 }
@@ -65,11 +43,12 @@ void EditorController::openSplitter() {
 // Detecta silencios y los fusiona con las marcas manuales existentes para
 // producir segmentos (pistas) no solapados.
 void EditorController::splitBySilence(const SilenceParams &params) {
-  if (currentFile == juce::File{})
+  const juce::File file = markers.file();
+  if (file == juce::File{})
     return;
   juce::AudioBuffer<float> buf;
   double sr = 44100.0;
-  if (!AudioFileLoader::load(currentFile, buf, sr))
+  if (!AudioFileLoader::load(file, buf, sr))
     return;
 
   TrackSplitterService svc;
@@ -77,7 +56,7 @@ void EditorController::splitBySilence(const SilenceParams &params) {
   const double total = (double)buf.getNumSamples() / sr;
 
   std::vector<double> cuts;
-  for (const auto &m : markers) { // marcas manuales respetadas
+  for (const auto &m : markers.markers()) { // marcas manuales respetadas
     cuts.push_back(m.startSec);
     if (m.endSec > m.startSec)
       cuts.push_back(m.endSec);
@@ -85,70 +64,38 @@ void EditorController::splitBySilence(const SilenceParams &params) {
   for (size_t i = 1; i < detected.size(); ++i)
     cuts.push_back(detected[i].startSec);
 
-  markers = segmentsFromCuts(cuts, total);
-  wave.setMarkers(markers);
-}
-
-std::vector<TrackRegion>
-EditorController::segmentsFromCuts(std::vector<double> cuts,
-                                   double total) const {
-  cuts.push_back(0.0);
-  cuts.push_back(total);
-  std::sort(cuts.begin(), cuts.end());
-  std::vector<double> uniq;
-  for (double c : cuts) {
-    c = juce::jlimit(0.0, total, c);
-    if (uniq.empty() || c - uniq.back() > 0.05)
-      uniq.push_back(c);
-  }
-  std::vector<TrackRegion> segs;
-  for (size_t i = 0; i + 1 < uniq.size(); ++i)
-    segs.push_back({uniq[i], uniq[i + 1], (int)i});
-  return segs;
+  markers.setMarkers(MarkerModel::segmentsFromCuts(cuts, total));
 }
 
 void EditorController::saveTracks(int formatId, const juce::String &,
                                   const juce::String &) {
-  if (currentFile == juce::File{})
+  const juce::File file = markers.file();
+  if (file == juce::File{})
     return;
   dirChooser = std::make_unique<juce::FileChooser>(
-      "Carpeta de salida", currentFile.getParentDirectory(), "*");
+      "Carpeta de salida", file.getParentDirectory(), "*");
   dirChooser->launchAsync(
       juce::FileBrowserComponent::openMode |
           juce::FileBrowserComponent::canSelectDirectories,
-      [this, formatId](const juce::FileChooser &fc) {
+      [this, formatId, file](const juce::FileChooser &fc) {
         auto dir = fc.getResult();
         if (dir == juce::File{})
           return;
         juce::AudioBuffer<float> buf;
         double sr = 44100.0;
-        if (!AudioFileLoader::load(currentFile, buf, sr))
+        if (!AudioFileLoader::load(file, buf, sr))
           return;
         const double total = (double)buf.getNumSamples() / sr;
         std::vector<double> cuts;
-        for (const auto &m : markers) {
+        for (const auto &m : markers.markers()) {
           cuts.push_back(m.startSec);
           if (m.endSec > m.startSec)
             cuts.push_back(m.endSec);
         }
-        auto regs = segmentsFromCuts(cuts, total);
+        auto regs = MarkerModel::segmentsFromCuts(cuts, total);
         ExportManager ex;
         ex.exportTracks(buf, sr, regs, dir, formatId);
       });
-}
-
-// Con selección activa en la onda: el corte usa los extremos del tramo
-// seleccionado; sin selección, marca un punto en el cabezal.
-void EditorController::addMarkerAtPlayhead() {
-  double a = engine.getPositionSec(), b = a;
-  if (wave.hasSelection()) {
-    auto s = wave.getSelection();
-    a = s.first;
-    b = s.second;
-  }
-  TrackRegion m{a, b, (int)markers.size()};
-  markers.push_back(m);
-  wave.setMarkers(markers);
 }
 
 void EditorController::quitEditor() {

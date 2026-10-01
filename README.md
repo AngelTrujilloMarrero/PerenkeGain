@@ -2,14 +2,25 @@
 
 ![PerenkeGain](assets/logo-256.png)
 
-Editor de audio moderno para digitalizar y restaurar vinilos y casetes.
-Abre WAV/MP3/FLAC/OGG, muestra la forma de onda estéreo, divide en pistas
-por silencio, aplica fade, un ecualizador gráfico de 31 bandas y un
-nivelador de sonoridad en vivo, y guarda las pistas por separado.
+**Editor y reproductor** de audio moderno para digitalizar y restaurar
+vinilos y casetes. Abre WAV/MP3/FLAC/OGG, reproduce con mesa DJ (dos decks,
+crossfader y automix), muestra la forma de onda estéreo, divide en pistas por
+silencio, aplica fade, ecualizador de 31 bandas y nivelador de sonoridad en
+vivo, y descarga de YouTube Music con normalización.
 
 ## Funciones
 
-- **Forma de onda estéreo** con zoom, marcadores y selección de tramos.
+- **Mesa DJ** con dos decks (A/B), cada uno con su selector, transporte y
+  **tiempo (posición/duración)**; crossfader, **volumen master con medidor** y
+  **Automix** (transición automática con fade corto/largo o corte) en el centro.
+  La lista incluye canciones locales y descargadas de YouTube.
+- **Lista de reproducción central** con el deck asignado a cada pista;
+  reordena arrastrando o con Subir/Bajar, quita y envía a A/B.
+- **Buscador de YouTube Music** integrado en la ventana principal: busca,
+  descarga el resultado elegido como MP3 normalizado y lo añade al
+  reproductor (requiere `yt-dlp` + `ffmpeg`).
+- **Editor de onda en ventana aparte**: forma de onda estéreo con zoom,
+  marcadores, corte/fade, escala, dividir y **guardar pistas**.
 - **Divisor de pistas** por detección de silencio (marcadores arrastrables).
 - **Ecualizador de 31 bandas** (ISO 1/3 octava) con presets por género
   (incluye géneros latinos) e intensidad general de salida.
@@ -46,21 +57,25 @@ En CI se compila en Ubuntu + macOS. Sin `cmake` local, revisa
 ## Estructura (AGENTS.md: 1 fichero = 1 cosa, <200 líneas)
 
 ```
-Source/app/      ventana, controlador y estado global
-Source/audio/    engine, waveform, marcadores, transporte
-Source/dsp/      silencio, splitter, de-click, de-hiss, EQ31, nivelador
-Source/ui/       EQ, nivelador, normalización por lotes y diálogos
-Source/storage/  carga, exportación y normalización de ficheros
+Source/app/      ventana principal, reproductor, modelos y controlador
+Source/audio/    engine, waveform, transporte
+Source/dsp/      silencio, splitter, de-click, de-hiss, EQ31, nivelador, sonoridad
+Source/ui/       reproductor, editor de onda, EQ, nivelador y diálogos
+Source/storage/  carga, exportación, normalización y descarga (yt-dlp)
 Source/types/    tipos comunes de audio
 ```
 
 ## Flujo
 
-`Abrir archivo -> Waveform L/R -> marcadores/tramos -> Fade -> EQ y
-nivelador en vivo -> Splitter -> Guardar pistas WAV/FLAC`.
+`Añadir/Buscar en YouTube -> elegir en un deck (A/B) -> reproducir y mezclar
+con el crossfader -> Editor de onda (marcadores, corte, fade) -> Dividir /
+Guardar -> EQ y nivelador en vivo -> Exportar WAV/FLAC`.
 
 La normalización por lotes (`Normalizar lote...`) es independiente: elige un
 fichero o carpeta, pulsa **Analizar** (mide volumen/pico en la escala mp3gain,
 80–120 dB), ajusta el objetivo y pulsa **Aplicar pista** o **Aplicar álbum**.
+
+El buscador de YouTube usa `yt-dlp` y `ffmpeg`; sin ellos el panel indica cómo
+instalarlos (`brew install yt-dlp ffmpeg`).
 
 Detalles de layout y DSP en `docs/EDITOR_SPEC.md`.

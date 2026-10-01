@@ -4,13 +4,13 @@
 namespace pg {
 
 MainWindow::MainWindow()
-    : DocumentWindow("PerenkeGain - Editor de Sonido",
+    : DocumentWindow("PerenkeGain - Editor y Reproductor de Sonido",
                      juce::Colour(0xFFD4D0C8),
                      DocumentWindow::allButtons) {
   setUsingNativeTitleBar(true);
   setResizable(true, true);
   setContentOwned(new EditorRootComponent(), true);
-  centreWithSize(900, 880);
+  centreWithSize(940, 980);
   setVisible(true);
 }
 
