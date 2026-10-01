@@ -1,9 +1,9 @@
 #include "ui/YouTubeSearchPanel.h"
 #include "storage/YouTubeDownloader.h"
 #include "ui/RetroLookAndFeel.h"
+#include "ui/ToolInstallHint.h"
 
 namespace pg {
-
 YouTubeSearchPanel::YouTubeSearchPanel() {
   addAndMakeVisible(query);
   query.setFont(juce::Font(juce::FontOptions(13.0f)));
@@ -42,7 +42,7 @@ YouTubeSearchPanel::YouTubeSearchPanel() {
   juce::File ytdlp, ffmpeg;
   setStatus(YouTubeDownloader::available(ytdlp, ffmpeg)
                 ? PG_T("Listo. Carpeta: ") + outDir.getFullPathName()
-                : PG_T("Faltan yt-dlp/ffmpeg (brew install yt-dlp ffmpeg)"));
+                : toolInstallHint());
 }
 
 void YouTubeSearchPanel::setStatus(const juce::String &s) {
@@ -74,7 +74,7 @@ void YouTubeSearchPanel::startSearch() {
     return;
   juce::File ytdlp, ffmpeg;
   if (!YouTubeDownloader::available(ytdlp, ffmpeg))
-    return setStatus(PG_T("Instala yt-dlp y ffmpeg: brew install yt-dlp ffmpeg"));
+    return setStatus(toolInstallHint());
   if (searchTask != nullptr && searchTask->isThreadRunning())
     return;
   searchB.setEnabled(false);
@@ -109,7 +109,7 @@ void YouTubeSearchPanel::startDownload() {
     return setStatus(PG_T("Elige un resultado y pulsa Descargar."));
   juce::File ytdlp, ffmpeg;
   if (!YouTubeDownloader::available(ytdlp, ffmpeg))
-    return setStatus(PG_T("Instala yt-dlp y ffmpeg: brew install yt-dlp ffmpeg"));
+    return setStatus(toolInstallHint());
   if (downloadTask != nullptr && downloadTask->isThreadRunning())
     return;
   if (!outDir.isDirectory())
