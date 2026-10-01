@@ -12,8 +12,7 @@ bool isAudio(const juce::File &f) {
          f.hasFileExtension("flac") || f.hasFileExtension("ogg");
 }
 
-// Saca una ruta de audio valida de una linea de yt-dlp (Destination, ruta
-// suelta, "already been downloaded").
+// Saca una ruta de audio valida de una linea de yt-dlp.
 juce::File pathFromLine(const juce::String &raw) {
   juce::String s = raw.trim();
   const int di = s.indexOf("Destination:");
@@ -31,22 +30,6 @@ juce::File pathFromLine(const juce::String &raw) {
   return (f.existsAsFile() && isAudio(f)) ? f : juce::File{};
 }
 
-// Carpeta que contiene ffmpeg y ffprobe. Si estan en sitios distintos, crea
-// una carpeta temporal con enlaces a ambos (yt-dlp necesita los dos).
-juce::File ffmpegLocationDir(const juce::File &ffmpeg) {
-  const juce::File ffprobe = ExternalTool::find("ffprobe");
-  if (ffprobe == juce::File{} ||
-      ffprobe.getParentDirectory() == ffmpeg.getParentDirectory())
-    return ffmpeg.getParentDirectory();
-
-  auto dir = juce::File::getSpecialLocation(juce::File::tempDirectory)
-                 .getChildFile("PerenkeGainFFmpeg");
-  dir.createDirectory();
-  ffmpeg.createSymbolicLink(dir.getChildFile("ffmpeg"), true);
-  ffprobe.createSymbolicLink(dir.getChildFile("ffprobe"), true);
-  return dir;
-}
-
 // Resumen del fallo de yt-dlp: ultimas lineas utiles (sin progreso).
 juce::String errorSummary(const juce::String &output, int code) {
   juce::StringArray keep;
@@ -55,7 +38,7 @@ juce::String errorSummary(const juce::String &output, int code) {
     if (t.isEmpty())
       continue;
     if (t.startsWith("[download]") && t.containsChar('%'))
-      continue; // lineas de progreso
+      continue;
     keep.add(t);
   }
   juce::String msg = "yt-dlp terminó con código " + juce::String(code);
@@ -65,14 +48,27 @@ juce::String errorSummary(const juce::String &output, int code) {
       tail.add(keep[i]);
     msg = tail.joinIntoString("\n");
   }
-  if (msg.containsIgnoreCase("ffprobe"))
-    msg += "\n(instala ffmpeg + ffprobe: sudo apt install ffmpeg)";
-  else if (msg.containsIgnoreCase("unable to extract") ||
-           msg.containsIgnoreCase("player response") ||
-           msg.containsIgnoreCase("sign in") ||
-           msg.containsIgnoreCase("failed to extract"))
+  if (msg.containsIgnoreCase("unable to extract") ||
+      msg.containsIgnoreCase("player response") ||
+      msg.containsIgnoreCase("sign in") ||
+      msg.containsIgnoreCase("failed to extract"))
     msg += "\n(actualiza yt-dlp: pip install -U yt-dlp)";
   return msg;
+}
+
+// Convierte cualquier audio a MP3 con ffmpeg (no depende de ffprobe).
+bool convertToMp3(const juce::File &in, const juce::File &out) {
+  const juce::File ffmpeg = ExternalTool::find("ffmpeg");
+  if (ffmpeg == juce::File{})
+    return false;
+  juce::ChildProcess p;
+  juce::StringArray a{ffmpeg.getFullPathName(), "-y", "-loglevel", "error",
+                      "-i", in.getFullPathName(), "-vn", "-c:a", "libmp3lame",
+                      "-q:a", "0", out.getFullPathName()};
+  if (!p.start(a))
+    return false;
+  p.waitForProcessToFinish(180000);
+  return p.getExitCode() == 0 && out.existsAsFile() && out.getSize() > 0;
 }
 } // namespace
 
@@ -92,8 +88,7 @@ YouTubeResult YouTubeDownloader::download(
     r.error = "yt-dlp no encontrado";
     return r;
   }
-  auto ffmpeg = ExternalTool::find("ffmpeg");
-  if (ffmpeg == juce::File{}) {
+  if (ExternalTool::find("ffmpeg") == juce::File{}) {
     r.error = "ffmpeg no encontrado";
     return r;
   }
@@ -108,21 +103,11 @@ YouTubeResult YouTubeDownloader::download(
 
   const juce::String tmpl =
       outDir.getChildFile("%(title)s.%(ext)s").getFullPathName();
-  // Opciones compatibles con yt-dlp antiguos (apt); el archivo se localiza
-  // por "Destination:" o por fichero nuevo en la carpeta.
-  juce::StringArray args{ytdlp.getFullPathName(),
-                         "-x",
-                         "--audio-format",
-                         "mp3",
-                         "--audio-quality",
-                         "0",
-                         "--ffmpeg-location",
-                         ffmpegLocationDir(ffmpeg).getFullPathName(),
-                         "--no-playlist",
-                         "--no-warnings",
-                         "-o",
-                         tmpl,
-                         url};
+  // Descarga el mejor audio SIN postprocesar (evita ffprobe); la conversion a
+  // MP3 la hacemos nosotros con ffmpeg.
+  juce::StringArray args{ytdlp.getFullPathName(), "-f",    "bestaudio",
+                         "--no-playlist",       "--no-warnings", "-o",
+                         tmpl,                  url};
 
   juce::ChildProcess proc;
   if (!proc.start(args)) {
@@ -143,29 +128,31 @@ YouTubeResult YouTubeDownloader::download(
     if (f != juce::File{})
       found = f;
   }
-
-  // 2) Fichero nuevo mas reciente de la carpeta (prefiere mp3).
+  // 2) Fichero nuevo mas reciente de la carpeta.
   if (found == juce::File{}) {
-    juce::Array<juce::File> fresh;
     for (const auto &f : outDir.findChildFiles(juce::File::findFiles, false))
-      if (!before.contains(f.getFileName()) && isAudio(f))
-        fresh.add(f);
-    for (const auto &f : fresh)
-      if (f.hasFileExtension("mp3") &&
+      if (!before.contains(f.getFileName()) && isAudio(f) &&
           (found == juce::File{} ||
            f.getLastModificationTime() > found.getLastModificationTime()))
         found = f;
-    if (found == juce::File{})
-      for (const auto &f : fresh)
-        if (found == juce::File{} ||
-            f.getLastModificationTime() > found.getLastModificationTime())
-          found = f;
   }
-
   if (found == juce::File{}) {
     r.error = PG_T("No se encontro el archivo descargado");
     return r;
   }
+
+  // Convierte a MP3.
+  if (!found.hasFileExtension("mp3")) {
+    const juce::File mp3 = found.getSiblingFile(
+        found.getFileNameWithoutExtension() + ".mp3");
+    if (!convertToMp3(found, mp3)) {
+      r.error = PG_T("No se pudo convertir a MP3 (revisa ffmpeg/libmp3lame)");
+      return r;
+    }
+    found.deleteFile();
+    found = mp3;
+  }
+
   r.ok = true;
   r.file = found;
   return r;
