@@ -47,17 +47,32 @@ juce::File ffmpegLocationDir(const juce::File &ffmpeg) {
   return dir;
 }
 
-// Ultima linea de error de la salida de yt-dlp (para mensajes utiles).
-juce::String lastErrorLine(const juce::String &output) {
-  juce::String last;
+// Resumen del fallo de yt-dlp: ultimas lineas utiles (sin progreso).
+juce::String errorSummary(const juce::String &output, int code) {
+  juce::StringArray keep;
   for (const auto &l : juce::StringArray::fromLines(output)) {
     const auto t = l.trim();
-    if (t.isNotEmpty() && t.containsIgnoreCase("ERROR"))
-      last = t;
+    if (t.isEmpty())
+      continue;
+    if (t.startsWith("[download]") && t.containsChar('%'))
+      continue; // lineas de progreso
+    keep.add(t);
   }
-  if (last.startsWithIgnoreCase("ERROR:"))
-    last = last.substring(6).trim();
-  return last;
+  juce::String msg = "yt-dlp terminó con código " + juce::String(code);
+  if (!keep.isEmpty()) {
+    juce::StringArray tail;
+    for (int i = juce::jmax(0, keep.size() - 4); i < keep.size(); ++i)
+      tail.add(keep[i]);
+    msg = tail.joinIntoString("\n");
+  }
+  if (msg.containsIgnoreCase("ffprobe"))
+    msg += "\n(instala ffmpeg + ffprobe: sudo apt install ffmpeg)";
+  else if (msg.containsIgnoreCase("unable to extract") ||
+           msg.containsIgnoreCase("player response") ||
+           msg.containsIgnoreCase("sign in") ||
+           msg.containsIgnoreCase("failed to extract"))
+    msg += "\n(actualiza yt-dlp: pip install -U yt-dlp)";
+  return msg;
 }
 } // namespace
 
@@ -117,10 +132,7 @@ YouTubeResult YouTubeDownloader::download(
   const juce::String output = proc.readAllProcessOutput();
   const int code = proc.getExitCode();
   if (code != 0) {
-    const juce::String msg = lastErrorLine(output);
-    r.error = msg.isNotEmpty()
-                  ? msg
-                  : "yt-dlp termino con codigo " + juce::String(code);
+    r.error = errorSummary(output, code);
     return r;
   }
 
