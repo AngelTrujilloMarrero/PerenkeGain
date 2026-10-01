@@ -13,6 +13,11 @@ public:
               const juce::String &patterns, const juce::File &startDir,
               std::function<void(const juce::File &)> onResult);
 
+  // Seleccion multiple de ficheros.
+  void chooseFiles(const juce::String &title, const juce::String &patterns,
+                   const juce::File &startDir,
+                   std::function<void(const juce::Array<juce::File> &)> onResult);
+
 private:
   std::unique_ptr<juce::FileChooser> chooser;
 };
