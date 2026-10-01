@@ -19,10 +19,17 @@ AudioEngine::AudioEngine() {
 AudioEngine::~AudioEngine() {
   devices.removeAudioCallback(&player);
   player.setSource(nullptr);
+  // Detach del reader ANTES de que el miembro 'reader' se destruya: si no,
+  // ~AudioTransportSource libera un PositionableAudioSource ya borrado
+  // (use-after-free al cerrar con un fichero cargado).
+  transport.setSource(nullptr);
 }
 
 void AudioEngine::loadFile(const juce::File &f) {
   stop();
+  // Detach del reader anterior antes de reemplazarlo (mismo use-after-free).
+  transport.setSource(nullptr);
+  reader.reset();
   if (auto *r = formats.createReaderFor(f)) {
     fileName = f;
     reader = std::make_unique<juce::AudioFormatReaderSource>(r, true);
