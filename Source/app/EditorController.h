@@ -14,7 +14,7 @@ public:
   void openAudio();
   void openFilePath(const juce::File &file); // carga directa (CLI, tests)
   void openSave();
-  void openAdvanced();
+  void openBatchNormalize();
   void openSplitter();
   void addMarkerAtPlayhead();
   void quitEditor();

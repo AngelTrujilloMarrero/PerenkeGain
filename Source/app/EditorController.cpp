@@ -1,7 +1,7 @@
 #include "app/EditorController.h"
 #include "types/Text.h"
 #include "app/DialogLauncher.h"
-#include "ui/AdvancedPanel.h"
+#include "ui/BatchNormalizeDialog.h"
 #include "ui/TrackSplitterDialog.h"
 #include "ui/SaveTracksDialog.h"
 #include "dsp/TrackSplitterService.h"
@@ -51,9 +51,9 @@ void EditorController::openSave() {
   dialogs::show("Guardar pistas...", dlg, 440, 280);
 }
 
-void EditorController::openAdvanced() {
-  dialogs::show(PG_T("Avanzado - Filtros de restauración"), new AdvancedPanel(),
-                460, 320);
+void EditorController::openBatchNormalize() {
+  dialogs::show(PG_T("Normalizar audios por lotes"),
+                new BatchNormalizeDialog(), 540, 500);
 }
 
 void EditorController::openSplitter() {
