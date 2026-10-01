@@ -30,6 +30,19 @@ juce::File pathFromLine(const juce::String &raw) {
   juce::File f(s);
   return (f.existsAsFile() && isAudio(f)) ? f : juce::File{};
 }
+
+// Ultima linea de error de la salida de yt-dlp (para mensajes utiles).
+juce::String lastErrorLine(const juce::String &output) {
+  juce::String last;
+  for (const auto &l : juce::StringArray::fromLines(output)) {
+    const auto t = l.trim();
+    if (t.isNotEmpty() && t.containsIgnoreCase("ERROR"))
+      last = t;
+  }
+  if (last.startsWithIgnoreCase("ERROR:"))
+    last = last.substring(6).trim();
+  return last;
+}
 } // namespace
 
 bool YouTubeDownloader::available(juce::File &ytdlp, juce::File &ffmpeg) {
@@ -64,6 +77,8 @@ YouTubeResult YouTubeDownloader::download(
 
   const juce::String tmpl =
       outDir.getChildFile("%(title)s.%(ext)s").getFullPathName();
+  // Opciones compatibles con yt-dlp antiguos (apt); el archivo se localiza
+  // por "Destination:" o por fichero nuevo en la carpeta.
   juce::StringArray args{ytdlp.getFullPathName(),
                          "-x",
                          "--audio-format",
@@ -74,9 +89,6 @@ YouTubeResult YouTubeDownloader::download(
                          ffmpeg.getParentDirectory().getFullPathName(),
                          "--no-playlist",
                          "--no-warnings",
-                         "--print",
-                         "after_move:filepath",
-                         "--no-simulate",
                          "-o",
                          tmpl,
                          url};
@@ -89,7 +101,10 @@ YouTubeResult YouTubeDownloader::download(
   const juce::String output = proc.readAllProcessOutput();
   const int code = proc.getExitCode();
   if (code != 0) {
-    r.error = "yt-dlp termino con codigo " + juce::String(code);
+    const juce::String msg = lastErrorLine(output);
+    r.error = msg.isNotEmpty()
+                  ? msg
+                  : "yt-dlp termino con codigo " + juce::String(code);
     return r;
   }
 
