@@ -59,8 +59,15 @@ juce::File writeHelperScript(const juce::File &newArtifact,
                              const juce::File &archive) {
   juce::String s;
   s << "#!/bin/sh\n";
+  // Espera a que la app termine, con limite para no quedarse colgada
+  // para siempre si el dialogo se cerro sin salir (reuso de PID, etc).
+  s << "n=0\n";
   s << "while kill -0 " << (int)::getpid()
-    << " 2>/dev/null; do sleep 0.3; done\n";
+    << " 2>/dev/null; do\n"
+       "  sleep 0.3\n"
+       "  n=$((n + 1))\n"
+       "  if [ \"$n\" -ge 200 ]; then break; fi\n"
+       "done\n";
   s << "TARGET=" << shellQuote(target.getFullPathName()) << "\n";
   s << "NEW=" << shellQuote(newArtifact.getFullPathName()) << "\n";
 #if JUCE_MAC
@@ -85,9 +92,18 @@ juce::File writeHelperScript(const juce::File &newArtifact,
       << "\n";
   s << "rm -f \"$0\"\n";
 
-  auto script = juce::File::getSpecialLocation(juce::File::tempDirectory)
-                    .getChildFile("perenkegain_update.sh");
-  if (!script.replaceWithText(s))
+  // Nombre unico por intento: evita colisiones entre reintentos o
+  // instancias y ataques por enlace simbolico en /tmp con nombre fijo.
+  auto script =
+      juce::File::getSpecialLocation(juce::File::tempDirectory)
+          .getChildFile("perenkegain_update_" +
+                        juce::String::toHexString(
+                            juce::Random::getSystemRandom().nextInt64()) +
+                        ".sh");
+  // LF explicito: replaceWithText usa CRLF por defecto y /bin/sh falla
+  // con "Syntax error" ante retornos de carro (la actualizacion nunca
+  // se aplicaba y la app se cerraba sin mas).
+  if (!script.replaceWithText(s, false, false, "\n"))
     return {};
   script.setExecutePermission(true);
   return script;
@@ -121,7 +137,11 @@ bool UpdateInstaller::isSelfInstallSupported() {
   return target.getFileName().endsWithIgnoreCase(".app") &&
          !target.getFullPathName().contains("AppTranslocation");
 #elif JUCE_LINUX
-  return target.existsAsFile();
+  // Hace falta poder escribir el directorio (se crea "$TARGET.new" y se
+  // renombra sobre el binario). Sin esto el ayudante fallaba en silencio
+  // y relanzaba la version vieja.
+  return target.existsAsFile() &&
+         target.getParentDirectory().hasWriteAccess();
 #else
   return false;
 #endif
@@ -161,7 +181,14 @@ bool UpdateInstaller::installAndRelaunch(const juce::File &archive) {
   // Lanza el ayudante desacoplado del proceso actual (sobrevive al cierre).
   juce::String cmd = "nohup /bin/sh " + shellQuote(script.getFullPathName()) +
                      " >/dev/null 2>&1 &";
-  std::system(cmd.toRawUTF8());
+  // Si el lanzamiento falla hay que devolver false: si no, el llamante
+  // cerraria la app y nada la reinstalaria ni relanzaria.
+  const int rc = std::system(cmd.toRawUTF8());
+  if (rc != 0) {
+    script.deleteFile();
+    temp.deleteRecursively();
+    return false;
+  }
   return true;
 }
 

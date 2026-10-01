@@ -126,13 +126,16 @@ void UpdateDialog::onDownloadFinished(bool ok, juce::File file) {
   std::thread([safe, file] {
     const bool installed = updater::UpdateInstaller::installAndRelaunch(file);
     juce::MessageManager::callAsync([safe, installed] {
-      if (safe == nullptr)
-        return;
-      auto *app = juce::JUCEApplication::getInstance();
-      if (installed && app != nullptr) {
-        app->systemRequestedQuit();
+      // Si la instalacion quedo programada hay que salir siempre, aunque
+      // el dialogo ya se haya cerrado: el ayudante espera a que este
+      // proceso termine y si no salimos la actualizacion no se aplica.
+      if (installed) {
+        if (auto *app = juce::JUCEApplication::getInstance())
+          app->systemRequestedQuit();
         return;
       }
+      if (safe == nullptr)
+        return;
       safe->downloading = false;
       safe->downloadBtn.setEnabled(true);
       safe->githubBtn.setEnabled(true);

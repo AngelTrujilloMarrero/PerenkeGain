@@ -48,7 +48,8 @@ void UpdateDownloader::start(const UpdateAsset &asset, juce::File target,
   state->finished = std::move(onFinished);
 
   const juce::String url = asset.downloadUrl;
-  std::thread([state = state, url, target] {
+  const juce::int64 expectedSize = asset.sizeBytes;
+  std::thread([state = state, url, target, expectedSize] {
     juce::URL u(url);
     auto options =
         juce::URL::InputStreamOptions(juce::URL::ParameterHandling::inAddress)
@@ -78,11 +79,16 @@ void UpdateDownloader::start(const UpdateAsset &asset, juce::File target,
     juce::HeapBlock<char> buffer(kChunkSize);
     juce::int64 downloaded = 0;
     int lastPercent = -1;
+    bool writeError = false;
     while (!in->isExhausted()) {
       const int n = in->read(buffer.get(), kChunkSize);
       if (n <= 0)
         break;
       out.write(buffer, (size_t)n);
+      if (out.getStatus().failed()) {
+        writeError = true;
+        break;
+      }
       downloaded += n;
       if (total > 0) {
         const int percent = (int)(downloaded * 100 / total);
@@ -94,7 +100,15 @@ void UpdateDownloader::start(const UpdateAsset &asset, juce::File target,
     }
     out.flush();
 
-    const bool ok = downloaded > 0;
+    // Una descarga truncada (corte de red, disco lleno, pagina de error
+    // HTTP guardada como fichero) no es una descarga valida: antes
+    // cualquier fichero de mas de 0 bytes contaba como exito y el
+    // instalador intentaba instalar basura.
+    bool ok = !writeError && downloaded > 0;
+    if (ok && total > 0 && downloaded != total)
+      ok = false;
+    if (ok && expectedSize > 0 && downloaded < expectedSize)
+      ok = false;
     if (!ok)
       target.deleteFile();
     state->reportFinished(ok, target);
