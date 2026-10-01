@@ -10,7 +10,6 @@ namespace pg {
 
 EditorRootComponent::EditorRootComponent()
     : playlistComp(engine, playlist), mixer(engine, playlist),
-      waveformWindow(engine, markerModel),
       controller(engine, markerModel, playlist),
       ticker(engine, cyan, progressPct) {
   updateBanner.onShowDetails = [this] { openUpdateDialog(); };
@@ -80,16 +79,8 @@ void EditorRootComponent::wire() {
     mixer.deck(deck).loadIntoDeck(f);
   };
 
-  waveformWindow.editor().onRequestSplit = [this] {
-    controller.openSplitter();
-  };
-  waveformWindow.editor().onRequestSave = [this] { controller.openSave(); };
-
   addB.onClick = [this] { addLocalFiles(); };
-  waveB.onClick = [this] {
-    waveformWindow.setVisible(true);
-    waveformWindow.toFront(true);
-  };
+  waveB.onClick = [this] { showWaveformWindow(); };
   batchB.onClick = [this] { controller.openBatchNormalize(); };
   closeB.onClick = [this] { controller.quitEditor(); };
 
@@ -102,6 +93,20 @@ void EditorRootComponent::wire() {
 
 void EditorRootComponent::activateDeck(int deck) {
   controller.setActiveFile(engine.getFile(deck));
+}
+
+// La ventana de onda se crea solo al pedirla: en Linux, crearla al arrancar
+// hacia que apareciera sola y no se pudiera cerrar.
+void EditorRootComponent::showWaveformWindow() {
+  if (waveformWindow == nullptr) {
+    waveformWindow = std::make_unique<WaveformWindow>(engine, markerModel);
+    waveformWindow->editor().onRequestSplit = [this] {
+      controller.openSplitter();
+    };
+    waveformWindow->editor().onRequestSave = [this] { controller.openSave(); };
+  }
+  waveformWindow->setVisible(true);
+  waveformWindow->toFront(true);
 }
 
 int EditorRootComponent::firstEmptyDeck() const {

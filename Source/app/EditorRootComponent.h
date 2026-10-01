@@ -37,7 +37,7 @@ private:
   YouTubeSearchPanel search;
   PlaylistComponent playlistComp;
   MixerBarComponent mixer;
-  WaveformWindow waveformWindow;
+  std::unique_ptr<WaveformWindow> waveformWindow; // se crea al pedirla
   EditorController controller;
   PlaybackTicker ticker;
   UpdateBannerComponent updateBanner;
@@ -53,6 +53,7 @@ private:
   void wire();
   void layoutRows();
   void activateDeck(int deck);
+  void showWaveformWindow();
   int firstEmptyDeck() const; // deck libre; -1 si ambos tienen pista
   void enqueue(const juce::File &file);
   void addLocalFiles();
