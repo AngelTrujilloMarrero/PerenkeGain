@@ -23,4 +23,11 @@ struct Eq31State {
   float masterIntensity = 1.0f; // 0..1
 };
 
+// Ecualizacion preconfigurada por genero musical: ganancia en dB
+// (-12..+12) para las 31 bandas ISO de kEq31Freqs.
+struct EqPreset {
+  const char *name; // literal UTF-8 (se muestra con PG_T en la UI)
+  std::array<float, 31> gains;
+};
+
 } // namespace pg
