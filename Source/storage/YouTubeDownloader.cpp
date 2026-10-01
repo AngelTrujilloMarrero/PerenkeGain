@@ -31,6 +31,22 @@ juce::File pathFromLine(const juce::String &raw) {
   return (f.existsAsFile() && isAudio(f)) ? f : juce::File{};
 }
 
+// Carpeta que contiene ffmpeg y ffprobe. Si estan en sitios distintos, crea
+// una carpeta temporal con enlaces a ambos (yt-dlp necesita los dos).
+juce::File ffmpegLocationDir(const juce::File &ffmpeg) {
+  const juce::File ffprobe = ExternalTool::find("ffprobe");
+  if (ffprobe == juce::File{} ||
+      ffprobe.getParentDirectory() == ffmpeg.getParentDirectory())
+    return ffmpeg.getParentDirectory();
+
+  auto dir = juce::File::getSpecialLocation(juce::File::tempDirectory)
+                 .getChildFile("PerenkeGainFFmpeg");
+  dir.createDirectory();
+  ffmpeg.createSymbolicLink(dir.getChildFile("ffmpeg"), true);
+  ffprobe.createSymbolicLink(dir.getChildFile("ffprobe"), true);
+  return dir;
+}
+
 // Ultima linea de error de la salida de yt-dlp (para mensajes utiles).
 juce::String lastErrorLine(const juce::String &output) {
   juce::String last;
@@ -86,7 +102,7 @@ YouTubeResult YouTubeDownloader::download(
                          "--audio-quality",
                          "0",
                          "--ffmpeg-location",
-                         ffmpeg.getParentDirectory().getFullPathName(),
+                         ffmpegLocationDir(ffmpeg).getFullPathName(),
                          "--no-playlist",
                          "--no-warnings",
                          "-o",
