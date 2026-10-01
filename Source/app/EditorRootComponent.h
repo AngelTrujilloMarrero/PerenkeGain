@@ -10,6 +10,9 @@
 #include "ui/CyanProgressBar.h"
 #include "ui/HelpButton.h"
 #include "ui/BottomDockComponent.h"
+#include "ui/UpdateBannerComponent.h"
+#include "updater/UpdateChecker.h"
+#include "updater/UpdateInfo.h"
 
 namespace pg {
 
@@ -29,6 +32,9 @@ private:
   BottomDockComponent dock;
   EditorController controller;
   PlaybackTicker ticker;
+  UpdateBannerComponent updateBanner;
+  updater::UpdateChecker updateChecker;
+  updater::UpdateInfo pendingUpdate;
 
   juce::Label filePath;
   juce::TextButton openB{"Abrir..."}, saveB{"Guardar como..."},
@@ -41,6 +47,9 @@ private:
 
   void wireButtons();
   void layoutRows();
+  void checkForUpdates();
+  void showUpdateAvailable(const updater::UpdateInfo &info);
+  void openUpdateDialog();
 };
 
 } // namespace pg

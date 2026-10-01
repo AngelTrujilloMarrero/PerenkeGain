@@ -1,5 +1,8 @@
 #include "app/EditorRootComponent.h"
+#include "app/DialogLauncher.h"
+#include "types/Text.h"
 #include "ui/RetroLookAndFeel.h"
+#include "ui/UpdateDialog.h"
 
 namespace pg {
 
@@ -11,6 +14,13 @@ EditorRootComponent::EditorRootComponent()
   filePath.setColour(juce::Label::textColourId, juce::Colours::black);
   filePath.setFont(juce::Font(juce::FontOptions(12.0f)));
   filePath.setText("Sin archivo", juce::dontSendNotification);
+
+  updateBanner.onShowDetails = [this] { openUpdateDialog(); };
+  updateBanner.onDismiss = [this] {
+    updateBanner.setVisible(false);
+    layoutRows();
+  };
+  addChildComponent(updateBanner);
 
   addAndMakeVisible(transport);
   addAndMakeVisible(helpBtn);
@@ -57,6 +67,30 @@ EditorRootComponent::EditorRootComponent()
         controller.openFilePath(f);
     }
   }
+
+  // Al arrancar: comprobar en segundo plano si hay una version nueva.
+  checkForUpdates();
+}
+
+void EditorRootComponent::checkForUpdates() {
+  auto safe = juce::Component::SafePointer<EditorRootComponent>(this);
+  updateChecker.checkAsync([safe](updater::UpdateInfo info) {
+    if (safe != nullptr && info.available)
+      safe->showUpdateAvailable(info);
+  });
+}
+
+void EditorRootComponent::showUpdateAvailable(
+    const updater::UpdateInfo &info) {
+  pendingUpdate = info;
+  updateBanner.setVersion(info.latestVersion, info.currentVersion);
+  updateBanner.setVisible(true);
+  layoutRows();
+}
+
+void EditorRootComponent::openUpdateDialog() {
+  auto *dlg = new UpdateDialog(pendingUpdate);
+  dialogs::show(PG_T("Actualizaci\u00f3n de PerenkeGain"), dlg, 500, 440);
 }
 
 void EditorRootComponent::wireButtons() {
@@ -110,6 +144,8 @@ void EditorRootComponent::wireButtons() {
 
 void EditorRootComponent::layoutRows() {
   auto r = getLocalBounds().reduced(3);
+  if (updateBanner.isVisible())
+    updateBanner.setBounds(r.removeFromTop(36).reduced(0, 2));
   auto row1 = r.removeFromTop(32);
   helpBtn.setBounds(row1.removeFromRight(32).reduced(2));
   transport.setBounds(row1.removeFromRight(110).reduced(2, 0));

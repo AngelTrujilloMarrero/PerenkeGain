@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(PerenkeGain VERSION 0.1.0 LANGUAGES C CXX)
+project(PerenkeGain VERSION 0.2.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -60,6 +60,13 @@ target_sources(PerenkeGain PRIVATE
   Source/storage/ProjectStore.cpp
   Source/storage/ExportManager.cpp
   Source/storage/AudioFileLoader.cpp
+  Source/updater/Version.cpp
+  Source/updater/UpdateInfo.cpp
+  Source/updater/GitHubReleaseClient.cpp
+  Source/updater/UpdateChecker.cpp
+  Source/updater/UpdateDownloader.cpp
+  Source/ui/UpdateBannerComponent.cpp
+  Source/ui/UpdateDialog.cpp
 )
 
 target_include_directories(PerenkeGain PRIVATE Source)
@@ -80,4 +87,5 @@ target_compile_definitions(PerenkeGain PRIVATE
   JUCE_USE_OGGVORBISAUDIOFORMAT=1
   JUCE_USE_FLACAUDIOFORMAT=1
   JUCE_STANDALONE_APPLICATION=1
+  PG_VERSION="${PROJECT_VERSION}"
 )

@@ -1,11 +1,14 @@
 #include <JuceHeader.h>
 #include "app/MainWindow.h"
 #include "ui/RetroLookAndFeel.h"
+#include "updater/AppVersion.h"
 
 class PerenkeGainApp : public juce::JUCEApplication {
 public:
   const juce::String getApplicationName() override { return "PerenkeGain"; }
-  const juce::String getApplicationVersion() override { return "0.1.0"; }
+  const juce::String getApplicationVersion() override {
+    return pg::appVersion();
+  }
 
   void initialise(const juce::String &) override {
     retro = std::make_unique<pg::RetroLookAndFeel>();
