@@ -33,10 +33,8 @@ target_sources(PerenkeGain PRIVATE
   Source/app/PlaybackTicker.cpp
   Source/app/DialogLauncher.cpp
   Source/ui/RetroLookAndFeel.cpp
-  Source/ui/HelpButton.cpp
   Source/ui/FileInfoBar.cpp
   Source/ui/CyanProgressBar.cpp
-  Source/ui/HelpInfoPanel.cpp
   Source/ui/BottomDockComponent.cpp
   Source/ui/MixerStripComponent.cpp
   Source/ui/MixerRowComponent.cpp
@@ -52,15 +50,25 @@ target_sources(PerenkeGain PRIVATE
   Source/dsp/DeClicker.cpp
   Source/dsp/DeHiss.cpp
   Source/dsp/Eq31BandProcessor.cpp
+  Source/dsp/LoudnessMeterRT.cpp
+  Source/dsp/LoudnessAnalyzer.cpp
+  Source/dsp/Leveler.cpp
   Source/dsp/DspChain.cpp
-  Source/ui/AdvancedPanel.cpp
+  Source/ui/BatchNormalizeDialog.cpp
+  Source/ui/BatchTask.cpp
+  Source/ui/FilePicker.cpp
+  Source/ui/NormalizeReport.cpp
   Source/ui/EqualizerComponent.cpp
   Source/ui/EqPresetBar.cpp
   Source/ui/TrackSplitterDialog.cpp
   Source/ui/SaveTracksDialog.cpp
+  Source/ui/LevelerPanel.cpp
+  Source/ui/MasterLevelBar.cpp
   Source/storage/ProjectStore.cpp
   Source/storage/ExportManager.cpp
   Source/storage/AudioFileLoader.cpp
+  Source/storage/AudioEncoder.cpp
+  Source/storage/BatchNormalizer.cpp
   Source/updater/Version.cpp
   Source/updater/UpdateInfo.cpp
   Source/updater/GitHubReleaseClient.cpp

@@ -3,6 +3,7 @@
 #include "audio/AnalyzingSourcePlayer.h"
 #include "dsp/BandLevelAnalyzer.h"
 #include "dsp/Eq31BandProcessor.h"
+#include "dsp/Leveler.h"
 
 namespace pg {
 
@@ -31,6 +32,11 @@ public:
   // Estado del EQ que se aplica al audio en reproducción (hilo UI -> audio).
   void setEqState(const Eq31State &s) { eq.setState(s); }
 
+  // Nivelador dinámico en vivo (monitorización; no afecta al export).
+  void setLevelerParams(const LevelerParams &p) { leveler.setParams(p); }
+  LevelerParams getLevelerParams() const { return leveler.getParams(); }
+  LevelerMeters getLevelerMeters() const { return leveler.getMeters(); }
+
 private:
   juce::File fileName;
   juce::AudioFormatManager formats;
@@ -40,6 +46,7 @@ private:
   std::unique_ptr<juce::AudioFormatReaderSource> reader;
   BandLevelAnalyzer bands;
   Eq31BandProcessor eq;
+  Leveler leveler;
 };
 
 } // namespace pg

@@ -14,12 +14,14 @@ public:
   void prepare(double sampleRate);
   void process(const float *const *channels, int numChannels,
                int numSamples);
-  float levelDb(int band) const; // -60..0 dB (lectura de la UI)
+  float levelDb(int band) const;        // -60..0 dB (lectura de la UI)
+  float masterLevelDb(int channel) const; // nivel general por canal (L/R)
 
 private:
   using Filter = juce::dsp::IIR::Filter<float>;
   std::array<std::array<Filter, kBands>, 2> filters; // [canal][banda]
   std::array<std::atomic<float>, kBands> levels{};
+  std::array<std::atomic<float>, 2> masterLv{};
   double rate = 0.0;
 };
 

@@ -2,15 +2,17 @@
 #include <JuceHeader.h>
 #include "dsp/BandLevelAnalyzer.h"
 #include "dsp/Eq31BandProcessor.h"
+#include "dsp/Leveler.h"
 
 namespace pg {
 
-// AudioSourcePlayer que aplica el EQ al audio de salida y luego lo analiza
-// para alimentar los medidores de nivel por banda del ecualizador.
+// AudioSourcePlayer que aplica el EQ y el nivelador al audio de salida y
+// luego lo analiza para alimentar los medidores de nivel por banda del EQ.
 class AnalyzingSourcePlayer : public juce::AudioSourcePlayer {
 public:
   BandLevelAnalyzer *analyzer = nullptr;
   Eq31BandProcessor *eqProcessor = nullptr;
+  Leveler *leveler = nullptr;
 
   void audioDeviceAboutToStart(juce::AudioIODevice *device) override {
     juce::AudioSourcePlayer::audioDeviceAboutToStart(device);
@@ -18,12 +20,14 @@ public:
       return;
     if (analyzer != nullptr)
       analyzer->prepare(device->getCurrentSampleRate());
-    if (eqProcessor != nullptr) {
-      int ch = juce::jmax(
-          1, device->getActiveOutputChannels().countNumberOfSetBits());
+    int ch =
+        juce::jmax(1, device->getActiveOutputChannels().countNumberOfSetBits());
+    if (eqProcessor != nullptr)
       eqProcessor->prepare(device->getCurrentSampleRate(), ch,
                            device->getCurrentBufferSizeSamples());
-    }
+    if (leveler != nullptr)
+      leveler->prepare(device->getCurrentSampleRate(), ch,
+                       device->getCurrentBufferSizeSamples());
   }
 
   void audioDeviceIOCallbackWithContext(
@@ -34,11 +38,15 @@ public:
     juce::AudioSourcePlayer::audioDeviceIOCallbackWithContext(
         inputChannelData, totalNumInputChannels, outputChannelData,
         totalNumOutputChannels, numSamples, context);
-    // EQ real sobre la salida (antes de medir).
-    if (eqProcessor != nullptr && totalNumOutputChannels > 0) {
+    // EQ + nivelador sobre la salida (antes de medir).
+    if (totalNumOutputChannels > 0 &&
+        (eqProcessor != nullptr || leveler != nullptr)) {
       juce::AudioBuffer<float> buf(outputChannelData, totalNumOutputChannels,
                                    numSamples);
-      eqProcessor->process(buf);
+      if (eqProcessor != nullptr)
+        eqProcessor->process(buf);
+      if (leveler != nullptr)
+        leveler->process(buf);
     }
     if (analyzer != nullptr)
       analyzer->process(outputChannelData, totalNumOutputChannels,

@@ -13,6 +13,7 @@ AudioEngine::AudioEngine() {
   player.setSource(&transport);
   player.analyzer = &bands;
   player.eqProcessor = &eq;
+  player.leveler = &leveler;
   devices.addAudioCallback(&player);
 }
 
