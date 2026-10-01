@@ -1,6 +1,8 @@
 #include "app/EditorRootComponent.h"
 #include "app/DialogLauncher.h"
+#include "BinaryData.h"
 #include "types/Text.h"
+#include "ui/AboutDialog.h"
 #include "ui/RetroLookAndFeel.h"
 #include "ui/UpdateDialog.h"
 
@@ -38,6 +40,14 @@ EditorRootComponent::EditorRootComponent()
   addAndMakeVisible(dock);
   for (auto *b : {&addB, &waveB, &batchB, &closeB})
     addAndMakeVisible(*b);
+
+  addAndMakeVisible(aboutB);
+  auto badge = juce::ImageCache::getFromMemory(BinaryData::logobadge_png,
+                                               BinaryData::logobadge_pngSize);
+  aboutB.setImages(false, true, true, badge, 1.0f, {}, badge, 0.85f, {},
+                   badge, 0.7f, {});
+  aboutB.setTooltip(PG_T("Acerca de PerenkeGain"));
+  aboutB.onClick = [this] { openAbout(); };
 
   dock.eq.mixer.attach(&engine.bandAnalyzer());
   dock.leveler.setEngine(&engine);
@@ -137,6 +147,10 @@ void EditorRootComponent::showUpdateAvailable(
   layoutRows();
 }
 
+void EditorRootComponent::openAbout() {
+  dialogs::show(PG_T("Acerca de PerenkeGain"), new AboutDialog(), 520, 560);
+}
+
 void EditorRootComponent::openUpdateDialog() {
   auto *dlg = new UpdateDialog(pendingUpdate);
   dialogs::show(PG_T("Actualizaci\u00f3n de PerenkeGain"), dlg, 500, 440);
@@ -154,6 +168,7 @@ void EditorRootComponent::layoutRows() {
   batchB.setBounds(right.removeFromRight(160).reduced(3, 2));
   waveB.setBounds(right.removeFromRight(170).reduced(3, 2));
   addB.setBounds(right.removeFromRight(110).reduced(3, 2));
+  aboutB.setBounds(toolbar.removeFromLeft(28).reduced(1));
   filePath.setBounds(toolbar.reduced(2));
 
   auto cyanRow = r.removeFromTop(26).reduced(0, 3);

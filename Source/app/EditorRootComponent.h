@@ -45,6 +45,7 @@ private:
   updater::UpdateInfo pendingUpdate;
 
   juce::Label filePath;
+  juce::ImageButton aboutB{"logo"};
   juce::TextButton addB{PG_T("Añadir...")}, waveB{"Editor de onda..."},
       batchB{"Normalizar lote..."}, closeB{"Cerrar"};
   FilePicker picker;
@@ -55,6 +56,7 @@ private:
   int firstEmptyDeck() const; // deck libre; -1 si ambos tienen pista
   void enqueue(const juce::File &file);
   void addLocalFiles();
+  void openAbout();
   void checkForUpdates();
   void showUpdateAvailable(const updater::UpdateInfo &info);
   void openUpdateDialog();

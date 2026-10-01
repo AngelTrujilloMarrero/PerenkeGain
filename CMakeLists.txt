@@ -25,6 +25,12 @@ juce_add_gui_app(PerenkeGain
 
 juce_generate_juce_header(PerenkeGain)
 
+# Imagenes embebidas (logo de la barra y portada de "Acerca de").
+juce_add_binary_data(PerenkeGainData SOURCES
+  assets/logobadge.png
+  assets/logohero.jpeg
+)
+
 target_sources(PerenkeGain PRIVATE
   Source/Main.cpp
   Source/app/MainWindow.cpp
@@ -89,11 +95,13 @@ target_sources(PerenkeGain PRIVATE
   Source/updater/UpdateInstaller.cpp
   Source/ui/UpdateBannerComponent.cpp
   Source/ui/UpdateDialog.cpp
+  Source/ui/AboutDialog.cpp
 )
 
 target_include_directories(PerenkeGain PRIVATE Source)
 
 target_link_libraries(PerenkeGain PRIVATE
+  PerenkeGainData
   juce::juce_audio_basics
   juce::juce_audio_devices
   juce::juce_audio_formats
