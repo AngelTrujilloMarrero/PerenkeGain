@@ -32,6 +32,7 @@ private:
   juce::TextButton downloadBtn, githubBtn, closeBtn;
 
   std::unique_ptr<updater::UpdateDownloader> downloader;
+  juce::File downloadedArchive;
   bool downloading = false;
 };
 

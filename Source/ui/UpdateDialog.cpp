@@ -1,5 +1,7 @@
 #include "ui/UpdateDialog.h"
 #include "types/Text.h"
+#include "updater/UpdateInstaller.h"
+#include <thread>
 
 namespace pg {
 
@@ -47,11 +49,11 @@ UpdateDialog::UpdateDialog(updater::UpdateInfo updateInfo)
   status.setFont(juce::Font(juce::FontOptions(11.5f)));
   status.setVisible(true);
   setStatus(asset.downloadUrl.isNotEmpty()
-                ? PG_T("Se guardar\u00e1 en tu carpeta de Descargas.")
+                ? PG_T("Se instalar\u00e1 y reiniciar\u00e1 autom\u00e1ticamente.")
                 : PG_T("No hay instalador para tu sistema: se abrir\u00e1 GitHub."));
   addAndMakeVisible(status);
 
-  downloadBtn.setButtonText(PG_T("Descargar e instalar"));
+  downloadBtn.setButtonText(PG_T("Actualizar ahora"));
   downloadBtn.onClick = [this] { startDownload(); };
   addAndMakeVisible(downloadBtn);
 
@@ -78,13 +80,13 @@ void UpdateDialog::startDownload() {
     return;
   }
 
-  auto downloads = juce::File::getSpecialLocation(
-                       juce::File::userHomeDirectory)
-                       .getChildFile("Downloads");
-  downloads.createDirectory();
-  auto target = downloads.getChildFile(asset.name.isNotEmpty()
-                                           ? asset.name
-                                           : juce::String("PerenkeGain-update"));
+  auto staging = juce::File::getSpecialLocation(juce::File::tempDirectory)
+                     .getChildFile("PerenkeGainDownload");
+  staging.createDirectory();
+  auto target = staging.getChildFile(asset.name.isNotEmpty()
+                                         ? asset.name
+                                         : juce::String("PerenkeGain-update"));
+  downloadedArchive = target;
   downloading = true;
   downloadBtn.setEnabled(false);
   githubBtn.setEnabled(false);
@@ -105,20 +107,42 @@ void UpdateDialog::startDownload() {
 }
 
 void UpdateDialog::onDownloadFinished(bool ok, juce::File file) {
-  downloading = false;
-  downloadBtn.setEnabled(true);
-  githubBtn.setEnabled(true);
-  downloadBtn.setButtonText(PG_T("Descargar e instalar"));
-
-  if (ok) {
-    progress.setFraction(1.0);
-    setStatus(PG_T("Completado: ") + file.getFileName() +
-              PG_T(". Cierra la app y ejec\u00fatalo para actualizar."));
-    file.revealToUser();
-  } else {
+  downloadedArchive = file;
+  if (!ok) {
+    downloading = false;
+    downloadBtn.setEnabled(true);
+    githubBtn.setEnabled(true);
+    downloadBtn.setButtonText(PG_T("Actualizar ahora"));
     setStatus(PG_T("No se pudo descargar. Abriendo GitHub\u2026"));
     openReleasePage();
+    return;
   }
+
+  progress.setFraction(1.0);
+  setStatus(PG_T("Instalando y reiniciando\u2026"));
+  closeBtn.setEnabled(false);
+
+  auto safe = juce::Component::SafePointer<UpdateDialog>(this);
+  std::thread([safe, file] {
+    const bool installed = updater::UpdateInstaller::installAndRelaunch(file);
+    juce::MessageManager::callAsync([safe, installed] {
+      if (safe == nullptr)
+        return;
+      auto *app = juce::JUCEApplication::getInstance();
+      if (installed && app != nullptr) {
+        app->systemRequestedQuit();
+        return;
+      }
+      safe->downloading = false;
+      safe->downloadBtn.setEnabled(true);
+      safe->githubBtn.setEnabled(true);
+      safe->closeBtn.setEnabled(true);
+      safe->downloadBtn.setButtonText(PG_T("Descargar el paquete"));
+      safe->setStatus(PG_T("No se pudo instalar solo. Se muestra el "
+                           "archivo descargado."));
+      safe->downloadedArchive.revealToUser();
+    });
+  }).detach();
 }
 
 void UpdateDialog::openReleasePage() {
