@@ -1,12 +1,13 @@
 #pragma once
 #include <JuceHeader.h>
+#include <array>
 #include "types/EqTypes.h"
 
 namespace pg {
 
-// EQ gráfica 31 bandas 1/3 octava.
-// gainDb (-12..+12) escalado por intensity (0..1) y masterIntensity.
-// effectiveGain = gainDb * intensity * masterIntensity.
+// EQ gráfica 31 bandas 1/3 octava, independiente por canal (mono/estéreo).
+// Las bandas aplican gainDb * intensity; "intensidad general" es la ganancia
+// maestra de salida (0..1) aplicada al final de la cadena.
 class Eq31BandProcessor {
 public:
   void prepare(double sr, int ch, int blockSize);
@@ -14,9 +15,12 @@ public:
   void process(juce::AudioBuffer<float> &buf);
 
 private:
+  static constexpr int kMaxChannels = 2;
+  using Filter = juce::dsp::IIR::Filter<float>;
   Eq31State state{};
-  std::array<juce::dsp::IIR::Filter<float>, 31> filters;
+  std::array<std::array<Filter, 31>, kMaxChannels> filters; // [canal][banda]
   double sampleRate = 44100.0;
+  int activeChannels = 2;
   juce::SpinLock lock; // UI escribe coeficientes, audio los lee
   void updateCoefficients();
 };

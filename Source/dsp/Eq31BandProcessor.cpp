@@ -8,12 +8,13 @@ constexpr float kMuteDb = -60.0f; // banda muteada: muesca profunda
 } // namespace
 
 void Eq31BandProcessor::prepare(double sr, int ch, int blockSize) {
+  juce::ignoreUnused(blockSize);
   const juce::SpinLock::ScopedLockType sl(lock);
-  sampleRate = sr;
-  juce::dsp::ProcessSpec spec{sr, (juce::uint32)blockSize,
-                              (juce::uint32)ch};
-  for (auto &f : filters)
-    f.prepare(spec);
+  sampleRate = sr > 0.0 ? sr : 44100.0;
+  activeChannels = juce::jlimit(1, kMaxChannels, ch);
+  for (auto &chFilters : filters)
+    for (auto &f : chFilters)
+      f.reset();
   updateCoefficients();
 }
 
@@ -24,16 +25,17 @@ void Eq31BandProcessor::setState(const Eq31State &s) {
 }
 
 void Eq31BandProcessor::updateCoefficients() {
-  for (size_t i = 0; i < 31; ++i) {
-    const auto &b = state.bands[i];
-    // Mute -> notch; si no, gain escalado por intensidad y master.
-    float eff = b.enabled ? b.gainDb * b.intensity * state.masterIntensity
-                          : kMuteDb;
-    if (state.bypass)
-      eff = 0.0f;
-    auto coef = juce::dsp::IIR::Coefficients<float>::makePeakFilter(
-        sampleRate, kEq31Freqs[i], kQ, juce::Decibels::decibelsToGain(eff));
-    filters[i].coefficients = coef;
+  for (auto &chFilters : filters) {
+    for (size_t i = 0; i < 31; ++i) {
+      const auto &b = state.bands[i];
+      // Banda muteada -> muesca; si no, gain escalado por intensidad.
+      float eff = b.enabled ? b.gainDb * b.intensity : kMuteDb;
+      if (state.bypass)
+        eff = 0.0f;
+      chFilters[i].coefficients =
+          juce::dsp::IIR::Coefficients<float>::makePeakFilter(
+              sampleRate, kEq31Freqs[i], kQ, juce::Decibels::decibelsToGain(eff));
+    }
   }
 }
 
@@ -42,10 +44,18 @@ void Eq31BandProcessor::process(juce::AudioBuffer<float> &buf) {
   const juce::SpinLock::ScopedTryLockType sl(lock);
   if (!sl.isLocked() || buf.getNumChannels() <= 0 || buf.getNumSamples() <= 0)
     return;
-  juce::dsp::AudioBlock<float> block(buf);
-  juce::dsp::ProcessContextReplacing<float> ctx(block);
-  for (auto &f : filters)
-    f.process(ctx);
+  const float master = juce::jlimit(0.0f, 1.0f, state.masterIntensity);
+  const int chans = juce::jmin(activeChannels, buf.getNumChannels());
+  const int n = buf.getNumSamples();
+  for (int c = 0; c < chans; ++c) {
+    auto *d = buf.getWritePointer(c);
+    for (int i = 0; i < n; ++i) {
+      float x = d[i];
+      for (auto &f : filters[(size_t)c])
+        x = f.processSample(x);
+      d[i] = x * master;
+    }
+  }
 }
 
 } // namespace pg

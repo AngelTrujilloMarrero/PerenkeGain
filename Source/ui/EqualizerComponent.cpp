@@ -18,6 +18,7 @@ EqualizerComponent::EqualizerComponent() {
   auto mk = [this](juce::Label &l, const juce::String &t) {
     l.setText(t, juce::dontSendNotification);
     l.setFont(juce::Font(juce::FontOptions(11.0f, juce::Font::bold)));
+    l.setColour(juce::Label::textColourId, juce::Colour(0xFFF2F3F6));
     l.setInterceptsMouseClicks(false, false);
     addAndMakeVisible(l);
   };
@@ -79,14 +80,13 @@ void EqualizerComponent::resized() {
   freqLabelsTitle.setBounds(titleRow.removeFromRight(260).reduced(0, 5));
   presetBar.setBounds(r.removeFromTop(26));
   r.removeFromTop(2);
-  auto mixerRow = r.removeFromTop(int(getHeight() * 0.70));
-  mixer.setBounds(mixerRow);
-  auto freqs = r.removeFromTop(14);
-  freqLabelsTop = freqs.getY();
-  r.removeFromTop(4);
-  auto masterRow = r.removeFromTop(28);
+  auto masterRow = r.removeFromBottom(28);
   masterTitle.setBounds(masterRow.removeFromLeft(160).reduced(0, 6));
   master.setBounds(masterRow.reduced(0, 4));
+  auto freqs = r.removeFromBottom(14);
+  freqLabelsTop = freqs.getY();
+  r.removeFromBottom(4);
+  mixer.setBounds(r);
 }
 
 Eq31State EqualizerComponent::getState() const {

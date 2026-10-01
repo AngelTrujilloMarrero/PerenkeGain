@@ -78,7 +78,7 @@ void RetroLookAndFeel::drawToggleButton(juce::Graphics &g,
     g.drawLine(tick.getCentreX() - 1.0f, (float)tick.getBottom(),
                (float)tick.getRight(), (float)tick.getY(), 2.5f);
   }
-  g.setColour(juce::Colours::black);
+  g.setColour(b.findColour(juce::ToggleButton::textColourId));
   g.drawText(b.getButtonText(), r.withTrimmedLeft(box.getWidth() + 6),
              juce::Justification::centredLeft);
 }
