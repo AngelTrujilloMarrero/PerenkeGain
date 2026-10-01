@@ -1,4 +1,5 @@
 #include "storage/AudioEncoder.h"
+#include "storage/ExternalTool.h"
 #include "types/Text.h"
 
 namespace pg {
@@ -6,15 +7,7 @@ namespace pg {
 namespace {
 
 juce::File findExecutable(const juce::String &name) {
-  auto path = juce::SystemStats::getEnvironmentVariable("PATH", {});
-  for (auto &dir : juce::StringArray::fromTokens(path, ":", "")) {
-    if (dir.isEmpty())
-      continue;
-    juce::File f = juce::File(dir).getChildFile(name);
-    if (f.existsAsFile())
-      return f;
-  }
-  return {};
+  return ExternalTool::find(name);
 }
 
 bool writeFormat(const juce::File &out, const juce::AudioBuffer<float> &buf,
