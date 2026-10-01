@@ -4,7 +4,7 @@
 
 namespace pg {
 
-// Waveform estilo PolderbitS: marco hundido, fondo blanco, onda negra,
+// Waveform: marco hundido, fondo blanco, onda negra,
 // scrollbar horizontal, playhead rojo, marcadores rojos y selección de
 // tramo con arrastre del ratón (para marcar cortes sobre la onda).
 class WaveformComponent : public juce::Component,

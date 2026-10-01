@@ -23,13 +23,12 @@ EditorRootComponent::EditorRootComponent()
   addChildComponent(updateBanner);
 
   addAndMakeVisible(transport);
-  addAndMakeVisible(helpBtn);
   addAndMakeVisible(info);
   addAndMakeVisible(cyan);
   addAndMakeVisible(wave);
+  addAndMakeVisible(meter);
   addAndMakeVisible(dock);
-  for (auto *b : {&openB, &saveB, &splitB, &eqB, &advB, &closeB, &skipB,
-                  &collapseB})
+  for (auto *b : {&openB, &saveB, &splitB, &advB, &closeB, &skipB})
     addAndMakeVisible(*b);
   for (auto *c : {&cutBox, &fadeIn, &fadeOut})
     addAndMakeVisible(*c);
@@ -48,11 +47,9 @@ EditorRootComponent::EditorRootComponent()
   controller.onFileLoaded = [this](const juce::String &path) {
     filePath.setText(path, juce::dontSendNotification);
   };
-  dock.onHelpContinue = [this] {
-    dock.setVisible(false);
-    layoutRows();
-  };
   dock.eq.mixer.attach(&engine.bandAnalyzer());
+  meter.attach(&engine.bandAnalyzer());
+  dock.leveler.setEngine(&engine);
   // El EQ del panel afecta al audio en reproducción.
   dock.eq.onStateChanged = [this] { engine.setEqState(dock.eq.getState()); };
   engine.setEqState(dock.eq.getState());
@@ -97,22 +94,8 @@ void EditorRootComponent::wireButtons() {
   openB.onClick = [this] { controller.openAudio(); };
   saveB.onClick = [this] { controller.openSave(); };
   splitB.onClick = [this] { controller.openSplitter(); };
-  eqB.onClick = [this] {
-    dock.showEqualizer();
-    dock.setVisible(true);
-    layoutRows();
-  };
-  advB.onClick = [this] { controller.openAdvanced(); };
+  advB.onClick = [this] { controller.openBatchNormalize(); };
   closeB.onClick = [this] { controller.quitEditor(); };
-  helpBtn.onClick = [this] {
-    dock.showHelp();
-    dock.setVisible(true);
-    layoutRows();
-  };
-  collapseB.onClick = [this] {
-    dock.setVisible(!dock.isVisible());
-    layoutRows();
-  };
   skipB.onClick = [this] {
     engine.setCurrentPosition(
         juce::jmin(engine.getPositionSec() + 5.0, engine.getLengthSec()));
@@ -147,23 +130,20 @@ void EditorRootComponent::layoutRows() {
   if (updateBanner.isVisible())
     updateBanner.setBounds(r.removeFromTop(36).reduced(0, 2));
   auto row1 = r.removeFromTop(32);
-  helpBtn.setBounds(row1.removeFromRight(32).reduced(2));
   transport.setBounds(row1.removeFromRight(110).reduced(2, 0));
   filePath.setBounds(row1.reduced(0, 2));
   info.setBounds(r.removeFromTop(38));
   auto row3 = r.removeFromTop(26).reduced(0, 2);
-  collapseB.setBounds(row3.removeFromRight(30));
   skipB.setBounds(row3.removeFromRight(46));
   cyan.setBounds(row3.reduced(0, 3));
 
-  if (dock.isVisible())
-    dock.setBounds(r.removeFromBottom(dock.preferredHeight()));
+  dock.setBounds(r.removeFromBottom(dock.preferredHeight()));
 
   auto right = r.removeFromRight(160);
-  for (auto *b : {&openB, &saveB, &splitB, &eqB, &advB, &closeB}) {
-    b->setBounds(right.removeFromTop(30).reduced(4, 3));
-    right.removeFromTop(4);
-  }
+  auto rightButtons = {&openB, &saveB, &splitB, &advB, &closeB};
+  const int slot = juce::jmax(1, right.getHeight() / (int)rightButtons.size());
+  for (auto *b : rightButtons)
+    b->setBounds(right.removeFromTop(slot).reduced(4, 2));
 
   auto left = r.removeFromLeft(190).reduced(0, 6);
   left.removeFromTop(4);
@@ -173,6 +153,7 @@ void EditorRootComponent::layoutRows() {
   left.removeFromTop(8);
   escalaTitle.setBounds(left.removeFromTop(24).removeFromLeft(60));
   escala.setBounds(left.removeFromTop(26).removeFromTop(24));
+  meter.setBounds(r.removeFromRight(40).reduced(2, 6));
   wave.setBounds(r.reduced(4, 6));
 }
 

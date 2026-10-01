@@ -1,36 +1,46 @@
-# Editor Spec — reinterpretación moderna PolderbitS
+# Editor Spec
 
-## Referencias originales
-
-- `pbrecorder_ss.jpg` (archive.org): ventana Recorder gris, VU verde-amarillo-rojo dBFS, combo calidad CD/DVD/radio/teléfono, botones pletina.
-- Malavida 5799-1..4: Editor + Advanced desplegado + Save Tracks.
-- Changelog v5: bordes redimensionables, cut-points grandes, split middle/start-end+fade, split equal/N, L/R separado, show clicks in red.
-
-## Layout moderno (oscuro)
+## Layout (oscuro + bandeja retro)
 
 ```
 +--------------------------------------------------+
-| Menu: Abrir | Guardar pistas | Splitter | A/B   |
+| Ruta | Transporte (Play/Stop)                     |
 +--------------------------------------------------+
-| TrackMarkers (amarillo sobre negro, arrastrable) |
-| Waveform L/R (verde claro, zoom H/V, click-der)  |
+| Info del fichero (formato, Hz, canales)          |
 +--------------------------------------------------+
-| Transporte: Play Stop | Trim | Fade-In Fade-Out  |
+| Barra cian de progreso            Skip | ▲        |
 +--------------------------------------------------+
-| [Advanced v] Click Crackle [x] Noise [x] EQ [x]   |
-| EQ31: 31x gain vertical + 31x intensidad + master |
+| Fade In / Fade Out |        Waveform L/R     | L/R |
+| Escala             |   marcadores + selección |master|
++--------------------------------------------------+
+| Bandeja inferior:                                |
+|   EQ 31 bandas (+ intensidad general / volumen)  |
+|   Nivelador de sonoridad (LUFS)                  |
 +--------------------------------------------------+
 ```
 
-## EQ 31 con intensidad integrada (requisito usuario)
+## EQ 31 bandas
 
-- Fila superior: `gain -12..+12 dB` por banda.
-- Fila inferior: `intensidad 0..100%` por banda + `master 0..100%`.
-- Fórmula: `effGain = gain * intensity * master`. Bypass respeta original.
-- Presets: Flat, Vinilo (HP 20 Hz + -6 dB >16 k + +2 dB 2-4 k), Casete (low-pass suave + -hiss).
-- DSP: 31x `juce::dsp::IIR peak Q=4.3`, `prepare()` por cambio de `sr`.
+- 31 sliders ISO 1/3 octava (`gain -12..+12 dB`) por banda, con presets por
+  género (incluye géneros latinos) y `Personalizado` al editar a mano.
+- `Intensidad general`: ganancia maestra de salida (0..100 %); al mínimo la
+  salida queda en silencio.
+- Procesado independiente por canal: 31x `juce::dsp::IIR peak Q=4.3`.
 
-## Splitter / Save
+## Nivelador de sonoridad (LUFS)
 
-- Splitter solo analiza al abrir diálogo (background thread).
-- Save recuerda último formato (WAV 32-float / MP3 / FLAC), ID3 álbum+pista.
+- Objetivo de sonoridad percibida ajustable (def. -14 LUFS).
+- Medición en tiempo real por bloques de 100 ms: LUFS momentáneo (400 ms) y
+  de corto plazo (3 s), con puerta para no subir en silencio.
+- Ballistics de ataque/liberación, límites de subida/bajada y limitador
+  true-peak de seguridad. Solo afecta a la reproducción (no exporta).
+
+## Splitter / Guardar
+
+- Splitter: analiza el fichero al abrir el diálogo y propone cortes por
+  silencio; se combinan con los marcadores manuales.
+- Guardar: exporta los tramos como WAV 32-float o FLAC.
+- Normalización por lotes (ventana aparte, tipo mp3gain): primero `Analizar`
+  (mide sonoridad percibida y pico por fichero), luego `Aplicar pista` o
+  `Aplicar álbum` al nivel objetivo en dB (escala mp3gain, 80–120). Conserva
+  el formato de entrada; MP3 necesita lame/ffmpeg externos.

@@ -4,7 +4,7 @@
 namespace pg {
 
 // LookAndFeel estilo Windows 9x/2000: gris #D4D0C8, bordes 3D,
-// checkbox clásico, barra cian. Basado en capturas del PolderbitS original.
+// checkbox clásico y barra cian.
 class RetroLookAndFeel : public juce::LookAndFeel_V4 {
 public:
   RetroLookAndFeel();

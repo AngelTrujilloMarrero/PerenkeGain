@@ -8,7 +8,7 @@
 #include "app/PlaybackTicker.h"
 #include "ui/FileInfoBar.h"
 #include "ui/CyanProgressBar.h"
-#include "ui/HelpButton.h"
+#include "ui/MasterLevelBar.h"
 #include "ui/BottomDockComponent.h"
 #include "ui/UpdateBannerComponent.h"
 #include "updater/UpdateChecker.h"
@@ -16,7 +16,8 @@
 
 namespace pg {
 
-// Layout fiel al Editor de Sonido PolderbitS original (capturas Malavida).
+// Layout principal del editor: barra superior, onda, controles y bandeja
+// inferior con ecualizador y nivelador.
 class EditorRootComponent : public juce::Component {
 public:
   EditorRootComponent();
@@ -28,7 +29,7 @@ private:
   FileInfoBar info;
   CyanProgressBar cyan;
   TransportComponent transport;
-  HelpButton helpBtn;
+  MasterLevelBar meter;
   BottomDockComponent dock;
   EditorController controller;
   PlaybackTicker ticker;
@@ -38,8 +39,8 @@ private:
 
   juce::Label filePath;
   juce::TextButton openB{"Abrir..."}, saveB{"Guardar como..."},
-      splitB{"Dividir..."}, eqB{"Ecualizador..."}, advB{"Avanzado..."},
-      closeB{"Cerrar"}, skipB{PG_T("→5")}, collapseB{PG_T("▲")};
+      splitB{"Dividir..."}, advB{"Normalizar lote..."}, closeB{"Cerrar"},
+      skipB{PG_T("→5")};
   juce::ToggleButton cutBox{"Iniciar Corte"},
       fadeIn{"Fade In / Punto de Inicio"}, fadeOut{"Fade Out / Punto del Final"};
   juce::Label escalaTitle;

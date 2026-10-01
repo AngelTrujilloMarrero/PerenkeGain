@@ -1,27 +1,35 @@
-# PerenkeGain — clon open del Editor PolderbitS
+# PerenkeGain
 
 ![PerenkeGain](assets/logo-256.png)
 
-Solo **editor** (sin grabador). Reinterpretación moderna del
-`PolderbitS Sound Recorder and Editor 9.0` orientada a digitalizar
-vinilos/casetes: abrir WAV/MP3, ver waveform estéreo, splitter por
-silencio, trim/fade, filtros Click/Crackle + Hiss + EQ gráfica 31 bandas
-con intensidad por banda, y guardado multipista.
+Editor de audio moderno para digitalizar y restaurar vinilos y casetes.
+Abre WAV/MP3/FLAC/OGG, muestra la forma de onda estéreo, divide en pistas
+por silencio, aplica fade, un ecualizador gráfico de 31 bandas y un
+nivelador de sonoridad en vivo, y guarda las pistas por separado.
 
-## Decisiones cerradas
+## Funciones
+
+- **Forma de onda estéreo** con zoom, marcadores y selección de tramos.
+- **Divisor de pistas** por detección de silencio (marcadores arrastrables).
+- **Ecualizador de 31 bandas** (ISO 1/3 octava) con presets por género
+  (incluye géneros latinos) e intensidad general de salida.
+- **Nivelador de sonoridad (LUFS)** en tiempo real con ataque/liberación,
+  puerta y limitador true-peak; medidores momentáneo, corto plazo y pico.
+- **Medidor master L/R** junto a la forma de onda.
+- **Normalización por lotes tipo mp3gain**: analiza el volumen percibido de
+  cada fichero, muestra la tabla y aplica la ganancia al objetivo en dB, por
+  pista o por álbum. La salida conserva el formato de entrada (MP3 requiere
+  `lame` o `ffmpeg` instalados).
+- **Guardado multipista** WAV/FLAC por tramos.
+- **Actualización automática** desde GitHub Releases.
+
+## Decisiones
 
 - Stack: **C++20 + JUCE 8 (Standalone App)**.
-- Audio: **44.1–192 kHz, 32-bit float** (moderno, no 16-bit legacy).
+- Audio: **44.1–192 kHz, 32-bit float**.
 - Licencia: **MIT**.
 - Targets: **Linux + macOS** (CI). Windows pospuesto.
-- UI: reinterpretación moderna oscura, mismo flujo simple original.
-- EQ: 31 sliders ISO 1/3 octava + **intensidad 0–100% por banda**.
-
-## Estado visual de referencia
-
-Ver `docs/EDITOR_SPEC.md`: layout, paleta, panel `Advanced`,
-`Track Splitter` y `Save Tracks` reconstruidos desde
-archive.org (`pbrecorder_ss.jpg`) y Malavida (4 capturas).
+- UI: tema oscuro con bandeja inferior tipo mesa digital.
 
 ## Build (Linux/macOS)
 
@@ -38,16 +46,21 @@ En CI se compila en Ubuntu + macOS. Sin `cmake` local, revisa
 ## Estructura (AGENTS.md: 1 fichero = 1 cosa, <200 líneas)
 
 ```
-Source/app/      ventana + estado global
+Source/app/      ventana, controlador y estado global
 Source/audio/    engine, waveform, marcadores, transporte
-Source/dsp/      silencio, splitter, rumble, de-click, de-hiss, EQ31, cadena
-Source/ui/       Advanced, EQ, diálogos splitter/save
-Source/storage/  SQLite proyectos + exportación
-Source/types/    tipos comunes audio
+Source/dsp/      silencio, splitter, de-click, de-hiss, EQ31, nivelador
+Source/ui/       EQ, nivelador, normalización por lotes y diálogos
+Source/storage/  carga, exportación y normalización de ficheros
+Source/types/    tipos comunes de audio
 ```
 
-## Flujo editor
+## Flujo
 
-`Abrir archivo -> Waveform L/R -> marcadores arrastrables ->
-Trim/Fade -> Advanced (filtros realtime + A/B) -> Splitter ->
-Save Tracks WAV/MP3/FLAC`
+`Abrir archivo -> Waveform L/R -> marcadores/tramos -> Fade -> EQ y
+nivelador en vivo -> Splitter -> Guardar pistas WAV/FLAC`.
+
+La normalización por lotes (`Normalizar lote...`) es independiente: elige un
+fichero o carpeta, pulsa **Analizar** (mide volumen/pico en la escala mp3gain,
+80–120 dB), ajusta el objetivo y pulsa **Aplicar pista** o **Aplicar álbum**.
+
+Detalles de layout y DSP en `docs/EDITOR_SPEC.md`.

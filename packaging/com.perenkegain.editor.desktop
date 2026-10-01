@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=PerenkeGain
-GenericName=Editor de audio (clon PolderbitS)
-Comment=Editor estilo PolderbitS: waveform, splitter por silencio, filtros vinilo/casete y EQ 31 bandas
+GenericName=Editor de audio
+Comment=Editor de audio: waveform, splitter por silencio, EQ 31 bandas, nivelador y normalización por lotes
 Exec=PerenkeGain %F
 Icon=perenkegain
 Terminal=false
