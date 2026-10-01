@@ -52,7 +52,7 @@ juce::String errorSummary(const juce::String &output, int code) {
       msg.containsIgnoreCase("player response") ||
       msg.containsIgnoreCase("sign in") ||
       msg.containsIgnoreCase("failed to extract"))
-    msg += "\n(actualiza yt-dlp: pip install -U yt-dlp)";
+    msg += "\n" + ExternalTool::ytDlpUpdateHint();
   return msg;
 }
 
@@ -90,6 +90,13 @@ YouTubeResult YouTubeDownloader::download(
   }
   if (ExternalTool::find("ffmpeg") == juce::File{}) {
     r.error = "ffmpeg no encontrado";
+    return r;
+  }
+  // Un yt-dlp viejo falla siempre ("Please sign in"): se avisa sin esperar.
+  juce::String ytVer;
+  if (ExternalTool::isYtDlpOutdated(ytdlp, &ytVer)) {
+    r.error = PG_T("yt-dlp desactualizado (") + ytVer + PG_T("). ") +
+              ExternalTool::ytDlpUpdateHint();
     return r;
   }
   if (!outDir.isDirectory() && !outDir.createDirectory()) {

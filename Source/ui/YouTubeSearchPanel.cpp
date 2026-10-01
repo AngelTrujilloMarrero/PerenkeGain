@@ -1,4 +1,5 @@
 #include "ui/YouTubeSearchPanel.h"
+#include "storage/ExternalTool.h"
 #include "storage/YouTubeDownloader.h"
 #include "ui/RetroLookAndFeel.h"
 #include "ui/ToolInstallHint.h"
@@ -40,9 +41,14 @@ YouTubeSearchPanel::YouTubeSearchPanel() {
   if (!outDir.isDirectory())
     outDir = juce::File::getSpecialLocation(juce::File::userMusicDirectory);
   juce::File ytdlp, ffmpeg;
-  setStatus(YouTubeDownloader::available(ytdlp, ffmpeg)
-                ? PG_T("Listo. Carpeta: ") + outDir.getFullPathName()
-                : toolInstallHint());
+  juce::String statusText;
+  if (!YouTubeDownloader::available(ytdlp, ffmpeg))
+    statusText = toolInstallHint();
+  else if (ExternalTool::isYtDlpOutdated(ytdlp))
+    statusText = ExternalTool::ytDlpUpdateHint();
+  else
+    statusText = PG_T("Listo. Carpeta: ") + outDir.getFullPathName();
+  setStatus(statusText);
 }
 
 void YouTubeSearchPanel::setStatus(const juce::String &s) {
