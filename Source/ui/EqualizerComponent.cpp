@@ -1,4 +1,6 @@
 #include "ui/EqualizerComponent.h"
+#include "dsp/EqPresets.h"
+#include "types/Text.h"
 #include "ui/RetroLookAndFeel.h"
 
 namespace pg {
@@ -37,9 +39,13 @@ EqualizerComponent::EqualizerComponent() {
   addAndMakeVisible(mixer);
   mixer.onReadout = [this](const juce::String &s) {
     readout.setText(s, juce::dontSendNotification);
+    presetBar.showCustom(); // el usuario retoco un fader a mano
     if (onStateChanged)
       onStateChanged();
   };
+
+  addAndMakeVisible(presetBar);
+  presetBar.onPresetChosen = [this](int i) { applyPreset(i); };
 }
 
 int EqualizerComponent::colW() const {
@@ -71,6 +77,8 @@ void EqualizerComponent::resized() {
   auto titleRow = r.removeFromTop(22);
   readout.setBounds(titleRow.removeFromLeft(230).reduced(4, 3));
   freqLabelsTitle.setBounds(titleRow.removeFromRight(260).reduced(0, 5));
+  presetBar.setBounds(r.removeFromTop(26));
+  r.removeFromTop(2);
   auto mixerRow = r.removeFromTop(int(getHeight() * 0.70));
   mixer.setBounds(mixerRow);
   auto freqs = r.removeFromTop(14);
@@ -98,6 +106,19 @@ void EqualizerComponent::setState(const Eq31State &s) {
     mixer.setMuted((int)i, !s.bands[i].enabled);
   }
   master.setValue(s.masterIntensity * 100.0, juce::dontSendNotification);
+}
+
+void EqualizerComponent::applyPreset(int index) {
+  index = juce::jlimit(0, (int)kEqPresets.size() - 1, index);
+  Eq31State s = eqPresetState(kEqPresets[(size_t)index]);
+  s.masterIntensity = (float)master.getValue() / 100.f; // conserva el master
+  setState(s);
+  presetBar.select(index);
+  readout.setText(PG_T("Preset: ") + PG_T(kEqPresets[(size_t)index].name),
+                  juce::dontSendNotification);
+  // setState es programatico (no dispara onEdit): avisa a mano al DSP.
+  if (onStateChanged)
+    onStateChanged();
 }
 
 } // namespace pg

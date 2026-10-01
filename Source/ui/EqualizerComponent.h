@@ -1,6 +1,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "types/EqTypes.h"
+#include "ui/EqPresetBar.h"
 #include "ui/MixerRowComponent.h"
 
 namespace pg {
@@ -16,6 +17,10 @@ public:
   Eq31State getState() const;
   void setState(const Eq31State &s);
 
+  // Carga un preset preconfigurado (indice en kEqPresets) y lo aplica.
+  void applyPreset(int index);
+
+  EqPresetBar presetBar;
   MixerRowComponent mixer; // el root lo enlaza con el analizador
 
   // Se dispara al cambiar cualquier banda (gain/mute) o el master.

@@ -55,6 +55,7 @@ target_sources(PerenkeGain PRIVATE
   Source/dsp/DspChain.cpp
   Source/ui/AdvancedPanel.cpp
   Source/ui/EqualizerComponent.cpp
+  Source/ui/EqPresetBar.cpp
   Source/ui/TrackSplitterDialog.cpp
   Source/ui/SaveTracksDialog.cpp
   Source/storage/ProjectStore.cpp
