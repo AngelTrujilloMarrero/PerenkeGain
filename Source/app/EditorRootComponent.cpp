@@ -148,7 +148,7 @@ void EditorRootComponent::showUpdateAvailable(
 }
 
 void EditorRootComponent::openAbout() {
-  dialogs::show(PG_T("Acerca de PerenkeGain"), new AboutDialog(), 520, 560);
+  dialogs::show(PG_T("Acerca de PerenkeGain"), new AboutDialog(), 560, 660);
 }
 
 void EditorRootComponent::openUpdateDialog() {

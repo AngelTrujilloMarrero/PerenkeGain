@@ -8,9 +8,11 @@ class AboutDialog : public juce::Component {
 public:
   AboutDialog();
   void paint(juce::Graphics &g) override;
+  void resized() override;
 
 private:
   juce::Image hero;
+  juce::HyperlinkButton repo;
 };
 
 } // namespace pg
