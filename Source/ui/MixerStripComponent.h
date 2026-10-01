@@ -33,6 +33,7 @@ private:
   juce::Rectangle<int> meterArea() const;
   juce::Rectangle<int> faderArea() const;
   juce::Rectangle<int> muteArea() const;
+  juce::Colour capColour() const;
   void paintMeter(juce::Graphics &g);
   void paintFader(juce::Graphics &g);
   void paintMute(juce::Graphics &g);

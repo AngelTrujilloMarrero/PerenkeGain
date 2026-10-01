@@ -2,6 +2,7 @@
 #include <JuceHeader.h>
 #include "audio/AnalyzingSourcePlayer.h"
 #include "dsp/BandLevelAnalyzer.h"
+#include "dsp/Eq31BandProcessor.h"
 
 namespace pg {
 
@@ -27,6 +28,9 @@ public:
   // Medidores por banda del ecualizador (alimentados por la salida).
   BandLevelAnalyzer &bandAnalyzer() { return bands; }
 
+  // Estado del EQ que se aplica al audio en reproducción (hilo UI -> audio).
+  void setEqState(const Eq31State &s) { eq.setState(s); }
+
 private:
   juce::File fileName;
   juce::AudioFormatManager formats;
@@ -35,6 +39,7 @@ private:
   juce::AudioTransportSource transport;
   std::unique_ptr<juce::AudioFormatReaderSource> reader;
   BandLevelAnalyzer bands;
+  Eq31BandProcessor eq;
 };
 
 } // namespace pg

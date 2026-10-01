@@ -40,7 +40,10 @@ void MixerRowComponent::timerCallback() {
   if (!isShowing() || analyzer == nullptr)
     return;
   for (int b = 0; b < BandLevelAnalyzer::kBands; ++b)
-    strips[(size_t)b]->setLevelDb(analyzer->levelDb(b));
+    // Banda muteada: medidor congelado a suelo (no "sigue funcionando").
+    strips[(size_t)b]->setLevelDb(strips[(size_t)b]->isMuted()
+                                      ? -60.0f
+                                      : analyzer->levelDb(b));
 }
 
 juce::String MixerRowComponent::infoFor(int i) const {

@@ -17,6 +17,7 @@ private:
   Eq31State state{};
   std::array<juce::dsp::IIR::Filter<float>, 31> filters;
   double sampleRate = 44100.0;
+  juce::SpinLock lock; // UI escribe coeficientes, audio los lee
   void updateCoefficients();
 };
 

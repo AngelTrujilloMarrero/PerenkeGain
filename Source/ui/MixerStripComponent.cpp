@@ -3,20 +3,24 @@
 namespace pg {
 
 static constexpr float kGainMin = -12.0f, kGainMax = 12.0f;
+static constexpr int kMuteH = 16;
 
 MixerStripComponent::MixerStripComponent(int bandIndex) : band(bandIndex) {}
 
 juce::Rectangle<int> MixerStripComponent::meterArea() const {
-  return {0, 0, juce::jmin(8, getWidth()), getHeight()};
+  return {0, 0, juce::jmin(8, getWidth()),
+          juce::jmax(0, getHeight() - kMuteH - 2)};
 }
 
 juce::Rectangle<int> MixerStripComponent::faderArea() const {
-  return {9, 0, 11, getHeight()};
+  int x = juce::jmin(9, getWidth());
+  int w = juce::jmax(0, getWidth() - x - 3);
+  int h = juce::jmax(0, getHeight() - kMuteH - 6);
+  return {x, 2, w, h};
 }
 
 juce::Rectangle<int> MixerStripComponent::muteArea() const {
-  int h = juce::jmin(15, getHeight());
-  return {20, getHeight() - h, juce::jmax(0, getWidth() - 20), h};
+  return {2, getHeight() - kMuteH, juce::jmax(0, getWidth() - 4), kMuteH};
 }
 
 void MixerStripComponent::setLevelDb(float db) {
@@ -54,7 +58,8 @@ void MixerStripComponent::mouseDown(const juce::MouseEvent &e) {
 void MixerStripComponent::mouseDrag(const juce::MouseEvent &e) {
   if (!dragging)
     return;
-  float perPx = (kGainMax - kGainMin) / (float)juce::jmax(1, getHeight());
+  float travel = (float)juce::jmax(1, faderArea().getHeight() - 6);
+  float perPx = (kGainMax - kGainMin) / travel;
   float g = dragStartGain + (dragStartY - (float)e.position.y) * perPx;
   g = juce::jlimit(kGainMin, kGainMax, g);
   g = std::round(g * 2.0f) / 2.0f; // pasos de 0.5 dB
@@ -102,30 +107,90 @@ void MixerStripComponent::paintMeter(juce::Graphics &g) {
   }
 }
 
+// Color del capuchón según la banda: espectro graves(azul)->agudos(rojo),
+// como los faders de colores de una mesa de sonido real.
+juce::Colour MixerStripComponent::capColour() const {
+  float t = juce::jlimit(0.0f, 1.0f, (float)band / 30.0f);
+  float hue = juce::jmap(t, 0.0f, 1.0f, 0.63f, 0.0f);
+  return juce::Colour::fromHSV(hue, 0.62f, 0.82f, 1.0f);
+}
+
 void MixerStripComponent::paintFader(juce::Graphics &g) {
   auto r = faderArea();
-  if (r.getWidth() <= 0 || r.getHeight() < 8)
+  if (r.getWidth() < 6 || r.getHeight() < 24)
     return;
-  int cx = r.getCentreX();
-  // Ranura
-  g.setColour(juce::Colour(0xFF0A0B0E));
-  g.fillRect(cx - 1, r.getY() + 2, 3, r.getHeight() - 4);
-  g.setColour(juce::Colour(0xFF3A3E4A));
-  g.drawVerticalLine(cx + 1, (float)(r.getY() + 2),
-                     (float)(r.getBottom() - 2));
-  // Capuchón que sube y baja
-  constexpr int capH = 13;
+  float cx = (float)r.getCentreX();
+
+  // Carril hundido con gradiente (aspecto consola).
+  auto slot = r.toFloat().reduced(1.0f, 3.0f);
+  juce::ColourGradient slotGrad(juce::Colour(0xFF050608), slot.getCentreX(),
+                                slot.getY(), juce::Colour(0xFF181B22),
+                                slot.getCentreX(), slot.getBottom(), false);
+  g.setGradientFill(slotGrad);
+  g.fillRoundedRectangle(slot, 3.0f);
+  g.setColour(juce::Colour(0xFF3A3E48));
+  g.drawRoundedRectangle(slot.reduced(0.5f), 3.0f, 1.0f);
+
+  // Riel central marcado.
+  g.setColour(juce::Colour(0xFF000000));
+  g.fillRect(cx - 1.5f, slot.getY() + 2.0f, 3.0f, slot.getHeight() - 4.0f);
+  g.setColour(juce::Colour(0xFF2C3038));
+  g.fillRect(cx - 0.5f, slot.getY() + 2.0f, 1.0f, slot.getHeight() - 4.0f);
+
+  // Ticks de escala (-12, -6, 0, +6, +12 dB).
+  constexpr int ticks = 4;
+  g.setColour(juce::Colour(0xFF6A7080));
+  for (int i = 0; i <= ticks; ++i) {
+    float frac = (float)i / (float)ticks;
+    int y = juce::roundToInt(slot.getY() + 3.0f +
+                             (1.0f - frac) * (slot.getHeight() - 6.0f));
+    bool mid = (i == ticks / 2);
+    float len = mid ? slot.getWidth() * 0.55f : 3.0f;
+    g.drawHorizontalLine(y, slot.getX() + 1.0f, slot.getX() + 1.0f + len);
+  }
+
+  // Capuchón grande tipo fader de consola, con color propio por banda.
   float frac = (gain - kGainMin) / (kGainMax - kGainMin);
-  int capY = r.getY() + 3 +
-             juce::roundToInt((1.0f - frac) * (float)(r.getHeight() - 6 - capH));
-  juce::Rectangle<int> cap(cx - 4, capY, 9, capH);
-  g.setColour(juce::Colour(0xFFE6E6E6));
-  g.fillRoundedRectangle(cap.toFloat(), 2.0f);
-  g.setColour(juce::Colours::black);
-  g.drawRoundedRectangle(cap.toFloat(), 2.0f, 1.0f);
-  g.setColour(juce::Colour(0xFF606470));
-  g.drawHorizontalLine(cap.getCentreY(), cap.getX() + 2.0f,
-                       cap.getRight() - 2.0f);
+  float capH = juce::jlimit(22.0f, 30.0f, (float)r.getHeight() / 6.5f);
+  float capCentreY =
+      slot.getY() + 3.0f + (1.0f - frac) * (slot.getHeight() - 6.0f);
+  float capW = (float)r.getWidth();
+  auto cap = juce::Rectangle<float>(cx - capW * 0.5f, capCentreY - capH * 0.5f,
+                                    capW, capH);
+  juce::Colour col = capColour();
+
+  // Sombra proyectada.
+  g.setColour(juce::Colour(0xA0000000));
+  g.fillRoundedRectangle(cap.translated(0.0f, 2.5f), 4.0f);
+
+  // Cuerpo con gradiente vertical coloreado (arriba claro, abajo oscuro).
+  juce::ColourGradient body(col.brighter(0.60f), cap.getCentreX(), cap.getY(),
+                            col.darker(0.55f), cap.getCentreX(), cap.getBottom(),
+                            false);
+  body.addColour(0.50, col.withMultipliedBrightness(1.05f));
+  g.setGradientFill(body);
+  g.fillRoundedRectangle(cap, 4.0f);
+
+  // Bisel: borde oscuro que da volumen.
+  g.setColour(col.darker(0.80f));
+  g.drawRoundedRectangle(cap.reduced(0.5f), 4.0f, 1.4f);
+
+  // Rebaje cóncavo central (donde apoya el dedo).
+  auto groove = cap.reduced(capW * 0.16f, capH * 0.30f);
+  g.setColour(juce::Colour(0x55000000));
+  g.fillRoundedRectangle(groove.translated(0.0f, 1.0f), 2.0f);
+  g.setColour(juce::Colour(0x40FFFFFF));
+  g.drawRoundedRectangle(groove, 2.0f, 1.0f);
+
+  // Línea indicadora central contrastada.
+  g.setColour(col.contrasting(0.9f));
+  g.fillRect(cap.getX() + 1.5f, cap.getCentreY() - 0.75f, cap.getWidth() - 3.0f,
+             1.5f);
+
+  // Reflejo superior brillante.
+  g.setColour(juce::Colour(0xA0FFFFFF));
+  g.drawHorizontalLine(juce::roundToInt(cap.getY() + 1.5f), cap.getX() + 3.0f,
+                       cap.getRight() - 3.0f);
 }
 
 void MixerStripComponent::paintMute(juce::Graphics &g) {
@@ -142,8 +207,16 @@ void MixerStripComponent::paintMute(juce::Graphics &g) {
 }
 
 void MixerStripComponent::paint(juce::Graphics &g) {
-  g.setColour(juce::Colour(0xFF262933));
-  g.fillRect(getLocalBounds());
+  auto b = getLocalBounds();
+  juce::ColourGradient bg(juce::Colour(0xFF2C2F3A), 0.0f, 0.0f,
+                          juce::Colour(0xFF1B1D24), 0.0f, (float)b.getHeight(),
+                          false);
+  g.setGradientFill(bg);
+  g.fillRect(b);
+  // Separación entre canales (efecto consola).
+  g.setColour(juce::Colour(0xFF0E0F12));
+  g.drawVerticalLine(0, 0.0f, (float)b.getHeight());
+  g.drawVerticalLine(b.getRight() - 1, 0.0f, (float)b.getHeight());
   paintMeter(g);
   paintFader(g);
   paintMute(g);

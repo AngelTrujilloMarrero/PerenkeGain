@@ -11,9 +11,13 @@ public:
   SilenceParams getParams() const;
   void resized() override;
 
+  // Se dispara al pulsar "Analizar" (detecta silencios y marca cortes).
+  std::function<void(const SilenceParams &)> onAnalyze;
+
 private:
   juce::Slider threshold, minSilence, minTrack;
   juce::ToggleButton middle{"Cortar en medio del silencio"};
+  juce::TextButton analyze{"Analizar"}, cancel{"Cancelar"};
 };
 
 } // namespace pg

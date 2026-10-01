@@ -14,6 +14,13 @@ SaveTracksDialog::SaveTracksDialog() {
   addAndMakeVisible(save);
   album.setTextToShowWhenEmpty(PG_T("Álbum"), juce::Colours::grey);
   track.setTextToShowWhenEmpty("Pista", juce::Colours::grey);
+
+  save.onClick = [this] {
+    if (onSave)
+      onSave(format.getSelectedId(), album.getText(), track.getText());
+    if (auto *dw = findParentComponentOfClass<juce::DialogWindow>())
+      dw->exitModalState(0);
+  };
 }
 
 void SaveTracksDialog::resized() {

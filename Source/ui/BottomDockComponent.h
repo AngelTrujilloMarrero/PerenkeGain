@@ -17,7 +17,7 @@ public:
   void showHelp();
   void showEqualizer();
   bool isHelpMode() const { return helpMode; }
-  int preferredHeight() const { return helpMode ? 128 : 360; }
+  int preferredHeight() const { return helpMode ? 128 : 420; }
 
   // Se dispara al pulsar "Continuar" del panel de ayuda.
   std::function<void()> onHelpContinue;

@@ -9,6 +9,11 @@ public:
   SaveTracksDialog();
   void resized() override;
 
+  // formatId: 1=WAV 32-float, 2=MP3 320k, 3=FLAC.
+  std::function<void(int formatId, const juce::String &album,
+                     const juce::String &track)>
+      onSave;
+
 private:
   juce::ComboBox format;
   juce::TextEditor album, track;

@@ -14,6 +14,19 @@ TrackSplitterDialog::TrackSplitterDialog() {
   addAndMakeVisible(minSilence);
   addAndMakeVisible(minTrack);
   addAndMakeVisible(middle);
+  addAndMakeVisible(analyze);
+  addAndMakeVisible(cancel);
+
+  analyze.onClick = [this] {
+    if (onAnalyze)
+      onAnalyze(getParams());
+    if (auto *dw = findParentComponentOfClass<juce::DialogWindow>())
+      dw->exitModalState(0);
+  };
+  cancel.onClick = [this] {
+    if (auto *dw = findParentComponentOfClass<juce::DialogWindow>())
+      dw->exitModalState(0);
+  };
 }
 
 SilenceParams TrackSplitterDialog::getParams() const {
@@ -23,6 +36,10 @@ SilenceParams TrackSplitterDialog::getParams() const {
 
 void TrackSplitterDialog::resized() {
   auto r = getLocalBounds();
+  auto buttons = r.removeFromBottom(36);
+  auto left = buttons.removeFromLeft(buttons.getWidth() / 2);
+  analyze.setBounds(left.reduced(6, 4));
+  cancel.setBounds(buttons.reduced(6, 4));
   threshold.setBounds(r.removeFromTop(40).reduced(4));
   minSilence.setBounds(r.removeFromTop(40).reduced(4));
   minTrack.setBounds(r.removeFromTop(40).reduced(4));

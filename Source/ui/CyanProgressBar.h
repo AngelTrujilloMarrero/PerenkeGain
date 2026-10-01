@@ -8,8 +8,14 @@ class CyanProgressBar : public juce::Component {
 public:
   void setFraction(double f);
   void paint(juce::Graphics &g) override;
+  void mouseDown(const juce::MouseEvent &e) override;
+  void mouseDrag(const juce::MouseEvent &e) override;
+
+  // Fracción 0..1 pulsada: el root la convierte en posición de reproducción.
+  std::function<void(double)> onSeekFraction;
 
 private:
+  void seekTo(const juce::MouseEvent &e);
   double fraction = 0.0;
 };
 

@@ -35,10 +35,12 @@ void BandLevelAnalyzer::process(const float *const *in, int numChannels,
       continue;
     for (int b = 0; b < kBands; ++b) {
       auto &f = filters[(size_t)c][(size_t)b];
-      double sum = 0.0;
-      for (int i = 0; i < numSamples; ++i)
-        sum += (double)f.processSample(in[c][i]);
-      acc[(size_t)b] += sum / (double)numSamples;
+      double sumSq = 0.0;
+      for (int i = 0; i < numSamples; ++i) {
+        double s = (double)f.processSample(in[c][i]);
+        sumSq += s * s; // energía (RMS), no media de la señal
+      }
+      acc[(size_t)b] += sumSq / (double)numSamples;
     }
   }
 

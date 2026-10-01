@@ -29,9 +29,16 @@ EqualizerComponent::EqualizerComponent() {
   readout.setInterceptsMouseClicks(false, false);
   addAndMakeVisible(readout);
 
+  master.onValueChange = [this] {
+    if (onStateChanged)
+      onStateChanged();
+  };
+
   addAndMakeVisible(mixer);
   mixer.onReadout = [this](const juce::String &s) {
     readout.setText(s, juce::dontSendNotification);
+    if (onStateChanged)
+      onStateChanged();
   };
 }
 

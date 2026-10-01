@@ -59,6 +59,7 @@ target_sources(PerenkeGain PRIVATE
   Source/ui/SaveTracksDialog.cpp
   Source/storage/ProjectStore.cpp
   Source/storage/ExportManager.cpp
+  Source/storage/AudioFileLoader.cpp
 )
 
 target_include_directories(PerenkeGain PRIVATE Source)

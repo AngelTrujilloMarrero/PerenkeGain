@@ -43,6 +43,9 @@ EditorRootComponent::EditorRootComponent()
     layoutRows();
   };
   dock.eq.mixer.attach(&engine.bandAnalyzer());
+  // El EQ del panel afecta al audio en reproducción.
+  dock.eq.onStateChanged = [this] { engine.setEqState(dock.eq.getState()); };
+  engine.setEqState(dock.eq.getState());
   wireButtons();
 
   // Arranque con archivo por línea de comandos: PerenkeGain archivo.wav
@@ -93,6 +96,16 @@ void EditorRootComponent::wireButtons() {
     engine.setCurrentPosition(engine.getLengthSec());
   };
   cutBox.onClick = [this] { controller.addMarkerAtPlayhead(); };
+  // Clic simple sobre la onda: salta a esa posición.
+  wave.onSeek = [this](double sec) {
+    if (engine.hasFile())
+      engine.setCurrentPosition(sec);
+  };
+  // Clic/arrastre sobre la barra cian: salta a esa fracción del tema.
+  cyan.onSeekFraction = [this](double f) {
+    if (engine.hasFile())
+      engine.setCurrentPosition(f * engine.getLengthSec());
+  };
 }
 
 void EditorRootComponent::layoutRows() {

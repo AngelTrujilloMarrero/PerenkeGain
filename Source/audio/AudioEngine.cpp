@@ -12,6 +12,7 @@ AudioEngine::AudioEngine() {
   // El player empuja transporte -> dispositivo en cada callback de audio.
   player.setSource(&transport);
   player.analyzer = &bands;
+  player.eqProcessor = &eq;
   devices.addAudioCallback(&player);
 }
 

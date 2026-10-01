@@ -28,6 +28,8 @@ public:
   void clearSelection();
   // Se dispara al soltar el ratón con un tramo seleccionado.
   std::function<void(double, double)> onSelectionChanged;
+  // Se dispara con un clic simple (sin arrastre): salta a esa posición.
+  std::function<void(double)> onSeek;
 
 private:
   juce::AudioFormatManager formats;

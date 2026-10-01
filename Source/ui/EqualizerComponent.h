@@ -18,6 +18,9 @@ public:
 
   MixerRowComponent mixer; // el root lo enlaza con el analizador
 
+  // Se dispara al cambiar cualquier banda (gain/mute) o el master.
+  std::function<void()> onStateChanged;
+
 private:
   juce::Slider master;
   juce::Label masterTitle, freqLabelsTitle, readout;

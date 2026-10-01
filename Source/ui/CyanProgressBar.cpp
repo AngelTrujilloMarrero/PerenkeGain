@@ -8,6 +8,17 @@ void CyanProgressBar::setFraction(double f) {
   repaint();
 }
 
+void CyanProgressBar::mouseDown(const juce::MouseEvent &e) { seekTo(e); }
+
+void CyanProgressBar::mouseDrag(const juce::MouseEvent &e) { seekTo(e); }
+
+void CyanProgressBar::seekTo(const juce::MouseEvent &e) {
+  if (getWidth() <= 0 || !onSeekFraction)
+    return;
+  onSeekFraction(juce::jlimit(0.0, 1.0,
+                              (double)e.position.x / (double)getWidth()));
+}
+
 void CyanProgressBar::paint(juce::Graphics &g) {
   auto r = getLocalBounds();
   g.setColour(juce::Colours::white);

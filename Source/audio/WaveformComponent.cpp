@@ -79,6 +79,8 @@ void WaveformComponent::mouseUp(const juce::MouseEvent &e) {
   double px = thumb.getTotalLength() / juce::jmax(1, inner.getWidth());
   if (juce::jmax(selA, selB) - juce::jmin(selA, selB) < 2.0 * px) {
     clearSelection(); // clic simple: no crea selección
+    if (onSeek)
+      onSeek(xToSec(e.position.x)); // ... pero salta a esa posición
     return;
   }
   if (onSelectionChanged) {
