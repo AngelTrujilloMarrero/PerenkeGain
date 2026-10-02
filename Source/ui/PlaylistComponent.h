@@ -8,8 +8,9 @@ namespace pg {
 
 // Lista de reproduccion central: muestra a que deck va cada pista y permite
 // reordenar (arrastrando o subiendo/bajando), quitar y enviar a un deck.
+// El arrastre (a otro orden o a un deck) lo gestiona el DragAndDropContainer
+// del componente raíz; doble clic envía al primer deck libre.
 class PlaylistComponent : public juce::Component,
-                          public juce::DragAndDropContainer,
                           public juce::DragAndDropTarget,
                           private juce::ListBoxModel,
                           private juce::ChangeListener,
@@ -29,12 +30,14 @@ private:
   void paintListBoxItem(int row, juce::Graphics &g, int width, int height,
                         bool rowIsSelected) override;
   juce::var getDragSourceDescription(const juce::SparseSet<int> &rows) override;
+  void listBoxItemDoubleClicked(int row, const juce::MouseEvent &) override;
   bool isInterestedInDragSource(const SourceDetails &) override;
   void itemDropped(const SourceDetails &details) override;
 
   void moveSelected(int delta);
   void removeSelected();
   void sendSelected(int deck);
+  void sendToFreeDeck(int row);
   int selectedEntry() const;
   int deckOf(const juce::File &f) const;
 

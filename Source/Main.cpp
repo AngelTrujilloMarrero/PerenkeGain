@@ -1,6 +1,6 @@
 #include <JuceHeader.h>
 #include "app/MainWindow.h"
-#include "ui/RetroLookAndFeel.h"
+#include "ui/ModernLookAndFeel.h"
 #include "updater/AppVersion.h"
 
 class PerenkeGainApp : public juce::JUCEApplication {
@@ -11,19 +11,19 @@ public:
   }
 
   void initialise(const juce::String &) override {
-    retro = std::make_unique<pg::RetroLookAndFeel>();
-    juce::LookAndFeel::setDefaultLookAndFeel(retro.get());
+    modern = std::make_unique<pg::ModernLookAndFeel>();
+    juce::LookAndFeel::setDefaultLookAndFeel(modern.get());
     mainWindow = std::make_unique<pg::MainWindow>();
   }
 
   void shutdown() override {
     juce::LookAndFeel::setDefaultLookAndFeel(nullptr);
     mainWindow.reset();
-    retro.reset();
+    modern.reset();
   }
 
 private:
-  std::unique_ptr<pg::RetroLookAndFeel> retro;
+  std::unique_ptr<pg::ModernLookAndFeel> modern;
   std::unique_ptr<pg::MainWindow> mainWindow;
 };
 

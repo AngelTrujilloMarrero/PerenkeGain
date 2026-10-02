@@ -3,7 +3,7 @@
 #include "types/Text.h"
 #include "ui/BatchTask.h"
 #include "ui/NormalizeReport.h"
-#include "ui/RetroLookAndFeel.h"
+#include "ui/ModernLookAndFeel.h"
 
 namespace pg {
 
@@ -163,9 +163,9 @@ void BatchNormalizeDialog::apply(bool album) {
 }
 
 void BatchNormalizeDialog::paint(juce::Graphics &g) {
-  g.setColour(retro::face());
+  g.setColour(modern::surface());
   g.fillAll();
-  g.setColour(juce::Colours::black);
+  g.setColour(juce::Colour(0xFFF2F3F6));
   g.setFont(juce::Font(juce::FontOptions(13.0f, juce::Font::bold)));
   g.drawText(PG_T("Normalizar audios por lotes (mp3gain)"),
              getLocalBounds().removeFromTop(24), juce::Justification::centred);

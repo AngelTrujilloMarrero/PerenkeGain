@@ -1,7 +1,7 @@
 #include "ui/AboutDialog.h"
 #include "BinaryData.h"
 #include "types/Text.h"
-#include "ui/RetroLookAndFeel.h"
+#include "ui/ModernLookAndFeel.h"
 #include "updater/AppVersion.h"
 
 namespace pg {
@@ -15,7 +15,7 @@ AboutDialog::AboutDialog()
   addAndMakeVisible(repo);
   repo.setFont(juce::Font(juce::FontOptions(12.0f)), false);
   repo.setColour(juce::HyperlinkButton::textColourId,
-                 juce::Colour(0xFF1A5FB4));
+                 juce::Colour(0xFF4FA3FF));
 }
 
 void AboutDialog::resized() {
@@ -26,7 +26,7 @@ void AboutDialog::resized() {
 }
 
 void AboutDialog::paint(juce::Graphics &g) {
-  g.setColour(retro::face());
+  g.setColour(modern::surface());
   g.fillAll();
 
   auto r = getLocalBounds().reduced(12);
@@ -36,7 +36,7 @@ void AboutDialog::paint(juce::Graphics &g) {
     g.drawImageWithin(hero, r.getX(), r.getY(), r.getWidth(), r.getHeight(),
                       juce::RectanglePlacement::centred);
 
-  g.setColour(juce::Colours::black);
+  g.setColour(juce::Colour(0xFFF2F3F6));
   g.setFont(juce::Font(juce::FontOptions(18.0f, juce::Font::bold)));
   g.drawText("PerenkeGain", text.removeFromTop(26),
              juce::Justification::centred);

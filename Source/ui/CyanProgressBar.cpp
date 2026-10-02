@@ -1,5 +1,5 @@
 #include "ui/CyanProgressBar.h"
-#include "ui/RetroLookAndFeel.h"
+#include "ui/ModernLookAndFeel.h"
 
 namespace pg {
 
@@ -20,14 +20,15 @@ void CyanProgressBar::seekTo(const juce::MouseEvent &e) {
 }
 
 void CyanProgressBar::paint(juce::Graphics &g) {
-  auto r = getLocalBounds();
-  g.setColour(juce::Colours::white);
-  g.fillRect(r);
-  g.setColour(juce::Colour(0xFF00E0E0));
-  g.fillRect(r.removeFromLeft(int(r.getWidth() * fraction)));
-  g.setColour(juce::Colour(0xFF808080));
-  g.drawRect(getLocalBounds(), 1);
-  retro::bevelSunken(g, getLocalBounds().reduced(1));
+  auto r = getLocalBounds().toFloat();
+  g.setColour(juce::Colour(0xFF2A2E38));
+  g.fillRoundedRectangle(r, 4.0f);
+  g.setColour(modern::accent());
+  g.fillRoundedRectangle(
+      juce::Rectangle<float>(r.getX(), r.getY(),
+                             r.getWidth() * (float)fraction, r.getHeight()),
+      4.0f);
+  modern::frame(g, getLocalBounds());
 }
 
 } // namespace pg

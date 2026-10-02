@@ -1,7 +1,6 @@
 #include "ui/EqualizerComponent.h"
 #include "dsp/EqPresets.h"
 #include "types/Text.h"
-#include "ui/RetroLookAndFeel.h"
 
 namespace pg {
 
@@ -120,5 +119,25 @@ void EqualizerComponent::applyPreset(int index) {
   if (onStateChanged)
     onStateChanged();
 }
+
+void EqualizerComponent::restoreSaved(const Eq31State &s, int preset,
+                                      bool custom) {
+  setState(s);
+  if (custom) {
+    presetBar.showCustom();
+    readout.setText(PG_T("Personalizado"), juce::dontSendNotification);
+  } else {
+    preset = juce::jlimit(0, (int)kEqPresets.size() - 1, preset);
+    presetBar.select(preset);
+    readout.setText(PG_T("Preset: ") + PG_T(kEqPresets[(size_t)preset].name),
+                    juce::dontSendNotification);
+  }
+}
+
+int EqualizerComponent::currentPreset() const {
+  return presetBar.presetIndex();
+}
+
+bool EqualizerComponent::isCustom() const { return presetBar.isCustom(); }
 
 } // namespace pg

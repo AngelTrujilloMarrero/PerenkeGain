@@ -41,10 +41,11 @@ target_sources(PerenkeGain PRIVATE
   Source/app/PlaylistModel.cpp
   Source/app/MarkerModel.cpp
   Source/app/WaveformWindow.cpp
-  Source/ui/RetroLookAndFeel.cpp
+  Source/ui/ModernLookAndFeel.cpp
   Source/ui/CyanProgressBar.cpp
   Source/ui/BottomDockComponent.cpp
   Source/ui/DeckComponent.cpp
+  Source/ui/DeckDragDrop.cpp
   Source/ui/TransportButton.cpp
   Source/ui/MixerBarComponent.cpp
   Source/ui/PlaylistComponent.cpp
@@ -56,6 +57,7 @@ target_sources(PerenkeGain PRIVATE
   Source/ui/MixerRowComponent.cpp
   Source/dsp/BandLevelAnalyzer.cpp
   Source/app/ApplicationState.cpp
+  Source/storage/EqSettingsStore.cpp
   Source/audio/AudioEngine.cpp
   Source/audio/WaveformComponent.cpp
   Source/audio/TransportComponent.cpp

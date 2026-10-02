@@ -1,6 +1,6 @@
 # Editor Spec
 
-## Layout (oscuro + bandeja retro)
+## Layout (oscuro moderno)
 
 ```
 +-----------------------------------------------------------+

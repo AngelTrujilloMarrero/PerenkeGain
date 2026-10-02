@@ -1,5 +1,5 @@
 #include "audio/WaveformComponent.h"
-#include "ui/RetroLookAndFeel.h"
+#include "ui/ModernLookAndFeel.h"
 
 namespace pg {
 
@@ -120,9 +120,9 @@ void WaveformComponent::paintSelection(juce::Graphics &g,
 
 void WaveformComponent::paint(juce::Graphics &g) {
   auto r = waveArea();
-  g.setColour(retro::face());
+  g.setColour(modern::surface());
   g.fillRect(r);
-  retro::bevelSunken(g, r);
+  modern::frame(g, r);
 
   auto inner = r.reduced(2);
   g.setColour(juce::Colours::white);

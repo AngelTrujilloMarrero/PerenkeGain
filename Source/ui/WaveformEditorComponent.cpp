@@ -1,5 +1,5 @@
 #include "ui/WaveformEditorComponent.h"
-#include "ui/RetroLookAndFeel.h"
+#include "ui/ModernLookAndFeel.h"
 
 namespace pg {
 
@@ -77,7 +77,7 @@ void WaveformEditorComponent::timerCallback() {
 }
 
 void WaveformEditorComponent::paint(juce::Graphics &g) {
-  g.setColour(retro::face());
+  g.setColour(modern::surface());
   g.fillAll();
 }
 

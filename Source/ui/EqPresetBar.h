@@ -20,6 +20,10 @@ public:
   // Muestra "Personalizado" sin disparar onPresetChosen.
   void showCustom();
 
+  // Para persistir la última ecualización elegida.
+  int presetIndex() const { return lastPreset; }
+  bool isCustom() const;
+
 private:
   juce::Label title;
   juce::ComboBox box;

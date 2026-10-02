@@ -5,7 +5,7 @@ namespace pg {
 
 MainWindow::MainWindow()
     : DocumentWindow("PerenkeGain - Editor y Reproductor de Sonido",
-                     juce::Colour(0xFFD4D0C8),
+                     juce::Colour(0xFF0B0C10),
                      DocumentWindow::allButtons) {
   setUsingNativeTitleBar(true);
   setResizable(true, true);

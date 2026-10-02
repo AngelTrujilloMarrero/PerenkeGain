@@ -20,6 +20,11 @@ public:
   // Carga un preset preconfigurado (indice en kEqPresets) y lo aplica.
   void applyPreset(int index);
 
+  // Restaura una sesión guardada (preset o personalizado).
+  void restoreSaved(const Eq31State &s, int preset, bool custom);
+  int currentPreset() const;
+  bool isCustom() const;
+
   EqPresetBar presetBar;
   MixerRowComponent mixer; // el root lo enlaza con el analizador
 

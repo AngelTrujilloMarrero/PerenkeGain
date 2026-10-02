@@ -8,7 +8,11 @@
 namespace pg {
 
 // Un deck de la mesa: selector de pista de la lista, titulo y transporte.
+// Acepta pista soltando encima una fila de la lista o un archivo de audio
+// del sistema, además del desplegable.
 class DeckComponent : public juce::Component,
+                      public juce::DragAndDropTarget,
+                      public juce::FileDragAndDropTarget,
                       private juce::ChangeListener,
                       private juce::Timer {
 public:
@@ -23,6 +27,15 @@ public:
   void resetUi();
   int deckIndex() const { return index; }
   std::function<void(int)> onActivated;
+
+  bool isInterestedInDragSource(const SourceDetails &details) override;
+  void itemDropped(const SourceDetails &details) override;
+  void itemDragEnter(const SourceDetails &) override;
+  void itemDragExit(const SourceDetails &) override;
+  bool isInterestedInFileDrag(const juce::StringArray &files) override;
+  void filesDropped(const juce::StringArray &files, int x, int y) override;
+  void fileDragEnter(const juce::StringArray &, int x, int y) override;
+  void fileDragExit(const juce::StringArray &) override;
 
 private:
   void changeListenerCallback(juce::ChangeBroadcaster *) override;
@@ -40,7 +53,7 @@ private:
   TransportButton playB{TransportButton::Icon::Play};
   TransportButton stopB{TransportButton::Icon::Stop};
   juce::File loadedFile;
-  int lastCount = -1;
+  bool dragOver = false;
 };
 
 } // namespace pg

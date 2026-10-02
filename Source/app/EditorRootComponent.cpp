@@ -3,7 +3,6 @@
 #include "BinaryData.h"
 #include "types/Text.h"
 #include "ui/AboutDialog.h"
-#include "ui/RetroLookAndFeel.h"
 #include "ui/UpdateDialog.h"
 
 namespace pg {
@@ -50,7 +49,14 @@ EditorRootComponent::EditorRootComponent()
 
   dock.eq.mixer.attach(&engine.bandAnalyzer());
   dock.leveler.setEngine(&engine);
-  dock.eq.onStateChanged = [this] { engine.setEqState(dock.eq.getState()); };
+  // Restaura la última ecualización guardada (si hay) antes de arrancar.
+  if (EqSavedState saved = eqStore.load(); saved.hasData)
+    dock.eq.restoreSaved(saved.state, saved.preset, saved.custom);
+  dock.eq.onStateChanged = [this] {
+    engine.setEqState(dock.eq.getState());
+    eqStore.save(dock.eq.getState(), dock.eq.currentPreset(),
+                 dock.eq.isCustom());
+  };
   engine.setEqState(dock.eq.getState());
 
   controller.onFileLoaded = [this](const juce::String &path) {

@@ -52,4 +52,8 @@ void EqPresetBar::showCustom() {
   box.setSelectedId(kCustomId, juce::dontSendNotification);
 }
 
+bool EqPresetBar::isCustom() const {
+  return box.getSelectedId() == kCustomId;
+}
+
 } // namespace pg

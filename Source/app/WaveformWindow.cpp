@@ -1,10 +1,10 @@
 #include "app/WaveformWindow.h"
-#include "ui/RetroLookAndFeel.h"
+#include "ui/ModernLookAndFeel.h"
 
 namespace pg {
 
 WaveformWindow::WaveformWindow(AudioEngine &e, MarkerModel &m)
-    : juce::DocumentWindow("Editor de onda - PerenkeGain", retro::face(),
+    : juce::DocumentWindow("Editor de onda - PerenkeGain", modern::surface(),
                            juce::DocumentWindow::allButtons) {
   content = new WaveformEditorComponent(e, m);
   setUsingNativeTitleBar(true);

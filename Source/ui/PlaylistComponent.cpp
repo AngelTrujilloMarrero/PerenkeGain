@@ -77,7 +77,11 @@ bool PlaylistComponent::isInterestedInDragSource(const SourceDetails &) {
 }
 
 void PlaylistComponent::itemDropped(const SourceDetails &details) {
-  const int from = (int)details.description.toString().getIntValue();
+  if (!details.description.isInt())
+    return;
+  const int from = (int)details.description;
+  if (from < 0 || from >= playlist.size())
+    return;
   auto p = list.getLocalPoint(this, details.localPosition.toInt());
   int to = list.getRowContainingPosition(p.x, p.y);
   if (to < 0)
@@ -117,12 +121,40 @@ void PlaylistComponent::sendSelected(int deck) {
     onSendToDeck(deck, playlist.at(r).file);
 }
 
+void PlaylistComponent::sendToFreeDeck(int row) {
+  if (row < 0 || row >= playlist.size())
+    return;
+  // Primer deck libre; si no hay, el primero que no esté sonando.
+  int deck = -1;
+  for (int d = 0; d < AudioEngine::kDecks; ++d)
+    if (!engine.hasFile(d)) {
+      deck = d;
+      break;
+    }
+  if (deck < 0)
+    for (int d = 0; d < AudioEngine::kDecks; ++d)
+      if (!engine.isPlaying(d)) {
+        deck = d;
+        break;
+      }
+  if (deck < 0)
+    deck = 0;
+  if (onSendToDeck)
+    onSendToDeck(deck, playlist.at(row).file);
+}
+
+void PlaylistComponent::listBoxItemDoubleClicked(int row,
+                                                const juce::MouseEvent &) {
+  sendToFreeDeck(row);
+}
+
 void PlaylistComponent::paint(juce::Graphics &g) {
   g.setColour(juce::Colour(0xFF0B0C10));
   g.fillAll();
   g.setColour(juce::Colour(0xFFB9C2D0));
   g.setFont(juce::Font(juce::FontOptions(11.0f, juce::Font::bold)));
-  g.drawText(PG_T("Lista de reproducción (arrastra para ordenar)"),
+  g.drawText(PG_T("Lista de reproducción (arrastra para ordenar, doble "
+                    "clic envía al deck)"),
              getLocalBounds().removeFromTop(16).reduced(6, 0),
              juce::Justification::centredLeft);
 }

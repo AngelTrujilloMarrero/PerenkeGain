@@ -87,12 +87,11 @@ void DeckComponent::changeListenerCallback(juce::ChangeBroadcaster *) {
 }
 
 void DeckComponent::rebuild() {
-  if (playlist.size() != lastCount) {
-    lastCount = playlist.size();
-    trackBox.clear(juce::dontSendNotification);
-    for (int i = 0; i < playlist.size(); ++i)
-      trackBox.addItem(playlist.at(i).title, i + 1);
-  }
+  // Reconstruye siempre: la lista puede reordenarse sin cambiar de tamaño
+  // y el desplegable quedaba con títulos/orden viejos (elegir pista fallaba).
+  trackBox.clear(juce::dontSendNotification);
+  for (int i = 0; i < playlist.size(); ++i)
+    trackBox.addItem(playlist.at(i).title, i + 1);
   syncSelection();
 }
 
@@ -143,8 +142,9 @@ void DeckComponent::paint(juce::Graphics &g) {
   g.setColour(index == 0 ? juce::Colour(0xFF17202E)
                          : juce::Colour(0xFF2A1D2E));
   g.fillAll();
-  g.setColour(juce::Colour(0xFF3A4152));
-  g.drawRect(getLocalBounds(), 1);
+  g.setColour(dragOver ? juce::Colour(0xFF00E0E0)
+                       : juce::Colour(0xFF3A4152));
+  g.drawRect(getLocalBounds(), dragOver ? 2 : 1);
   g.setColour(juce::Colour(0xFFB9C2D0));
   g.setFont(juce::Font(juce::FontOptions(10.0f, juce::Font::bold)));
   g.drawText(index == 0 ? "A" : "B", getLocalBounds().reduced(6, 2),

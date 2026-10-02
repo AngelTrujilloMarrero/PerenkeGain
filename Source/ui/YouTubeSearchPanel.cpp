@@ -1,7 +1,6 @@
 #include "ui/YouTubeSearchPanel.h"
 #include "storage/ExternalTool.h"
 #include "storage/YouTubeDownloader.h"
-#include "ui/RetroLookAndFeel.h"
 #include "ui/ToolInstallHint.h"
 
 namespace pg {

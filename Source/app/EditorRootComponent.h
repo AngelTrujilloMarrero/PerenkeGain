@@ -14,6 +14,7 @@
 #include "ui/YouTubeSearchPanel.h"
 #include "ui/BottomDockComponent.h"
 #include "ui/UpdateBannerComponent.h"
+#include "storage/EqSettingsStore.h"
 #include "updater/UpdateChecker.h"
 #include "updater/UpdateInfo.h"
 
@@ -21,8 +22,10 @@ namespace pg {
 
 // Ventana principal: mesa DJ (dos decks + crossfader) arriba, buscador de
 // YouTube, informacion y la bandeja con ecualizador y nivelador. La edicion de
-// onda vive en una ventana aparte (WaveformWindow).
-class EditorRootComponent : public juce::Component {
+// onda vive en una ventana aparte (WaveformWindow). Es el DragAndDropContainer
+// común: permite arrastrar filas de la lista a los decks y reordenarlas.
+class EditorRootComponent : public juce::Component,
+                            public juce::DragAndDropContainer {
 public:
   EditorRootComponent();
   void resized() override;
@@ -43,6 +46,7 @@ private:
   UpdateBannerComponent updateBanner;
   updater::UpdateChecker updateChecker;
   updater::UpdateInfo pendingUpdate;
+  EqSettingsStore eqStore;
 
   juce::Label filePath;
   juce::ImageButton aboutB{"logo"};
