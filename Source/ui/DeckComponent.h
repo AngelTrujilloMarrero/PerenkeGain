@@ -2,12 +2,14 @@
 #include <JuceHeader.h>
 #include "audio/AudioEngine.h"
 #include "app/PlaylistModel.h"
+#include "ui/FilePicker.h"
 #include "ui/TransportButton.h"
 #include "types/Text.h"
 
 namespace pg {
 
-// Un deck de la mesa: selector de pista de la lista, titulo y transporte.
+// Un deck de la mesa: selector de pista de la lista, titulo y transporte,
+// con boton para cargar una cancion y boton X para vaciar el deck.
 // Acepta pista soltando encima una fila de la lista o un archivo de audio
 // del sistema, además del desplegable.
 class DeckComponent : public juce::Component,
@@ -44,6 +46,11 @@ private:
   void syncSelection();
   void updateTitle();
   void chooseFromBox();
+  // DeckActions.cpp
+  void setupButtons();
+  void releaseDeck();
+  void clearFromDeck();
+  void chooseFileToLoad();
 
   AudioEngine &engine;
   PlaylistModel &playlist;
@@ -52,6 +59,8 @@ private:
   juce::Label title, timeL;
   TransportButton playB{TransportButton::Icon::Play};
   TransportButton stopB{TransportButton::Icon::Stop};
+  juce::TextButton clearB, loadB;
+  FilePicker picker;
   juce::File loadedFile;
   bool dragOver = false;
 };

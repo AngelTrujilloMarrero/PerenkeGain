@@ -167,7 +167,7 @@ void BatchNormalizeDialog::paint(juce::Graphics &g) {
   g.fillAll();
   g.setColour(juce::Colour(0xFFF2F3F6));
   g.setFont(juce::Font(juce::FontOptions(13.0f, juce::Font::bold)));
-  g.drawText(PG_T("Normalizar audios por lotes (mp3gain)"),
+  g.drawText(PG_T("Normalizar audios por lotes"),
              getLocalBounds().removeFromTop(24), juce::Justification::centred);
 }
 

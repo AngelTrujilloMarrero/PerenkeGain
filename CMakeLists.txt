@@ -45,6 +45,7 @@ target_sources(PerenkeGain PRIVATE
   Source/ui/CyanProgressBar.cpp
   Source/ui/BottomDockComponent.cpp
   Source/ui/DeckComponent.cpp
+  Source/ui/DeckButtons.cpp
   Source/ui/DeckDragDrop.cpp
   Source/ui/TransportButton.cpp
   Source/ui/MixerBarComponent.cpp

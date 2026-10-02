@@ -186,6 +186,8 @@ void YouTubeSearchPanel::listBoxItemDoubleClicked(int row,
 void YouTubeSearchPanel::paint(juce::Graphics &g) {
   g.setColour(juce::Colour(0xFF0B0C10));
   g.fillAll();
+  g.setColour(juce::Colour(0xFFE23B3B));
+  g.drawRect(getLocalBounds(), 2);
 }
 
 void YouTubeSearchPanel::resized() {

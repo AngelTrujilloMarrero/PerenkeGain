@@ -37,6 +37,8 @@ DeckComponent::DeckComponent(AudioEngine &e, PlaylistModel &p, int deckIndex)
     playB.setIcon(TransportButton::Icon::Play);
   };
 
+  setupButtons();
+
   playlist.addChangeListener(this);
   rebuild();
   startTimerHz(10);
@@ -55,17 +57,7 @@ void DeckComponent::timerCallback() {
   // Al terminar la pista, libera el deck (deja de mostrar la vieja).
   if (engine.hasFile(index) && !engine.isPlaying(index) && len > 0.0 &&
       pos >= len - 0.05) {
-    const bool wasActive = engine.activeDeck() == index;
-    engine.clearDeck(index);
-    loadedFile = juce::File{};
-    updateTitle();
-    syncSelection();
-    timeL.setText("--:-- / --:--", juce::dontSendNotification);
-    if (wasActive) { // el deck activo cede el turno si el otro tiene pista
-      const int other = 1 - index;
-      if (engine.hasFile(other))
-        engine.setActiveDeck(other);
-    }
+    releaseDeck();
     if (onActivated)
       onActivated(engine.activeDeck());
     return;
@@ -136,6 +128,7 @@ void DeckComponent::updateTitle() {
   title.setText(f == juce::File{} ? PG_T("Sin pista")
                                   : f.getFileNameWithoutExtension(),
                 juce::dontSendNotification);
+  clearB.setEnabled(f != juce::File{});
 }
 
 void DeckComponent::paint(juce::Graphics &g) {
@@ -153,6 +146,10 @@ void DeckComponent::paint(juce::Graphics &g) {
 
 void DeckComponent::resized() {
   auto r = getLocalBounds().reduced(8);
+  // Cabecera: letras A/B (pintadas) a la izquierda, botones a la derecha.
+  auto header = r.removeFromTop(20);
+  loadB.setBounds(header.removeFromRight(74).reduced(1, 1));
+  clearB.setBounds(header.removeFromRight(24).reduced(1, 1));
   // Transporte centrado.
   auto transport = r.removeFromBottom(40);
   const int bw = 46;
@@ -163,7 +160,7 @@ void DeckComponent::resized() {
   trackBox.setBounds(r.removeFromBottom(28).reduced(1, 2));
   r.removeFromBottom(4);
   timeL.setBounds(r.removeFromBottom(18));
-  title.setBounds(r.withTrimmedTop(14));
+  title.setBounds(r);
 }
 
 } // namespace pg

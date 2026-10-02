@@ -157,6 +157,8 @@ void PlaylistComponent::paint(juce::Graphics &g) {
                     "clic envía al deck)"),
              getLocalBounds().removeFromTop(16).reduced(6, 0),
              juce::Justification::centredLeft);
+  g.setColour(juce::Colour(0xFFFFD400));
+  g.drawRect(getLocalBounds(), 2);
 }
 
 void PlaylistComponent::resized() {
