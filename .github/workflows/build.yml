@@ -25,3 +25,14 @@ jobs:
       - uses: lukka/get-cmake@latest
       - run: cmake --preset macos-release
       - run: cmake --build --preset macos-release
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+      - name: Ninja
+        run: choco install ninja -y
+      - uses: lukka/get-cmake@latest
+      - run: cmake --preset windows-release
+      - run: cmake --build --preset windows-release

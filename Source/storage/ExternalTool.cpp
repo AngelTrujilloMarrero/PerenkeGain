@@ -4,8 +4,23 @@
 namespace pg {
 
 juce::File ExternalTool::find(const juce::String &name) {
+#if JUCE_WINDOWS
+  const juce::String sep = ";";
+#else
+  const juce::String sep = ":";
+#endif
   juce::StringArray dirs = juce::StringArray::fromTokens(
-      juce::SystemStats::getEnvironmentVariable("PATH", {}), ":", "");
+      juce::SystemStats::getEnvironmentVariable("PATH", {}), sep, "");
+#if JUCE_WINDOWS
+  // Instalaciones habituales en Windows: winget, chocolatey y scoop.
+  dirs.add(juce::SystemStats::getEnvironmentVariable("LOCALAPPDATA", {}) +
+           "\\Microsoft\\WindowsApps");
+  dirs.add(juce::SystemStats::getEnvironmentVariable("ProgramData", {}) +
+           "\\chocolatey\\bin");
+  dirs.add(juce::File::getSpecialLocation(juce::File::userHomeDirectory)
+               .getChildFile("scoop\\shims")
+               .getFullPathName());
+#else
   // Al abrir desde el escritorio el PATH viene minimo: se anaden las rutas
   // habituales de Homebrew, pip (usuario), snap y Linuxbrew.
   dirs.add(juce::File::getSpecialLocation(juce::File::userHomeDirectory)
@@ -20,13 +35,22 @@ juce::File ExternalTool::find(const juce::String &name) {
   dirs.add("/var/lib/snapd/snap/bin");
   dirs.add("/usr/bin");
   dirs.add("/bin");
+#endif
+
+  juce::StringArray candidates;
+  candidates.add(name);
+#if JUCE_WINDOWS
+  candidates.add(name + ".exe"); // yt-dlp.exe, ffmpeg.exe...
+#endif
 
   for (auto &dir : dirs) {
     if (dir.isEmpty())
       continue;
-    juce::File f = juce::File(dir).getChildFile(name);
-    if (f.existsAsFile())
-      return f;
+    for (const auto &n : candidates) {
+      juce::File f = juce::File(dir).getChildFile(n);
+      if (f.existsAsFile())
+        return f;
+    }
   }
   return {};
 }
@@ -76,6 +100,8 @@ juce::String ExternalTool::ytDlpUpdateHint() {
               "binario oficial en ~/.local/bin (github.com/yt-dlp/yt-dlp)");
 #elif JUCE_MAC
   return PG_T("yt-dlp desactualizado: ejecuta 'brew upgrade yt-dlp'");
+#elif JUCE_WINDOWS
+  return PG_T("yt-dlp desactualizado: ejecuta 'winget upgrade yt-dlp'");
 #else
   return PG_T("yt-dlp desactualizado: actualiza yt-dlp a la última versión");
 #endif

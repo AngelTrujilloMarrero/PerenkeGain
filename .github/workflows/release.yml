@@ -46,3 +46,23 @@ jobs:
         with:
           files: PerenkeGain-macos.zip
           generate_release_notes: true
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+      - name: Ninja
+        run: choco install ninja -y
+      - uses: lukka/get-cmake@latest
+      - run: cmake --preset windows-release
+      - run: cmake --build --preset windows-release
+      - name: Package
+        run: |
+          cd build/windows-release/PerenkeGain_artefacts/Release
+          Compress-Archive -Path PerenkeGain.exe `
+            -DestinationPath "$env:GITHUB_WORKSPACE\PerenkeGain-windows-x64.zip"
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: PerenkeGain-windows-x64.zip
+          generate_release_notes: true

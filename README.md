@@ -10,10 +10,11 @@ vivo, y descarga de YouTube Music con normalización.
 
 ## Funciones
 
-- **Mesa DJ** con dos decks (A/B), cada uno con su selector, transporte y
-  **tiempo (posición/duración)**; crossfader, **volumen master con medidor** y
-  **Automix** (transición automática con fade corto/largo o corte) en el centro.
-  La lista incluye canciones locales y descargadas de YouTube.
+- **Mesa DJ** con dos decks (A/B), cada uno con su selector, transporte,
+  **tiempo (posición/duración)** y botones **Cargar**/**X** (abre un
+  archivo o vacía el deck); crossfader, **volumen master con medidor** y
+  **Automix** (transición automática con fade corto/largo o corte) en el
+  centro. La lista incluye canciones locales y descargadas de YouTube.
 - **Lista de reproducción central** con el deck asignado a cada pista;
   reordena arrastrando o con Subir/Bajar, quita y envía a A/B.
 - **Buscador de YouTube Music** integrado en la ventana principal: busca,
@@ -33,25 +34,43 @@ vivo, y descarga de YouTube Music con normalización.
   `lame` o `ffmpeg` instalados).
 - **Guardado multipista** WAV/FLAC por tramos.
 - **Actualización automática** desde GitHub Releases.
+- **Windows incluido**: la release trae `PerenkeGain-windows-x64.zip` con el
+  `.exe` listo (descomprime y ejecuta; yt-dlp/ffmpeg con
+  `winget install yt-dlp` / `winget install ffmpeg`).
+
+## Descargas
+
+Cada release publica tres paquetes desde
+[GitHub Releases](https://github.com/AngelTrujilloMarrero/PerenkeGain/releases):
+
+| Plataforma | Archivo | Cómo ejecutarlo |
+| --- | --- | --- |
+| Windows (x64) | `PerenkeGain-windows-x64.zip` | Descomprime y ejecuta `PerenkeGain.exe` |
+| Linux (x86_64) | `PerenkeGain-linux-x86_64.tar.gz` | `tar -xzf … && ./PerenkeGain` |
+| macOS | `PerenkeGain-macos.zip` | Abre `PerenkeGain.app` |
 
 ## Decisiones
 
 - Stack: **C++20 + JUCE 8 (Standalone App)**.
 - Audio: **44.1–192 kHz, 32-bit float**.
 - Licencia: **MIT**.
-- Targets: **Linux + macOS** (CI). Windows pospuesto.
+- Targets: **Linux + macOS + Windows** (CI).
 - UI: tema oscuro con bandeja inferior tipo mesa digital.
 
-## Build (Linux/macOS)
+## Build (Linux/macOS/Windows)
 
 ```bash
 # Requiere CMake 3.22+, Ninja, compilador C++20
-cmake --preset linux-release   # o macos-release
-cmake --build --preset linux-release
+cmake --preset linux-release   # o macos-release / windows-release
+cmake --build --preset windows-release
 ```
 
+En Windows usa el símbolo de desarrollo de Visual Studio (x64) para que
+`cl` y `ninja` estén en el PATH; el artefacto queda en
+`build/windows-release/PerenkeGain_artefacts/Release/PerenkeGain.exe`.
+
 JUCE se trae por `FetchContent` (no hay submodule pesado en el repo).
-En CI se compila en Ubuntu + macOS. Sin `cmake` local, revisa
+En CI se compila en Ubuntu + macOS + Windows. Sin `cmake` local, revisa
 `.github/workflows/build.yml`.
 
 ## Estructura (AGENTS.md: 1 fichero = 1 cosa, <200 líneas)

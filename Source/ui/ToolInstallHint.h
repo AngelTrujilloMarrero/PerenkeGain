@@ -10,6 +10,9 @@ inline juce::String toolInstallHint() {
                       "sudo apt install ffmpeg)");
 #elif JUCE_MAC
   return juce::String("Faltan yt-dlp/ffmpeg (brew install yt-dlp ffmpeg)");
+#elif JUCE_WINDOWS
+  return juce::String(
+      "Faltan yt-dlp/ffmpeg (winget install yt-dlp; winget install ffmpeg)");
 #else
   return juce::String("Faltan yt-dlp/ffmpeg");
 #endif

@@ -61,8 +61,14 @@ juce::File writeHelperScript(const juce::File &newArtifact,
   s << "#!/bin/sh\n";
   // Espera a que la app termine, con limite para no quedarse colgada
   // para siempre si el dialogo se cerro sin salir (reuso de PID, etc).
+  // getpid() solo existe en POSIX: en Windows este script no se usa.
+#if JUCE_MAC || JUCE_LINUX
+  const int pid = (int)::getpid();
+#else
+  const int pid = 0;
+#endif
   s << "n=0\n";
-  s << "while kill -0 " << (int)::getpid()
+  s << "while kill -0 " << pid
     << " 2>/dev/null; do\n"
        "  sleep 0.3\n"
        "  n=$((n + 1))\n"
