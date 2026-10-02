@@ -19,6 +19,7 @@ public:
   int size() const { return (int)entries.size(); }
   bool empty() const { return entries.empty(); }
   const PlaylistEntry &at(int i) const { return entries[(size_t)i]; }
+  int indexOf(const juce::File &file) const; // -1 si no esta
   int selectedIndex() const { return selected; }
   juce::File selectedFile() const;
   void select(int index);

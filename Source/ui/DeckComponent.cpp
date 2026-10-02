@@ -54,10 +54,17 @@ void DeckComponent::timerCallback() {
                                         : TransportButton::Icon::Play);
   const double len = engine.getLengthSec(index);
   const double pos = engine.getPositionSec(index);
-  // Al terminar la pista, libera el deck (deja de mostrar la vieja).
+  // Al terminar la pista, libera el deck y la quita de la lista (si el
+  // otro deck no esta usando el mismo fichero).
   if (engine.hasFile(index) && !engine.isPlaying(index) && len > 0.0 &&
       pos >= len - 0.05) {
+    const juce::File finished = engine.getFile(index);
     releaseDeck();
+    if (finished != juce::File{} && engine.getFile(1 - index) != finished) {
+      const int row = playlist.indexOf(finished);
+      if (row >= 0)
+        playlist.remove(row);
+    }
     if (onActivated)
       onActivated(engine.activeDeck());
     return;

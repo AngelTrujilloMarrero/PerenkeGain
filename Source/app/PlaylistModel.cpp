@@ -47,6 +47,13 @@ juce::File PlaylistModel::selectedFile() const {
   return entries[(size_t)selected].file;
 }
 
+int PlaylistModel::indexOf(const juce::File &file) const {
+  for (int i = 0; i < (int)entries.size(); ++i)
+    if (entries[(size_t)i].file == file)
+      return i;
+  return -1;
+}
+
 void PlaylistModel::select(int index) {
   if (index < 0 || index >= (int)entries.size() || index == selected)
     return;
