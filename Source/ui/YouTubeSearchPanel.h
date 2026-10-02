@@ -1,6 +1,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include <memory>
+#include "storage/ToolInstaller.h"
 #include "storage/YouTubeSearch.h"
 #include "types/Text.h"
 #include "ui/FilePicker.h"
@@ -29,6 +30,9 @@ private:
   void clearAll();
   void setResults(std::vector<YouTubeSearchItem> items);
   void setStatus(const juce::String &s);
+  // YouTubePanelTools.cpp: estado de yt-dlp/ffmpeg e instalacion interna.
+  void refreshToolStatus();
+  void startToolInstall();
 
   int getNumRows() override;
   void paintListBoxItem(int row, juce::Graphics &g, int width, int height,
@@ -37,12 +41,14 @@ private:
 
   juce::TextEditor query;
   juce::TextButton searchB{"Buscar"}, clearB{"Limpiar"},
-      folderB{"Carpeta..."}, downloadB{"Descargar"};
+      folderB{"Carpeta..."}, downloadB{"Descargar"},
+      installB{"Instalar herramientas"};
   juce::ListBox results;
   juce::Label status;
   std::vector<YouTubeSearchItem> items;
   std::unique_ptr<YouTubeSearchTask> searchTask;
   std::unique_ptr<YouTubeTask> downloadTask;
+  ToolInstaller toolInstaller;
   int statusRow = -1;
   juce::String rowInfo;
   juce::File outDir;

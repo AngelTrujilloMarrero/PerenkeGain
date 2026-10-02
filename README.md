@@ -16,10 +16,13 @@ vivo, y descarga de YouTube Music con normalización.
   **Automix** (transición automática con fade corto/largo o corte) en el
   centro. La lista incluye canciones locales y descargadas de YouTube.
 - **Lista de reproducción central** con el deck asignado a cada pista;
-  reordena arrastrando o con Subir/Bajar, quita y envía a A/B.
+  reordena arrastrando o con Subir/Bajar, quita y envía a A/B; al
+  terminar una pista en su deck se elimina sola de la lista.
 - **Buscador de YouTube Music** integrado en la ventana principal: busca,
   descarga el resultado elegido como MP3 normalizado y lo añade al
-  reproductor (requiere `yt-dlp` + `ffmpeg`).
+  reproductor. **Windows y macOS ya traen `yt-dlp` + `ffmpeg` dentro del
+  paquete**; si faltan (o en Linux) el botón **Instalar herramientas** los
+  descarga y actualiza desde la propia app, sin winget/brew/apt.
 - **Editor de onda en ventana aparte**: forma de onda estéreo con zoom,
   marcadores, corte/fade, escala, dividir y **guardar pistas**.
 - **Divisor de pistas** por detección de silencio (marcadores arrastrables).
@@ -35,8 +38,7 @@ vivo, y descarga de YouTube Music con normalización.
 - **Guardado multipista** WAV/FLAC por tramos.
 - **Actualización automática** desde GitHub Releases.
 - **Windows incluido**: la release trae `PerenkeGain-windows-x64.zip` con el
-  `.exe` listo (descomprime y ejecuta; yt-dlp/ffmpeg con
-  `winget install yt-dlp` / `winget install ffmpeg`).
+  `.exe` **y las herramientas de YouTube** ya dentro (descomprime y ejecuta).
 
 ## Descargas
 
@@ -45,9 +47,9 @@ Cada release publica tres paquetes desde
 
 | Plataforma | Archivo | Cómo ejecutarlo |
 | --- | --- | --- |
-| Windows (x64) | `PerenkeGain-windows-x64.zip` | Descomprime y ejecuta `PerenkeGain.exe` |
+| Windows (x64) | `PerenkeGain-windows-x64.zip` | Descomprime y ejecuta `PerenkeGain.exe` (incluye `yt-dlp` y `ffmpeg`) |
 | Linux (x86_64) | `PerenkeGain-linux-x86_64.tar.gz` | `tar -xzf … && ./PerenkeGain` |
-| macOS | `PerenkeGain-macos.zip` | Abre `PerenkeGain.app` |
+| macOS | `PerenkeGain-macos.zip` | Abre `PerenkeGain.app` (incluye `yt-dlp` y `ffmpeg`) |
 
 ## Decisiones
 
@@ -94,7 +96,9 @@ La normalización por lotes (`Normalizar lote...`) es independiente: elige un
 fichero o carpeta, pulsa **Analizar** (mide volumen/pico en la escala mp3gain,
 80–120 dB), ajusta el objetivo y pulsa **Aplicar pista** o **Aplicar álbum**.
 
-El buscador de YouTube usa `yt-dlp` y `ffmpeg`; sin ellos el panel indica cómo
-instalarlos (`brew install yt-dlp ffmpeg`).
+El buscador de YouTube necesita `yt-dlp` y `ffmpeg`: los paquetes de
+Windows y macOS ya los traen en `tools/`, y el botón **Instalar
+herramientas** del panel los descarga a la carpeta de la app (o los
+actualiza si `yt-dlp` tiene más de 180 días) también en Linux.
 
 Detalles de layout y DSP en `docs/EDITOR_SPEC.md`.

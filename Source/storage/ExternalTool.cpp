@@ -3,7 +3,46 @@
 
 namespace pg {
 
+juce::File ExternalTool::managedToolsDir() {
+  return juce::File::getSpecialLocation(juce::File::userApplicationDataDirectory)
+      .getChildFile("PerenkeGain")
+      .getChildFile("tools");
+}
+
+juce::Array<juce::File> ExternalTool::localToolsDirs() {
+  juce::Array<juce::File> dirs;
+  // 1) Descargas de ToolInstaller: gana al bundle para que las
+  //    actualizaciones de la app se noten.
+  dirs.add(managedToolsDir());
+  // 2) Bundle: tools/ al lado del ejecutable (Windows) o dentro de
+  //    Contents/MacOS/tools (macOS).
+  const juce::File exeDir =
+      juce::File::getSpecialLocation(juce::File::currentExecutableFile)
+          .getParentDirectory();
+  dirs.add(exeDir.getChildFile("tools"));
+  return dirs;
+}
+
 juce::File ExternalTool::find(const juce::String &name) {
+  juce::StringArray candidates;
+  candidates.add(name);
+#if JUCE_WINDOWS
+  candidates.add(name + ".exe"); // yt-dlp.exe, ffmpeg.exe...
+#endif
+
+  // 1) Carpetas propias: lo que empaqueta la release o instala la app.
+  for (const auto &dir : localToolsDirs()) {
+    for (const auto &n : candidates) {
+      juce::File f = dir.getChildFile(n);
+      if (f.existsAsFile()) {
+#if !JUCE_WINDOWS
+        f.setExecutePermission(true); // por si el zip perdio el bit x
+#endif
+        return f;
+      }
+    }
+  }
+
 #if JUCE_WINDOWS
   const juce::String sep = ";";
 #else
@@ -35,12 +74,6 @@ juce::File ExternalTool::find(const juce::String &name) {
   dirs.add("/var/lib/snapd/snap/bin");
   dirs.add("/usr/bin");
   dirs.add("/bin");
-#endif
-
-  juce::StringArray candidates;
-  candidates.add(name);
-#if JUCE_WINDOWS
-  candidates.add(name + ".exe"); // yt-dlp.exe, ffmpeg.exe...
 #endif
 
   for (auto &dir : dirs) {

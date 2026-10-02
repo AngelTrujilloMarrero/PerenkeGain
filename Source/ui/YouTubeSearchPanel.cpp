@@ -39,15 +39,10 @@ YouTubeSearchPanel::YouTubeSearchPanel() {
                .getChildFile("MUSICA");
   if (!outDir.isDirectory())
     outDir = juce::File::getSpecialLocation(juce::File::userMusicDirectory);
-  juce::File ytdlp, ffmpeg;
-  juce::String statusText;
-  if (!YouTubeDownloader::available(ytdlp, ffmpeg))
-    statusText = toolInstallHint();
-  else if (ExternalTool::isYtDlpOutdated(ytdlp))
-    statusText = ExternalTool::ytDlpUpdateHint();
-  else
-    statusText = PG_T("Listo. Carpeta: ") + outDir.getFullPathName();
-  setStatus(statusText);
+
+  addAndMakeVisible(installB);
+  installB.onClick = [this] { startToolInstall(); };
+  refreshToolStatus();
 }
 
 void YouTubeSearchPanel::setStatus(const juce::String &s) {
@@ -199,6 +194,8 @@ void YouTubeSearchPanel::resized() {
   query.setBounds(row.reduced(2));
   auto bottom = r.removeFromBottom(26);
   downloadB.setBounds(bottom.removeFromLeft(120).reduced(2));
+  if (installB.isVisible())
+    installB.setBounds(bottom.removeFromLeft(176).reduced(2));
   status.setBounds(bottom.reduced(4, 0));
   r.removeFromTop(4);
   results.setBounds(r);

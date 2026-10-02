@@ -52,6 +52,7 @@ target_sources(PerenkeGain PRIVATE
   Source/ui/PlaylistComponent.cpp
   Source/ui/WaveformEditorComponent.cpp
   Source/ui/YouTubeSearchPanel.cpp
+  Source/ui/YouTubePanelTools.cpp
   Source/ui/YouTubeSearchTask.cpp
   Source/ui/YouTubeTask.cpp
   Source/ui/MixerStripComponent.cpp
@@ -90,6 +91,7 @@ target_sources(PerenkeGain PRIVATE
   Source/storage/ExternalTool.cpp
   Source/storage/YouTubeDownloader.cpp
   Source/storage/YouTubeSearch.cpp
+  Source/storage/ToolInstaller.cpp
   Source/updater/Version.cpp
   Source/updater/UpdateInfo.cpp
   Source/updater/GitHubReleaseClient.cpp

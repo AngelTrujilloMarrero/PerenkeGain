@@ -37,6 +37,15 @@ jobs:
       - uses: lukka/get-cmake@latest
       - run: cmake --preset macos-release
       - run: cmake --build --preset macos-release
+      - name: Tools
+        run: |
+          tools="build/macos-release/PerenkeGain_artefacts/Release/PerenkeGain.app/Contents/MacOS/tools"
+          mkdir -p "$tools"
+          curl -L --retry 3 -o "$tools/yt-dlp" \
+            https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_macos
+          curl -L --retry 3 -o "$tools/ffmpeg" \
+            https://github.com/eugeneware/ffmpeg-static/releases/latest/download/ffmpeg-darwin-arm64
+          chmod +x "$tools/yt-dlp" "$tools/ffmpeg"
       - name: Package
         run: |
           cd build/macos-release/PerenkeGain_artefacts/Release
@@ -59,9 +68,17 @@ jobs:
       - run: cmake --build --preset windows-release
       - name: Package
         run: |
-          cd build/windows-release/PerenkeGain_artefacts/Release
-          Compress-Archive -Path PerenkeGain.exe `
-            -DestinationPath "$env:GITHUB_WORKSPACE\PerenkeGain-windows-x64.zip"
+          $stage = "$env:RUNNER_TEMP\pkg"
+          New-Item -ItemType Directory -Force -Path "$stage\tools" | Out-Null
+          Copy-Item "build\windows-release\PerenkeGain_artefacts\Release\PerenkeGain.exe" $stage
+          curl.exe -L --retry 3 -o "$stage\tools\yt-dlp.exe" `
+            https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          curl.exe -L --retry 3 -o "$stage\tools\ffmpeg.exe" `
+            https://github.com/eugeneware/ffmpeg-static/releases/latest/download/ffmpeg-win32-x64
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          Compress-Archive -Path "$stage\*" `
+            -DestinationPath "$env:GITHUB_WORKSPACE\PerenkeGain-windows-x64.zip" -Force
       - uses: softprops/action-gh-release@v2
         with:
           files: PerenkeGain-windows-x64.zip
