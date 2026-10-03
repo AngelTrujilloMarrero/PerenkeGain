@@ -198,22 +198,26 @@ void MixerBarComponent::resized() {
   deckA.setBounds(left.reduced(2));
   deckB.setBounds(right.reduced(2));
 
+  const bool compact = r.getHeight() < 215;
+  const int gap = compact ? 2 : 4;
+  const int rowH = compact ? 20 : 22;
+
   auto mid = r.reduced(6, 4);
-  auto lab = mid.removeFromTop(14);
+  auto lab = mid.removeFromTop(compact ? 12 : 14);
   aL.setBounds(lab.removeFromLeft(16));
   bL.setBounds(lab.removeFromRight(16));
   mid.removeFromTop(2);
-  transition.setBounds(mid.removeFromTop(22).reduced(2, 0));
+  transition.setBounds(mid.removeFromTop(rowH).reduced(2, 0));
   mid.removeFromTop(2);
-  crossfader.setBounds(mid.removeFromTop(22).reduced(6, 0));
-  mid.removeFromTop(4);
-  automixB.setBounds(mid.removeFromTop(26).reduced(24, 0));
-  mid.removeFromTop(4);
+  crossfader.setBounds(mid.removeFromTop(rowH).reduced(6, 0));
+  mid.removeFromTop(gap);
+  automixB.setBounds(mid.removeFromTop(compact ? 22 : 26).reduced(24, 0));
+  mid.removeFromTop(gap);
   masterL.setBounds(mid.removeFromTop(12));
-  auto meterRow = mid.removeFromTop(70).reduced(0, 1);
+  auto meterRow = mid.removeFromTop(compact ? 52 : 70).reduced(0, 1);
   master.setBounds(meterRow.withSizeKeepingCentre(46, 66));
-  mid.removeFromTop(4);
-  masterVol.setBounds(mid.removeFromTop(22).reduced(8, 0));
+  mid.removeFromTop(2);
+  masterVol.setBounds(mid.removeFromTop(rowH).reduced(8, 0));
 }
 
 } // namespace pg

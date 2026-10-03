@@ -59,32 +59,39 @@ void EqualizerComponent::paint(juce::Graphics &g) {
   g.setFont(juce::Font(juce::FontOptions(12.0f, juce::Font::bold)));
   g.drawText("Ecualizador de 31 bandas", getLocalBounds().removeFromTop(22),
              juce::Justification::centred);
-  // Etiquetas de frecuencia bajo las tiras.
-  g.setFont(juce::Font(juce::FontOptions(8.0f)));
-  g.setColour(juce::Colour(0xFF9AA0AC));
-  for (size_t i = 0; i < 31; ++i) {
-    float f = kEq31Freqs[i];
-    juce::String t = f >= 1000.f
-                         ? juce::String(juce::roundToInt(f / 1000.f)) + "k"
-                         : juce::String(juce::roundToInt(f));
-    g.drawText(t, 8 + int(i) * colW(), freqLabelsTop + 1, colW(), 12,
-               juce::Justification::centred, false);
+  if (freqLabelsTop >= 0) {
+    g.setFont(juce::Font(juce::FontOptions(8.0f)));
+    g.setColour(juce::Colour(0xFF9AA0AC));
+    for (size_t i = 0; i < 31; ++i) {
+      float f = kEq31Freqs[i];
+      juce::String t = f >= 1000.f
+                           ? juce::String(juce::roundToInt(f / 1000.f)) + "k"
+                           : juce::String(juce::roundToInt(f));
+      g.drawText(t, 8 + int(i) * colW(), freqLabelsTop + 1, colW(), 12,
+                 juce::Justification::centred, false);
+    }
   }
 }
 
 void EqualizerComponent::resized() {
   auto r = getLocalBounds().reduced(8);
+  const bool compact = r.getHeight() < 170;
   auto titleRow = r.removeFromTop(22);
   readout.setBounds(titleRow.removeFromLeft(230).reduced(4, 3));
   freqLabelsTitle.setBounds(titleRow.removeFromRight(260).reduced(0, 5));
+  freqLabelsTitle.setVisible(!compact);
   presetBar.setBounds(r.removeFromTop(26));
   r.removeFromTop(2);
   auto masterRow = r.removeFromBottom(28);
   masterTitle.setBounds(masterRow.removeFromLeft(160).reduced(0, 6));
   master.setBounds(masterRow.reduced(0, 4));
-  auto freqs = r.removeFromBottom(14);
-  freqLabelsTop = freqs.getY();
-  r.removeFromBottom(4);
+  if (compact) {
+    freqLabelsTop = -1;
+  } else {
+    auto freqs = r.removeFromBottom(14);
+    freqLabelsTop = freqs.getY();
+    r.removeFromBottom(4);
+  }
   mixer.setBounds(r);
 }
 

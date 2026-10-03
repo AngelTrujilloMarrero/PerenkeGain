@@ -52,10 +52,14 @@ private:
   juce::ImageButton aboutB{"logo"};
   juce::TextButton addB{PG_T("Añadir...")}, waveB{"Editor de onda..."},
       batchB{"Normalizar lote..."}, closeB{"Cerrar"};
+  juce::ToggleButton eqB{PG_T("EQ")};
+  bool dockVisible = true;
+  bool dockToggled = false;
   FilePicker picker;
 
   void wire();
   void layoutRows();
+  void setDockVisible(bool v);
   void activateDeck(int deck);
   void showWaveformWindow();
   int firstEmptyDeck() const; // deck libre; -1 si ambos tienen pista
