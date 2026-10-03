@@ -1,9 +1,9 @@
 package com.perenkegain;
 
 import android.content.Context;
-import com.arthenica.ffmpegkit.FFmpeg;
-import com.arthenica.ffmpegkit.FFmpegKitExecution;
-import com.arthenica.ffmpegkit.ReturnCallback;
+import com.arthenica.ffmpegkit.FFmpegKit;
+import com.arthenica.ffmpegkit.FFmpegSession;
+import com.arthenica.ffmpegkit.FFmpegSessionCompleteCallback;
 import com.arthenica.ffmpegkit.ReturnCode;
 import com.chaquo.python.Python;
 import com.chaquo.python.android.AndroidPlatform;
@@ -42,14 +42,14 @@ public class YouTubeBridge {
             final String out = input.replaceAll("\\.[^.]+$", "") + ".mp3";
             final CountDownLatch latch = new CountDownLatch(1);
             final int[] rc = new int[]{-1};
-            FFmpeg.executeAsync(
+            FFmpegKit.executeAsync(
                     "-y -loglevel error -i " + sh(input)
                             + " -vn -c:a libmp3lame -q:a 0 " + sh(out),
-                    new ReturnCallback() {
+                    new FFmpegSessionCompleteCallback() {
                         @Override
-                        public void apply(FFmpegKitExecution execution,
-                                          ReturnCode returnCode) {
-                            rc[0] = returnCode.getValue();
+                        public void apply(FFmpegSession session) {
+                            ReturnCode code = session.getReturnCode();
+                            rc[0] = code != null ? code.getValue() : -1;
                             latch.countDown();
                         }
                     });
