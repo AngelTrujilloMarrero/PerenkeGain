@@ -2,6 +2,11 @@
 #include "types/Text.h"
 
 #if JUCE_ANDROID
+#include <jni.h>
+#include <juce_core/native/juce_JNIHelpers_android.h>
+#endif
+
+#if JUCE_ANDROID
 
 namespace pg {
 namespace {
