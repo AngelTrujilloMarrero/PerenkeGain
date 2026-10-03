@@ -54,6 +54,13 @@ EditorRootComponent::EditorRootComponent()
   aboutB.setTooltip(PG_T("Acerca de PerenkeGain"));
   aboutB.onClick = [this] { openAbout(); };
 
+  eqB.setClickingTogglesState(true);
+  eqB.setTooltip(PG_T("Mostrar/ocultar ecualizador y nivelador"));
+  eqB.setColour(juce::ToggleButton::textColourId,
+                juce::Colour(0xFFF2F3F6));
+  addAndMakeVisible(eqB);
+  eqB.onClick = [this] { setDockVisible(!dockVisible); };
+
   dock.eq.mixer.attach(&engine.bandAnalyzer());
   dock.leveler.setEngine(&engine);
   // Restaura la última ecualización guardada (si hay) antes de arrancar.
@@ -164,31 +171,50 @@ void EditorRootComponent::openAbout() {
 
 void EditorRootComponent::layoutRows() {
   auto r = getLocalBounds().reduced(3);
+  const int H = r.getHeight();
 #if !JUCE_ANDROID
   if (updateBanner.isVisible())
     updateBanner.setBounds(r.removeFromTop(36).reduced(0, 2));
 #endif
-  mixer.setBounds(r.removeFromTop(258));
+  const int mixerH = juce::jlimit(190, 258, juce::roundToInt(H * 0.30f));
+  mixer.setBounds(r.removeFromTop(mixerH));
 
   auto toolbar = r.removeFromTop(30);
-  auto right = toolbar.removeFromRight(540);
+  auto right = toolbar.removeFromRight(610);
   closeB.setBounds(right.removeFromRight(90).reduced(3, 2));
 #if !JUCE_ANDROID
   batchB.setBounds(right.removeFromRight(160).reduced(3, 2));
 #endif
   waveB.setBounds(right.removeFromRight(170).reduced(3, 2));
   addB.setBounds(right.removeFromRight(110).reduced(3, 2));
+  eqB.setBounds(right.removeFromRight(76).reduced(3, 2));
   aboutB.setBounds(toolbar.removeFromLeft(28).reduced(1));
   filePath.setBounds(toolbar.reduced(2));
 
   auto cyanRow = r.removeFromTop(26).reduced(0, 3);
   progressPct.setBounds(cyanRow.removeFromRight(52));
   cyan.setBounds(cyanRow);
-  dock.setBounds(r.removeFromBottom(dock.preferredHeight()));
+  if (!dockToggled)
+    dockVisible = H >= 900;
+  eqB.setToggleState(dockVisible, juce::dontSendNotification);
+  if (dockVisible) {
+    const int dockH =
+        juce::jlimit(240, dock.preferredHeight(), juce::roundToInt(H * 0.34f));
+    dock.setBounds(r.removeFromBottom(dockH));
+  } else {
+    dock.setBounds({});
+  }
 #if !JUCE_ANDROID
-  search.setBounds(r.removeFromTop(116));
+  const int searchH = juce::jlimit(100, 116, juce::roundToInt(H * 0.14f));
+  search.setBounds(r.removeFromTop(searchH));
 #endif
   playlistComp.setBounds(r);
+}
+
+void EditorRootComponent::setDockVisible(bool v) {
+  dockToggled = true;
+  dockVisible = v;
+  layoutRows();
 }
 
 void EditorRootComponent::resized() { layoutRows(); }

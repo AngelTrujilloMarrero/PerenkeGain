@@ -9,6 +9,7 @@ MainWindow::MainWindow()
                      DocumentWindow::allButtons) {
   setUsingNativeTitleBar(true);
   setResizable(true, true);
+  setResizeLimits(900, 620, 16000, 16000);
   setContentOwned(new EditorRootComponent(), true);
   centreWithSize(940, 980);
   setVisible(true);
