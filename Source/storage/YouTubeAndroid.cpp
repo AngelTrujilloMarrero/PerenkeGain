@@ -116,11 +116,11 @@ YouTubeAndroid::search(const juce::String &query, int maxResults,
   for (const auto &item : *arr) {
     if ((int)out.size() >= limit)
       break;
-    const auto *do = item.getDynamicObject();
-    if (do == nullptr)
+    const auto *dobj = item.getDynamicObject();
+    if (dobj == nullptr)
       continue;
-    const juce::String title = do->getProperty("title").toString();
-    const juce::String url = do->getProperty("url").toString();
+    const juce::String title = dobj->getProperty("title").toString();
+    const juce::String url = dobj->getProperty("url").toString();
     if (title.isEmpty() || !url.contains("watch?v="))
       continue;
     out.push_back({title, url, {}});
