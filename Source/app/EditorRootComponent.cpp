@@ -192,8 +192,13 @@ void EditorRootComponent::layoutRows() {
   auto cyanRow = r.removeFromTop(26).reduced(0, 3);
   progressPct.setBounds(cyanRow.removeFromRight(52));
   cyan.setBounds(cyanRow);
+#if JUCE_ANDROID
+  if (!dockToggled)
+    dockVisible = false;
+#else
   if (!dockToggled)
     dockVisible = H >= 900;
+#endif
   eqB.setToggleState(dockVisible, juce::dontSendNotification);
   if (dockVisible) {
     const int dockH =
