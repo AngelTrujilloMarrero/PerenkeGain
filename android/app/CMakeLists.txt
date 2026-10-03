@@ -50,6 +50,7 @@ add_library( ${BINARY_NAME}
     "../../Source/app/EditorRootComponent.h"
     "../../Source/app/MainWindow.cpp"
     "../../Source/app/MainWindow.h"
+    "../../Source/app/UpdateFlow.cpp"
     "../../Source/app/MarkerModel.cpp"
     "../../Source/app/MarkerModel.h"
     "../../Source/app/PlaybackTicker.cpp"

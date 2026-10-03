@@ -17,6 +17,7 @@
       <FILE id="pgf00009" name="EditorRootComponent.h" compile="0" resource="0" file="Source/app/EditorRootComponent.h"/>
       <FILE id="pgf00010" name="MainWindow.cpp" compile="1" resource="0" file="Source/app/MainWindow.cpp"/>
       <FILE id="pgf00011" name="MainWindow.h" compile="0" resource="0" file="Source/app/MainWindow.h"/>
+      <FILE id="pgfupd1" name="UpdateFlow.cpp" compile="1" resource="0" file="Source/app/UpdateFlow.cpp"/>
       <FILE id="pgf00012" name="MarkerModel.cpp" compile="1" resource="0" file="Source/app/MarkerModel.cpp"/>
       <FILE id="pgf00013" name="MarkerModel.h" compile="0" resource="0" file="Source/app/MarkerModel.h"/>
       <FILE id="pgf00014" name="PlaybackTicker.cpp" compile="1" resource="0" file="Source/app/PlaybackTicker.cpp"/>

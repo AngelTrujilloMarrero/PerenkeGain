@@ -20,6 +20,8 @@ android/local.properties
 android/.gradle/
 android/app/build/
 android/build/
+*.keystore
+!android/debug.keystore
 
 # SQLite / temporales audio
 *.db

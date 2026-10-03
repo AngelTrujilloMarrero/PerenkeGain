@@ -34,6 +34,7 @@ juce_add_binary_data(PerenkeGainData SOURCES
 target_sources(PerenkeGain PRIVATE
   Source/Main.cpp
   Source/app/MainWindow.cpp
+  Source/app/UpdateFlow.cpp
   Source/app/EditorRootComponent.cpp
   Source/app/EditorController.cpp
   Source/app/PlaybackTicker.cpp

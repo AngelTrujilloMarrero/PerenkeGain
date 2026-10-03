@@ -3,7 +3,6 @@
 #include "BinaryData.h"
 #include "types/Text.h"
 #include "ui/AboutDialog.h"
-#include "ui/UpdateDialog.h"
 
 namespace pg {
 
@@ -16,7 +15,9 @@ EditorRootComponent::EditorRootComponent()
     updateBanner.setVisible(false);
     layoutRows();
   };
+#if !JUCE_ANDROID
   addChildComponent(updateBanner);
+#endif
 
   addAndMakeVisible(filePath);
   filePath.setColour(juce::Label::backgroundColourId, juce::Colours::white);
@@ -33,11 +34,17 @@ EditorRootComponent::EditorRootComponent()
   progressPct.setColour(juce::Label::textColourId, juce::Colour(0xFF7CFF3C));
   progressPct.setJustificationType(juce::Justification::centred);
   progressPct.setInterceptsMouseClicks(false, false);
+#if !JUCE_ANDROID
   addAndMakeVisible(search);
+#endif
   addAndMakeVisible(playlistComp);
   addAndMakeVisible(dock);
-  for (auto *b : {&addB, &waveB, &batchB, &closeB})
-    addAndMakeVisible(*b);
+  addAndMakeVisible(addB);
+  addAndMakeVisible(waveB);
+#if !JUCE_ANDROID
+  addAndMakeVisible(batchB);
+#endif
+  addAndMakeVisible(closeB);
 
   addAndMakeVisible(aboutB);
   auto badge = juce::ImageCache::getFromMemory(BinaryData::logobadge_png,
@@ -80,14 +87,18 @@ EditorRootComponent::EditorRootComponent()
 void EditorRootComponent::wire() {
   mixer.deck(0).onActivated = [this](int d) { activateDeck(d); };
   mixer.deck(1).onActivated = [this](int d) { activateDeck(d); };
+#if !JUCE_ANDROID
   search.onDownloaded = [this](const juce::File &f) { enqueue(f); };
+#endif
   playlistComp.onSendToDeck = [this](int deck, const juce::File &f) {
     mixer.deck(deck).loadIntoDeck(f);
   };
 
   addB.onClick = [this] { addLocalFiles(); };
   waveB.onClick = [this] { showWaveformWindow(); };
+#if !JUCE_ANDROID
   batchB.onClick = [this] { controller.openBatchNormalize(); };
+#endif
   closeB.onClick = [this] { controller.quitEditor(); };
 
   cyan.onSeekFraction = [this](double f) {
@@ -142,41 +153,29 @@ void EditorRootComponent::addLocalFiles() {
                      });
 }
 
-void EditorRootComponent::checkForUpdates() {
-  auto safe = juce::Component::SafePointer<EditorRootComponent>(this);
-  updateChecker.checkAsync([safe](updater::UpdateInfo info) {
-    if (safe != nullptr && info.available)
-      safe->showUpdateAvailable(info);
-  });
-}
-
-void EditorRootComponent::showUpdateAvailable(
-    const updater::UpdateInfo &info) {
-  pendingUpdate = info;
-  updateBanner.setVersion(info.latestVersion, info.currentVersion);
-  updateBanner.setVisible(true);
-  layoutRows();
-}
-
 void EditorRootComponent::openAbout() {
+#if JUCE_ANDROID
+  dialogs::show(PG_T("Acerca de PerenkeGain"),
+                new AboutDialog(), 420, 520);
+#else
   dialogs::show(PG_T("Acerca de PerenkeGain"), new AboutDialog(), 560, 660);
-}
-
-void EditorRootComponent::openUpdateDialog() {
-  auto *dlg = new UpdateDialog(pendingUpdate);
-  dialogs::show(PG_T("Actualizaci\u00f3n de PerenkeGain"), dlg, 500, 440);
+#endif
 }
 
 void EditorRootComponent::layoutRows() {
   auto r = getLocalBounds().reduced(3);
+#if !JUCE_ANDROID
   if (updateBanner.isVisible())
     updateBanner.setBounds(r.removeFromTop(36).reduced(0, 2));
+#endif
   mixer.setBounds(r.removeFromTop(258));
 
   auto toolbar = r.removeFromTop(30);
   auto right = toolbar.removeFromRight(540);
   closeB.setBounds(right.removeFromRight(90).reduced(3, 2));
+#if !JUCE_ANDROID
   batchB.setBounds(right.removeFromRight(160).reduced(3, 2));
+#endif
   waveB.setBounds(right.removeFromRight(170).reduced(3, 2));
   addB.setBounds(right.removeFromRight(110).reduced(3, 2));
   aboutB.setBounds(toolbar.removeFromLeft(28).reduced(1));
@@ -186,8 +185,9 @@ void EditorRootComponent::layoutRows() {
   progressPct.setBounds(cyanRow.removeFromRight(52));
   cyan.setBounds(cyanRow);
   dock.setBounds(r.removeFromBottom(dock.preferredHeight()));
-  // Centro: buscador (solo 3 resultados) arriba y lista de reproduccion abajo.
+#if !JUCE_ANDROID
   search.setBounds(r.removeFromTop(116));
+#endif
   playlistComp.setBounds(r);
 }
 

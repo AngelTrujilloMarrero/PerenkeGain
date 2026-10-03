@@ -40,6 +40,58 @@ vivo, y descarga de YouTube Music con normalización.
 - **Windows incluido**: la release trae `PerenkeGain-windows-x64.zip` con el
   `.exe` **y las herramientas de YouTube** ya dentro (descomprime y ejecuta).
 
+## Android (tablet 10–12")
+
+Release de prueba de concepto: **APK firmado** (minSdk 26) para
+tablets. La compila CI (`assembleDebug` en cada push; `assembleRelease`
+firmado en tags `v*`).
+
+Limitaciones en Android:
+
+- **Sin YouTube/yt-dlp**: Android 10+ prohíbe `exec()` de binarios
+  externos, así que el buscador de YouTube Music no está disponible
+  (se oculta su panel).
+- **Sin normalizar lote ni actualizaciones automáticas** (dependen de
+  procesos externos y de reemplazar el binario en marcha).
+- Audio: OpenSL ES (Oboe desactivado).
+
+### Cómo se construye
+
+El proyecto Android lo genera **Projucer** desde `PerenkeGain.jucer`
+(exporter `ANDROIDSTUDIO`, `targetFolder="android"`):
+
+```bash
+# Con Projucer y JUCE 8.0.10 en ./JUCE (symlink o clone):
+Projucer --resave PerenkeGain.jucer
+```
+
+Requisitos locales: JDK 17, Android SDK (platform-35, NDK 28.1.13356709,
+CMake 3.22.1) y `JUCE/` apuntando a los fuentes de JUCE 8.0.10
+(en CI se clona con `--branch 8.0.10`).
+
+```bash
+cd android && ./gradlew assembleDebug    # o assembleRelease
+```
+
+### APK firmado (releases)
+
+Para publicar en GitHub Releases, el job `android` de `release.yml`
+necesita cuatro **repository secrets**:
+
+1. Genera un keystore (una sola vez, guárdalo):
+   ```bash
+   keytool -genkeypair -keystore release.keystore -alias perenkegain \
+     -keyalg RSA -keysize 2048 -validity 10000 \
+     -dname "CN=PerenkeGain"
+   ```
+2. Añade los secrets:
+   - `ANDROID_KEYSTORE_BASE64`: `base64 -i release.keystore`
+   - `KEYSTORE_PASSWORD`, `KEY_ALIAS` (`perenkegain`),
+     `KEY_PASSWORD`
+
+Sin esos secrets, el job avisa y omite el APK de release (no firma
+con el debug keystore, que no sirve para publicar).
+
 ## Descargas
 
 Cada release publica tres paquetes desde
@@ -50,13 +102,14 @@ Cada release publica tres paquetes desde
 | Windows (x64) | `PerenkeGain-windows-x64.zip` | Descomprime y ejecuta `PerenkeGain.exe` (incluye `yt-dlp` y `ffmpeg`) |
 | Linux (x86_64) | `PerenkeGain-linux-x86_64.tar.gz` | `tar -xzf … && ./PerenkeGain` |
 | macOS | `PerenkeGain-macos.zip` | Abre `PerenkeGain.app` (incluye `yt-dlp` y `ffmpeg`) |
+| Android (tablet) | `PerenkeGain-android.apk` | Instala el APK (minSdk 26) |
 
 ## Decisiones
 
 - Stack: **C++20 + JUCE 8 (Standalone App)**.
 - Audio: **44.1–192 kHz, 32-bit float**.
 - Licencia: **MIT**.
-- Targets: **Linux + macOS + Windows** (CI).
+- Targets: **Linux + macOS + Windows** (CI) + **Android** (APK fase 0).
 - UI: tema oscuro con bandeja inferior tipo mesa digital.
 
 ## Build (Linux/macOS/Windows)
