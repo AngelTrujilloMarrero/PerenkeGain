@@ -22,7 +22,7 @@ YouTubeSearch::search(const juce::String &query, int maxResults,
                          "--skip-download",
                          "--no-warnings",
                          "--print",
-                         "%(title)s\t%(url)s",
+                         "%(title)s\x1F%(url)s",
                          searchUrl};
   juce::ChildProcess proc;
   if (!proc.start(args)) {
@@ -34,7 +34,7 @@ YouTubeSearch::search(const juce::String &query, int maxResults,
   for (const auto &line : juce::StringArray::fromLines(output)) {
     if ((int)out.size() >= limit)
       break;
-    auto parts = juce::StringArray::fromTokens(line, "\t", "");
+    auto parts = juce::StringArray::fromTokens(line, "\x1F", "");
     parts.trim();
     if (parts.size() < 2)
       continue;
@@ -46,8 +46,21 @@ YouTubeSearch::search(const juce::String &query, int maxResults,
       continue;
     out.push_back({title, url, {}});
   }
-  if (out.empty() && error.isEmpty())
-    error = "Sin resultados";
+  if (out.empty() && error.isEmpty()) {
+    for (const auto &l : juce::StringArray::fromLines(output)) {
+      const auto t = l.trim();
+      if (t.startsWithIgnoreCase("ERROR")) {
+        error = t;
+        break;
+      }
+    }
+    if (error.isEmpty()) {
+      const int code = (int)proc.getExitCode();
+      error = code != 0 ? PG_T("yt-dlp terminó con código ") +
+                              juce::String(code)
+                        : juce::String("Sin resultados");
+    }
+  }
   return out;
 }
 
