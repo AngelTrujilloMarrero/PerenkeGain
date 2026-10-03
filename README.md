@@ -48,9 +48,10 @@ firmado en tags `v*`).
 
 Limitaciones en Android:
 
-- **Sin YouTube/yt-dlp**: Android 10+ prohíbe `exec()` de binarios
-  externos, así que el buscador de YouTube Music no está disponible
-  (se oculta su panel).
+- YouTube **SÍ disponible** (buscador + descarga a MP3): yt-dlp
+  corre en Python embebido (Chaquopy) y la conversión a MP3 la hace
+  ffmpeg-kit dentro del APK (~40 MB). Las descargas van a la caché
+  de la app. Respeta los términos de YouTube como en escritorio.
 - **Sin normalizar lote ni actualizaciones automáticas** (dependen de
   procesos externos y de reemplazar el binario en marcha).
 - Audio: OpenSL ES (Oboe desactivado).
@@ -63,6 +64,9 @@ El proyecto Android lo genera **Projucer** desde `PerenkeGain.jucer`
 ```bash
 # Con Projucer y JUCE 8.0.10 en ./JUCE (symlink o clone):
 Projucer --resave PerenkeGain.jucer
+# ...y re-aplica los parches de gradle (Chaquopy/ffmpeg-kit/ABIs),
+# que Projucer sobrescribe al regenerar android/:
+./packaging/patch-android.sh
 ```
 
 Requisitos locales: JDK 17, Android SDK (platform-35, NDK 28.1.13356709,

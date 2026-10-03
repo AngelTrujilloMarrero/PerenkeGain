@@ -1,0 +1,20 @@
+Componentes de terceros incluidos en el APK de Android
+===========================================================
+
+- Chaquopy 17.0 (https://chaquo.com/chaquopy/) — licencia MIT.
+  Proporciona el interprete de Python embebido.
+
+- yt-dlp (https://github.com/yt-dlp/yt-dlp) — licencia Unlicense
+  (dominio publico). Se instala via pip en tiempo de compilacion
+  (`pip install yt-dlp`) y corre dentro del interprete Chaquopy.
+
+- certifi (https://github.com/certifi/python-certifi) — licencia MPL-2.0.
+  Certificados raiz para TLS dentro de Python en Android
+  (`SSL_CERT_FILE`).
+
+- ffmpeg-kit audio-lgpl 6.0, paquete `com.arthenica:ffmpeg-kit-audio-lgpl`
+  (https://github.com/arthenica/ffmpeg-kit) — licencia LGPL-3.0.
+  Usado solo para convertir el audio descargado a MP3 (libmp3lame).
+  Conforme a la LGPL: el AAR se enlaza como biblioteca dinamica y
+  puede sustituirse por otra version compatible; el codigo fuente de
+  ffmpeg-kit esta disponible en su repositorio publico.

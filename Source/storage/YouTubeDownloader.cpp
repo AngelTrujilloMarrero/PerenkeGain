@@ -1,5 +1,6 @@
 #include "storage/YouTubeDownloader.h"
 #include "storage/ExternalTool.h"
+#include "storage/YouTubeAndroid.h"
 #include "types/Text.h"
 
 namespace pg {
@@ -73,15 +74,24 @@ bool convertToMp3(const juce::File &in, const juce::File &out) {
 } // namespace
 
 bool YouTubeDownloader::available(juce::File &ytdlp, juce::File &ffmpeg) {
+#if JUCE_ANDROID
+  ytdlp = juce::File{};
+  ffmpeg = juce::File{};
+  return true;
+#else
   ytdlp = ExternalTool::find("yt-dlp");
   ffmpeg = ExternalTool::find("ffmpeg");
   return ytdlp != juce::File{} && ffmpeg != juce::File{};
+#endif
 }
 
 YouTubeResult YouTubeDownloader::download(
     const juce::String &url, const juce::File &outDir,
     const std::function<void(float)> &onProgress) {
   juce::ignoreUnused(onProgress);
+#if JUCE_ANDROID
+  return YouTubeAndroid::download(url, outDir);
+#else
   YouTubeResult r;
   auto ytdlp = ExternalTool::find("yt-dlp");
   if (ytdlp == juce::File{}) {
@@ -163,6 +173,7 @@ YouTubeResult YouTubeDownloader::download(
   r.ok = true;
   r.file = found;
   return r;
+#endif
 }
 
 } // namespace pg

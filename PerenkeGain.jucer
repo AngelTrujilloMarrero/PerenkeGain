@@ -85,6 +85,8 @@
       <FILE id="pgf00073" name="YouTubeDownloader.h" compile="0" resource="0" file="Source/storage/YouTubeDownloader.h"/>
       <FILE id="pgf00074" name="YouTubeSearch.cpp" compile="1" resource="0" file="Source/storage/YouTubeSearch.cpp"/>
       <FILE id="pgf00075" name="YouTubeSearch.h" compile="0" resource="0" file="Source/storage/YouTubeSearch.h"/>
+      <FILE id="pgfand01" name="YouTubeAndroid.cpp" compile="1" resource="0" file="Source/storage/YouTubeAndroid.cpp"/>
+      <FILE id="pgfand02" name="YouTubeAndroid.h" compile="0" resource="0" file="Source/storage/YouTubeAndroid.h"/>
     </GROUP>
     <GROUP id="pgg00076" name="types">
       <FILE id="pgf00077" name="AudioTypes.h" compile="0" resource="0" file="Source/types/AudioTypes.h"/>
@@ -177,7 +179,7 @@
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
-    <ANDROIDSTUDIO targetFolder="android" androidMinimumSDK="26" smallIcon="pgf00157" bigIcon="pgf00158">
+    <ANDROIDSTUDIO targetFolder="android" androidMinimumSDK="26" smallIcon="pgf00157" bigIcon="pgf00158" androidAdditionalJavaFolders="android-java">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug"/>
         <CONFIGURATION isDebug="0" name="Release"/>

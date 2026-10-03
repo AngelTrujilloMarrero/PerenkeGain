@@ -34,11 +34,16 @@ YouTubeSearchPanel::YouTubeSearchPanel() {
   status.setFont(juce::Font(juce::FontOptions(11.0f)));
   status.setColour(juce::Label::textColourId, juce::Colour(0xFF9AA0AC));
 
-  // Carpeta de musica del usuario (Documents/MUSICA); si no, la de Musica.
+#if JUCE_ANDROID
+  outDir = juce::File::getSpecialLocation(juce::File::tempDirectory)
+               .getChildFile("PerenkeGain");
+  installB.setVisible(false);
+#else
   outDir = juce::File::getSpecialLocation(juce::File::userDocumentsDirectory)
                .getChildFile("MUSICA");
   if (!outDir.isDirectory())
     outDir = juce::File::getSpecialLocation(juce::File::userMusicDirectory);
+#endif
 
   addAndMakeVisible(installB);
   installB.onClick = [this] { startToolInstall(); };

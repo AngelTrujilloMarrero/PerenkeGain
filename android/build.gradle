@@ -3,9 +3,10 @@ buildscript {
        google()
        mavenCentral()
    }
-   dependencies {
-       classpath 'com.android.tools.build:gradle:8.10.0'
-   }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.10.0'
+        classpath 'com.chaquo.python:gradle:17.0.0'
+    }
 }
 
 allprojects {

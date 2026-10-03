@@ -112,6 +112,8 @@ add_library( ${BINARY_NAME}
     "../../Source/storage/YouTubeDownloader.h"
     "../../Source/storage/YouTubeSearch.cpp"
     "../../Source/storage/YouTubeSearch.h"
+    "../../Source/storage/YouTubeAndroid.cpp"
+    "../../Source/storage/YouTubeAndroid.h"
     "../../Source/types/AudioTypes.h"
     "../../Source/types/EqTypes.h"
     "../../Source/types/NormalizeTypes.h"

@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.chaquo.python'
 
 def ndkVersionString = "28.1.13356709"
 
@@ -26,6 +27,16 @@ android {
         applicationId "com.perenkegain.editor"
         minSdkVersion    26
         targetSdkVersion 35
+        ndk {
+            abiFilters "arm64-v8a"
+        }
+        python {
+            version "3.12"
+            pip {
+                install "yt-dlp"
+                install "certifi"
+            }
+        }
         externalNativeBuild {
             cmake {
                 arguments "-DANDROID_TOOLCHAIN=clang", "-DANDROID_PLATFORM=android-26", "-DANDROID_STL=c++_static", "-DANDROID_CPP_FEATURES=exceptions rtti", "-DANDROID_ARM_MODE=arm", "-DANDROID_ARM_NEON=TRUE", "-DANDROID_WEAK_API_DEFS=ON", "-DCMAKE_CXX_STANDARD=20", "-DCMAKE_CXX_EXTENSIONS=OFF"
@@ -52,7 +63,7 @@ android {
     productFlavors {
         debug_ {
             ndk {
-                abiFilters "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
+                abiFilters "arm64-v8a"
             }
             externalNativeBuild {
                 cmake {
@@ -65,6 +76,9 @@ android {
             dimension "default"
         }
         release_ {
+            ndk {
+                abiFilters "arm64-v8a"
+            }
             externalNativeBuild {
                 cmake {
                     cFlags    "-O3"
@@ -93,7 +107,8 @@ android {
         main.java.srcDirs +=
             ["../../JUCE/modules/juce_core/native/javacore/init",
              "../../JUCE/modules/juce_core/native/javacore/app",
-             "../../JUCE/modules/juce_gui_basics/native/javaopt/app"]
+             "../../JUCE/modules/juce_gui_basics/native/javaopt/app",
+             "../../android-java"]
 
         main.res.srcDirs +=
             []
@@ -103,6 +118,7 @@ android {
     }
 
     dependencies {
+        implementation 'com.arthenica:ffmpeg-kit-audio-lgpl:6.0'
     }
 
 

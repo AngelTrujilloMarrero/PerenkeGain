@@ -92,6 +92,7 @@ target_sources(PerenkeGain PRIVATE
   Source/storage/ExternalTool.cpp
   Source/storage/YouTubeDownloader.cpp
   Source/storage/YouTubeSearch.cpp
+  Source/storage/YouTubeAndroid.cpp
   Source/storage/ToolInstaller.cpp
   Source/updater/Version.cpp
   Source/updater/UpdateInfo.cpp

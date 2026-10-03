@@ -1,5 +1,6 @@
 #include "storage/YouTubeSearch.h"
 #include "storage/ExternalTool.h"
+#include "storage/YouTubeAndroid.h"
 #include "types/Text.h"
 
 namespace pg {
@@ -7,6 +8,9 @@ namespace pg {
 std::vector<YouTubeSearchItem>
 YouTubeSearch::search(const juce::String &query, int maxResults,
                       juce::String &error) {
+#if JUCE_ANDROID
+  return YouTubeAndroid::search(query, maxResults, error);
+#else
   std::vector<YouTubeSearchItem> out;
   auto ytdlp = ExternalTool::find("yt-dlp");
   if (ytdlp == juce::File{}) {
@@ -62,6 +66,7 @@ YouTubeSearch::search(const juce::String &query, int maxResults,
     }
   }
   return out;
+#endif
 }
 
 } // namespace pg

@@ -94,9 +94,7 @@ EditorRootComponent::EditorRootComponent()
 void EditorRootComponent::wire() {
   mixer.deck(0).onActivated = [this](int d) { activateDeck(d); };
   mixer.deck(1).onActivated = [this](int d) { activateDeck(d); };
-#if !JUCE_ANDROID
   search.onDownloaded = [this](const juce::File &f) { enqueue(f); };
-#endif
   playlistComp.onSendToDeck = [this](int deck, const juce::File &f) {
     mixer.deck(deck).loadIntoDeck(f);
   };
@@ -204,10 +202,8 @@ void EditorRootComponent::layoutRows() {
   } else {
     dock.setBounds({});
   }
-#if !JUCE_ANDROID
   const int searchH = juce::jlimit(100, 116, juce::roundToInt(H * 0.14f));
   search.setBounds(r.removeFromTop(searchH));
-#endif
   playlistComp.setBounds(r);
 }
 

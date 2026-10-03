@@ -7,7 +7,7 @@ CMakeFiles/
 *.a
 *.so
 *.dylib
-PerenkeGain
+/PerenkeGain
 PerenkeGain_artefacts/
 
 # JUCE

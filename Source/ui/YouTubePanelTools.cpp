@@ -8,6 +8,11 @@ namespace pg {
 // Estado de las herramientas externas (yt-dlp/ffmpeg) y su instalacion
 // interna: si falta algo se ofrece el boton de descarga de la propia app.
 void YouTubeSearchPanel::refreshToolStatus() {
+#if JUCE_ANDROID
+  installB.setVisible(false);
+  setStatus(PG_T("Listo. Carpeta: ") + outDir.getFullPathName());
+  return;
+#else
   const bool pending = !ToolInstaller::ready();
   installB.setVisible(pending);
   if (pending) {
@@ -21,6 +26,7 @@ void YouTubeSearchPanel::refreshToolStatus() {
     return;
   }
   setStatus(PG_T("Listo. Carpeta: ") + outDir.getFullPathName());
+#endif
 }
 
 void YouTubeSearchPanel::startToolInstall() {
