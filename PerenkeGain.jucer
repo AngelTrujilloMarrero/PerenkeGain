@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="pegain01" name="PerenkeGain" projectType="guiapp" version="0.8.1"
+              bundleIdentifier="com.perenkegain.editor" companyName="PerenkeGain"
+              defines="JUCE_STANDALONE_APPLICATION=1&#10;PG_VERSION=&quot;0.8.1&quot;" headerPath="../Source" cppLanguageStandard="20"
+              useAppConfig="0" addUsingNamespaceToJuceHeader="0"
+              jucerFormatVersion="1">
+  <MAINGROUP id="pgmain001" name="PerenkeGain">
+    <GROUP id="pgg00001" name="app">
+      <FILE id="pgf00002" name="ApplicationState.cpp" compile="1" resource="0" file="Source/app/ApplicationState.cpp"/>
+      <FILE id="pgf00003" name="ApplicationState.h" compile="0" resource="0" file="Source/app/ApplicationState.h"/>
+      <FILE id="pgf00004" name="DialogLauncher.cpp" compile="1" resource="0" file="Source/app/DialogLauncher.cpp"/>
+      <FILE id="pgf00005" name="DialogLauncher.h" compile="0" resource="0" file="Source/app/DialogLauncher.h"/>
+      <FILE id="pgf00006" name="EditorController.cpp" compile="1" resource="0" file="Source/app/EditorController.cpp"/>
+      <FILE id="pgf00007" name="EditorController.h" compile="0" resource="0" file="Source/app/EditorController.h"/>
+      <FILE id="pgf00008" name="EditorRootComponent.cpp" compile="1" resource="0" file="Source/app/EditorRootComponent.cpp"/>
+      <FILE id="pgf00009" name="EditorRootComponent.h" compile="0" resource="0" file="Source/app/EditorRootComponent.h"/>
+      <FILE id="pgf00010" name="MainWindow.cpp" compile="1" resource="0" file="Source/app/MainWindow.cpp"/>
+      <FILE id="pgf00011" name="MainWindow.h" compile="0" resource="0" file="Source/app/MainWindow.h"/>
+      <FILE id="pgf00012" name="MarkerModel.cpp" compile="1" resource="0" file="Source/app/MarkerModel.cpp"/>
+      <FILE id="pgf00013" name="MarkerModel.h" compile="0" resource="0" file="Source/app/MarkerModel.h"/>
+      <FILE id="pgf00014" name="PlaybackTicker.cpp" compile="1" resource="0" file="Source/app/PlaybackTicker.cpp"/>
+      <FILE id="pgf00015" name="PlaybackTicker.h" compile="0" resource="0" file="Source/app/PlaybackTicker.h"/>
+      <FILE id="pgf00016" name="PlaylistModel.cpp" compile="1" resource="0" file="Source/app/PlaylistModel.cpp"/>
+      <FILE id="pgf00017" name="PlaylistModel.h" compile="0" resource="0" file="Source/app/PlaylistModel.h"/>
+      <FILE id="pgf00018" name="WaveformWindow.cpp" compile="1" resource="0" file="Source/app/WaveformWindow.cpp"/>
+      <FILE id="pgf00019" name="WaveformWindow.h" compile="0" resource="0" file="Source/app/WaveformWindow.h"/>
+    </GROUP>
+    <GROUP id="pgg00020" name="audio">
+      <FILE id="pgf00021" name="AnalyzingSourcePlayer.h" compile="0" resource="0" file="Source/audio/AnalyzingSourcePlayer.h"/>
+      <FILE id="pgf00022" name="AudioEngine.cpp" compile="1" resource="0" file="Source/audio/AudioEngine.cpp"/>
+      <FILE id="pgf00023" name="AudioEngine.h" compile="0" resource="0" file="Source/audio/AudioEngine.h"/>
+      <FILE id="pgf00024" name="TransportComponent.cpp" compile="1" resource="0" file="Source/audio/TransportComponent.cpp"/>
+      <FILE id="pgf00025" name="TransportComponent.h" compile="0" resource="0" file="Source/audio/TransportComponent.h"/>
+      <FILE id="pgf00026" name="WaveformComponent.cpp" compile="1" resource="0" file="Source/audio/WaveformComponent.cpp"/>
+      <FILE id="pgf00027" name="WaveformComponent.h" compile="0" resource="0" file="Source/audio/WaveformComponent.h"/>
+    </GROUP>
+    <GROUP id="pgg00028" name="dsp">
+      <FILE id="pgf00029" name="BandLevelAnalyzer.cpp" compile="1" resource="0" file="Source/dsp/BandLevelAnalyzer.cpp"/>
+      <FILE id="pgf00030" name="BandLevelAnalyzer.h" compile="0" resource="0" file="Source/dsp/BandLevelAnalyzer.h"/>
+      <FILE id="pgf00031" name="DeClicker.cpp" compile="1" resource="0" file="Source/dsp/DeClicker.cpp"/>
+      <FILE id="pgf00032" name="DeClicker.h" compile="0" resource="0" file="Source/dsp/DeClicker.h"/>
+      <FILE id="pgf00033" name="DeHiss.cpp" compile="1" resource="0" file="Source/dsp/DeHiss.cpp"/>
+      <FILE id="pgf00034" name="DeHiss.h" compile="0" resource="0" file="Source/dsp/DeHiss.h"/>
+      <FILE id="pgf00035" name="DspChain.cpp" compile="1" resource="0" file="Source/dsp/DspChain.cpp"/>
+      <FILE id="pgf00036" name="DspChain.h" compile="0" resource="0" file="Source/dsp/DspChain.h"/>
+      <FILE id="pgf00037" name="Eq31BandProcessor.cpp" compile="1" resource="0" file="Source/dsp/Eq31BandProcessor.cpp"/>
+      <FILE id="pgf00038" name="Eq31BandProcessor.h" compile="0" resource="0" file="Source/dsp/Eq31BandProcessor.h"/>
+      <FILE id="pgf00039" name="EqPresets.h" compile="0" resource="0" file="Source/dsp/EqPresets.h"/>
+      <FILE id="pgf00040" name="EqPresetsLatin.h" compile="0" resource="0" file="Source/dsp/EqPresetsLatin.h"/>
+      <FILE id="pgf00041" name="KWeightingFilter.h" compile="0" resource="0" file="Source/dsp/KWeightingFilter.h"/>
+      <FILE id="pgf00042" name="Leveler.cpp" compile="1" resource="0" file="Source/dsp/Leveler.cpp"/>
+      <FILE id="pgf00043" name="Leveler.h" compile="0" resource="0" file="Source/dsp/Leveler.h"/>
+      <FILE id="pgf00044" name="LoudnessAnalyzer.cpp" compile="1" resource="0" file="Source/dsp/LoudnessAnalyzer.cpp"/>
+      <FILE id="pgf00045" name="LoudnessAnalyzer.h" compile="0" resource="0" file="Source/dsp/LoudnessAnalyzer.h"/>
+      <FILE id="pgf00046" name="LoudnessMeterRT.cpp" compile="1" resource="0" file="Source/dsp/LoudnessMeterRT.cpp"/>
+      <FILE id="pgf00047" name="LoudnessMeterRT.h" compile="0" resource="0" file="Source/dsp/LoudnessMeterRT.h"/>
+      <FILE id="pgf00048" name="RumbleFilter.cpp" compile="1" resource="0" file="Source/dsp/RumbleFilter.cpp"/>
+      <FILE id="pgf00049" name="RumbleFilter.h" compile="0" resource="0" file="Source/dsp/RumbleFilter.h"/>
+      <FILE id="pgf00050" name="SilenceDetector.cpp" compile="1" resource="0" file="Source/dsp/SilenceDetector.cpp"/>
+      <FILE id="pgf00051" name="SilenceDetector.h" compile="0" resource="0" file="Source/dsp/SilenceDetector.h"/>
+      <FILE id="pgf00052" name="TrackSplitterService.cpp" compile="1" resource="0" file="Source/dsp/TrackSplitterService.cpp"/>
+      <FILE id="pgf00053" name="TrackSplitterService.h" compile="0" resource="0" file="Source/dsp/TrackSplitterService.h"/>
+      <FILE id="pgf00054" name="TruePeakLimiter.h" compile="0" resource="0" file="Source/dsp/TruePeakLimiter.h"/>
+    </GROUP>
+    <GROUP id="pgg00055" name="storage">
+      <FILE id="pgf00056" name="AudioEncoder.cpp" compile="1" resource="0" file="Source/storage/AudioEncoder.cpp"/>
+      <FILE id="pgf00057" name="AudioEncoder.h" compile="0" resource="0" file="Source/storage/AudioEncoder.h"/>
+      <FILE id="pgf00058" name="AudioFileLoader.cpp" compile="1" resource="0" file="Source/storage/AudioFileLoader.cpp"/>
+      <FILE id="pgf00059" name="AudioFileLoader.h" compile="0" resource="0" file="Source/storage/AudioFileLoader.h"/>
+      <FILE id="pgf00060" name="BatchNormalizer.cpp" compile="1" resource="0" file="Source/storage/BatchNormalizer.cpp"/>
+      <FILE id="pgf00061" name="BatchNormalizer.h" compile="0" resource="0" file="Source/storage/BatchNormalizer.h"/>
+      <FILE id="pgf00062" name="EqSettingsStore.cpp" compile="1" resource="0" file="Source/storage/EqSettingsStore.cpp"/>
+      <FILE id="pgf00063" name="EqSettingsStore.h" compile="0" resource="0" file="Source/storage/EqSettingsStore.h"/>
+      <FILE id="pgf00064" name="ExportManager.cpp" compile="1" resource="0" file="Source/storage/ExportManager.cpp"/>
+      <FILE id="pgf00065" name="ExportManager.h" compile="0" resource="0" file="Source/storage/ExportManager.h"/>
+      <FILE id="pgf00066" name="ExternalTool.cpp" compile="1" resource="0" file="Source/storage/ExternalTool.cpp"/>
+      <FILE id="pgf00067" name="ExternalTool.h" compile="0" resource="0" file="Source/storage/ExternalTool.h"/>
+      <FILE id="pgf00068" name="ProjectStore.cpp" compile="1" resource="0" file="Source/storage/ProjectStore.cpp"/>
+      <FILE id="pgf00069" name="ProjectStore.h" compile="0" resource="0" file="Source/storage/ProjectStore.h"/>
+      <FILE id="pgf00070" name="ToolInstaller.cpp" compile="1" resource="0" file="Source/storage/ToolInstaller.cpp"/>
+      <FILE id="pgf00071" name="ToolInstaller.h" compile="0" resource="0" file="Source/storage/ToolInstaller.h"/>
+      <FILE id="pgf00072" name="YouTubeDownloader.cpp" compile="1" resource="0" file="Source/storage/YouTubeDownloader.cpp"/>
+      <FILE id="pgf00073" name="YouTubeDownloader.h" compile="0" resource="0" file="Source/storage/YouTubeDownloader.h"/>
+      <FILE id="pgf00074" name="YouTubeSearch.cpp" compile="1" resource="0" file="Source/storage/YouTubeSearch.cpp"/>
+      <FILE id="pgf00075" name="YouTubeSearch.h" compile="0" resource="0" file="Source/storage/YouTubeSearch.h"/>
+    </GROUP>
+    <GROUP id="pgg00076" name="types">
+      <FILE id="pgf00077" name="AudioTypes.h" compile="0" resource="0" file="Source/types/AudioTypes.h"/>
+      <FILE id="pgf00078" name="EqTypes.h" compile="0" resource="0" file="Source/types/EqTypes.h"/>
+      <FILE id="pgf00079" name="NormalizeTypes.h" compile="0" resource="0" file="Source/types/NormalizeTypes.h"/>
+      <FILE id="pgf00080" name="Text.h" compile="0" resource="0" file="Source/types/Text.h"/>
+    </GROUP>
+    <GROUP id="pgg00081" name="ui">
+      <FILE id="pgf00082" name="AboutDialog.cpp" compile="1" resource="0" file="Source/ui/AboutDialog.cpp"/>
+      <FILE id="pgf00083" name="AboutDialog.h" compile="0" resource="0" file="Source/ui/AboutDialog.h"/>
+      <FILE id="pgf00084" name="BatchNormalizeDialog.cpp" compile="1" resource="0" file="Source/ui/BatchNormalizeDialog.cpp"/>
+      <FILE id="pgf00085" name="BatchNormalizeDialog.h" compile="0" resource="0" file="Source/ui/BatchNormalizeDialog.h"/>
+      <FILE id="pgf00086" name="BatchTask.cpp" compile="1" resource="0" file="Source/ui/BatchTask.cpp"/>
+      <FILE id="pgf00087" name="BatchTask.h" compile="0" resource="0" file="Source/ui/BatchTask.h"/>
+      <FILE id="pgf00088" name="BottomDockComponent.cpp" compile="1" resource="0" file="Source/ui/BottomDockComponent.cpp"/>
+      <FILE id="pgf00089" name="BottomDockComponent.h" compile="0" resource="0" file="Source/ui/BottomDockComponent.h"/>
+      <FILE id="pgf00090" name="CyanProgressBar.cpp" compile="1" resource="0" file="Source/ui/CyanProgressBar.cpp"/>
+      <FILE id="pgf00091" name="CyanProgressBar.h" compile="0" resource="0" file="Source/ui/CyanProgressBar.h"/>
+      <FILE id="pgf00092" name="DeckButtons.cpp" compile="1" resource="0" file="Source/ui/DeckButtons.cpp"/>
+      <FILE id="pgf00093" name="DeckComponent.cpp" compile="1" resource="0" file="Source/ui/DeckComponent.cpp"/>
+      <FILE id="pgf00094" name="DeckComponent.h" compile="0" resource="0" file="Source/ui/DeckComponent.h"/>
+      <FILE id="pgf00095" name="DeckDragDrop.cpp" compile="1" resource="0" file="Source/ui/DeckDragDrop.cpp"/>
+      <FILE id="pgf00096" name="EqPresetBar.cpp" compile="1" resource="0" file="Source/ui/EqPresetBar.cpp"/>
+      <FILE id="pgf00097" name="EqPresetBar.h" compile="0" resource="0" file="Source/ui/EqPresetBar.h"/>
+      <FILE id="pgf00098" name="EqualizerComponent.cpp" compile="1" resource="0" file="Source/ui/EqualizerComponent.cpp"/>
+      <FILE id="pgf00099" name="EqualizerComponent.h" compile="0" resource="0" file="Source/ui/EqualizerComponent.h"/>
+      <FILE id="pgf00100" name="FilePicker.cpp" compile="1" resource="0" file="Source/ui/FilePicker.cpp"/>
+      <FILE id="pgf00101" name="FilePicker.h" compile="0" resource="0" file="Source/ui/FilePicker.h"/>
+      <FILE id="pgf00102" name="LevelerPanel.cpp" compile="1" resource="0" file="Source/ui/LevelerPanel.cpp"/>
+      <FILE id="pgf00103" name="LevelerPanel.h" compile="0" resource="0" file="Source/ui/LevelerPanel.h"/>
+      <FILE id="pgf00104" name="MasterLevelBar.cpp" compile="1" resource="0" file="Source/ui/MasterLevelBar.cpp"/>
+      <FILE id="pgf00105" name="MasterLevelBar.h" compile="0" resource="0" file="Source/ui/MasterLevelBar.h"/>
+      <FILE id="pgf00106" name="MixerBarComponent.cpp" compile="1" resource="0" file="Source/ui/MixerBarComponent.cpp"/>
+      <FILE id="pgf00107" name="MixerBarComponent.h" compile="0" resource="0" file="Source/ui/MixerBarComponent.h"/>
+      <FILE id="pgf00108" name="MixerRowComponent.cpp" compile="1" resource="0" file="Source/ui/MixerRowComponent.cpp"/>
+      <FILE id="pgf00109" name="MixerRowComponent.h" compile="0" resource="0" file="Source/ui/MixerRowComponent.h"/>
+      <FILE id="pgf00110" name="MixerStripComponent.cpp" compile="1" resource="0" file="Source/ui/MixerStripComponent.cpp"/>
+      <FILE id="pgf00111" name="MixerStripComponent.h" compile="0" resource="0" file="Source/ui/MixerStripComponent.h"/>
+      <FILE id="pgf00112" name="ModernLookAndFeel.cpp" compile="1" resource="0" file="Source/ui/ModernLookAndFeel.cpp"/>
+      <FILE id="pgf00113" name="ModernLookAndFeel.h" compile="0" resource="0" file="Source/ui/ModernLookAndFeel.h"/>
+      <FILE id="pgf00114" name="NormalizeReport.cpp" compile="1" resource="0" file="Source/ui/NormalizeReport.cpp"/>
+      <FILE id="pgf00115" name="NormalizeReport.h" compile="0" resource="0" file="Source/ui/NormalizeReport.h"/>
+      <FILE id="pgf00116" name="PlaylistComponent.cpp" compile="1" resource="0" file="Source/ui/PlaylistComponent.cpp"/>
+      <FILE id="pgf00117" name="PlaylistComponent.h" compile="0" resource="0" file="Source/ui/PlaylistComponent.h"/>
+      <FILE id="pgf00118" name="SaveTracksDialog.cpp" compile="1" resource="0" file="Source/ui/SaveTracksDialog.cpp"/>
+      <FILE id="pgf00119" name="SaveTracksDialog.h" compile="0" resource="0" file="Source/ui/SaveTracksDialog.h"/>
+      <FILE id="pgf00120" name="ToolInstallHint.h" compile="0" resource="0" file="Source/ui/ToolInstallHint.h"/>
+      <FILE id="pgf00121" name="TrackSplitterDialog.cpp" compile="1" resource="0" file="Source/ui/TrackSplitterDialog.cpp"/>
+      <FILE id="pgf00122" name="TrackSplitterDialog.h" compile="0" resource="0" file="Source/ui/TrackSplitterDialog.h"/>
+      <FILE id="pgf00123" name="TransportButton.cpp" compile="1" resource="0" file="Source/ui/TransportButton.cpp"/>
+      <FILE id="pgf00124" name="TransportButton.h" compile="0" resource="0" file="Source/ui/TransportButton.h"/>
+      <FILE id="pgf00125" name="UpdateBannerComponent.cpp" compile="1" resource="0" file="Source/ui/UpdateBannerComponent.cpp"/>
+      <FILE id="pgf00126" name="UpdateBannerComponent.h" compile="0" resource="0" file="Source/ui/UpdateBannerComponent.h"/>
+      <FILE id="pgf00127" name="UpdateDialog.cpp" compile="1" resource="0" file="Source/ui/UpdateDialog.cpp"/>
+      <FILE id="pgf00128" name="UpdateDialog.h" compile="0" resource="0" file="Source/ui/UpdateDialog.h"/>
+      <FILE id="pgf00129" name="WaveformEditorComponent.cpp" compile="1" resource="0" file="Source/ui/WaveformEditorComponent.cpp"/>
+      <FILE id="pgf00130" name="WaveformEditorComponent.h" compile="0" resource="0" file="Source/ui/WaveformEditorComponent.h"/>
+      <FILE id="pgf00131" name="YouTubePanelTools.cpp" compile="1" resource="0" file="Source/ui/YouTubePanelTools.cpp"/>
+      <FILE id="pgf00132" name="YouTubeSearchPanel.cpp" compile="1" resource="0" file="Source/ui/YouTubeSearchPanel.cpp"/>
+      <FILE id="pgf00133" name="YouTubeSearchPanel.h" compile="0" resource="0" file="Source/ui/YouTubeSearchPanel.h"/>
+      <FILE id="pgf00134" name="YouTubeSearchTask.cpp" compile="1" resource="0" file="Source/ui/YouTubeSearchTask.cpp"/>
+      <FILE id="pgf00135" name="YouTubeSearchTask.h" compile="0" resource="0" file="Source/ui/YouTubeSearchTask.h"/>
+      <FILE id="pgf00136" name="YouTubeTask.cpp" compile="1" resource="0" file="Source/ui/YouTubeTask.cpp"/>
+      <FILE id="pgf00137" name="YouTubeTask.h" compile="0" resource="0" file="Source/ui/YouTubeTask.h"/>
+    </GROUP>
+    <GROUP id="pgg00138" name="updater">
+      <FILE id="pgf00139" name="AppVersion.h" compile="0" resource="0" file="Source/updater/AppVersion.h"/>
+      <FILE id="pgf00140" name="GitHubReleaseClient.cpp" compile="1" resource="0" file="Source/updater/GitHubReleaseClient.cpp"/>
+      <FILE id="pgf00141" name="GitHubReleaseClient.h" compile="0" resource="0" file="Source/updater/GitHubReleaseClient.h"/>
+      <FILE id="pgf00142" name="UpdateChecker.cpp" compile="1" resource="0" file="Source/updater/UpdateChecker.cpp"/>
+      <FILE id="pgf00143" name="UpdateChecker.h" compile="0" resource="0" file="Source/updater/UpdateChecker.h"/>
+      <FILE id="pgf00144" name="UpdateConfig.h" compile="0" resource="0" file="Source/updater/UpdateConfig.h"/>
+      <FILE id="pgf00145" name="UpdateDownloader.cpp" compile="1" resource="0" file="Source/updater/UpdateDownloader.cpp"/>
+      <FILE id="pgf00146" name="UpdateDownloader.h" compile="0" resource="0" file="Source/updater/UpdateDownloader.h"/>
+      <FILE id="pgf00147" name="UpdateInfo.cpp" compile="1" resource="0" file="Source/updater/UpdateInfo.cpp"/>
+      <FILE id="pgf00148" name="UpdateInfo.h" compile="0" resource="0" file="Source/updater/UpdateInfo.h"/>
+      <FILE id="pgf00149" name="UpdateInstaller.cpp" compile="1" resource="0" file="Source/updater/UpdateInstaller.cpp"/>
+      <FILE id="pgf00150" name="UpdateInstaller.h" compile="0" resource="0" file="Source/updater/UpdateInstaller.h"/>
+      <FILE id="pgf00151" name="Version.cpp" compile="1" resource="0" file="Source/updater/Version.cpp"/>
+      <FILE id="pgf00152" name="Version.h" compile="0" resource="0" file="Source/updater/Version.h"/>
+    </GROUP>
+    <GROUP id="pgg00153" name="root">
+      <FILE id="pgf00154" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+    </GROUP>
+    <GROUP id="pgassets" name="assets">
+      <FILE id="pgf00155" name="logobadge.png" compile="0" resource="1" file="assets/logobadge.png"/>
+      <FILE id="pgf00156" name="logohero.jpeg" compile="0" resource="1" file="assets/logohero.jpeg"/>
+      <FILE id="pgf00157" name="logo-48.png" compile="0" resource="0" file="assets/logo-48.png"/>
+      <FILE id="pgf00158" name="logo-512.png" compile="0" resource="0" file="assets/logo-512.png"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <ANDROIDSTUDIO targetFolder="android" androidMinimumSDK="26" smallIcon="pgf00157" bigIcon="pgf00158">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug"/>
+        <CONFIGURATION isDebug="0" name="Release"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="JUCE/modules"/>
+      </MODULEPATHS>
+    </ANDROIDSTUDIO>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+  </MODULES>
+  <JUCEOPTIONS JUCE_USE_MP3AUDIOFORMAT="1" JUCE_USE_OGGVORBISAUDIOFORMAT="1" JUCE_USE_FLACAUDIOFORMAT="1" JUCE_USE_ANDROID_OBOE="0"/>
+  <LIVE_SETTINGS>
+    <OSX/>
+  </LIVE_SETTINGS>
+</JUCERPROJECT>

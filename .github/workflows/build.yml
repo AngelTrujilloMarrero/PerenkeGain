@@ -36,3 +36,24 @@ jobs:
       - uses: lukka/get-cmake@latest
       - run: cmake --preset windows-release
       - run: cmake --build --preset windows-release
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: JUCE
+        run: git clone --depth 1 --branch 8.0.10 https://github.com/juce-framework/JUCE.git JUCE
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          version: 17
+      - uses: android-actions/setup-android@v3
+      - name: SDK
+        run: |
+          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0" "ndk;28.1.13356709" "cmake;3.22.1"
+          yes | sdkmanager --licenses
+      - name: Assemble
+        run: cd android && ./gradlew assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PerenkeGain-android-debug
+          path: android/app/build/outputs/apk/debug/*.apk

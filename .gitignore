@@ -12,7 +12,14 @@ PerenkeGain_artefacts/
 
 # JUCE
 JuceLibraryCode/
+!/JuceLibraryCode/
 *.jucer.bak
+
+# Android (generado por Projucer; local.properties lleva rutas locales)
+android/local.properties
+android/.gradle/
+android/app/build/
+android/build/
 
 # SQLite / temporales audio
 *.db
