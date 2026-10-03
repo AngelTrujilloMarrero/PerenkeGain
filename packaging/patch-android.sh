@@ -6,6 +6,7 @@ import re
 
 PROJ = "android/build.gradle"
 APP = "android/app/build.gradle"
+MANIFEST = "android/app/src/main/AndroidManifest.xml"
 
 
 def sub_once(path, pattern, repl):
@@ -63,5 +64,9 @@ if "release_ {\n            ndk" not in app:
              r"\1            ndk {\n"
              r"                abiFilters \"arm64-v8a\"\n"
              r"            }\n")
+
+ensure(MANIFEST, "com.perenkegain.MainActivity",
+       r'android:name="com\.rmsl\.juce\.JuceActivity"',
+       r'android:name="com.perenkegain.MainActivity"')
 print("parche android completo")
 EOF

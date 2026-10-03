@@ -34,9 +34,7 @@ EditorRootComponent::EditorRootComponent()
   progressPct.setColour(juce::Label::textColourId, juce::Colour(0xFF7CFF3C));
   progressPct.setJustificationType(juce::Justification::centred);
   progressPct.setInterceptsMouseClicks(false, false);
-#if !JUCE_ANDROID
   addAndMakeVisible(search);
-#endif
   addAndMakeVisible(playlistComp);
   addAndMakeVisible(dock);
   addAndMakeVisible(addB);
