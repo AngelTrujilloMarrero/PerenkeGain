@@ -12,9 +12,13 @@ Componentes de terceros incluidos en el APK de Android
   Certificados raiz para TLS dentro de Python en Android
   (`SSL_CERT_FILE`).
 
-- ffmpeg-kit audio-lgpl 6.0, paquete `com.arthenica:ffmpeg-kit-audio-lgpl`
-  (https://github.com/arthenica/ffmpeg-kit) — licencia LGPL-3.0.
-  Usado solo para convertir el audio descargado a MP3 (libmp3lame).
-  Conforme a la LGPL: el AAR se enlaza como biblioteca dinamica y
-  puede sustituirse por otra version compatible; el codigo fuente de
-  ffmpeg-kit esta disponible en su repositorio publico.
+- ffmpeg-kit audio 8.1.9, paquete
+  `dev.ffmpegkit-maintained:ffmpeg-kit-audio`
+  (https://github.com/ffmpegkit-maintained/ffmpeg) — licencia LGPL-3.0.
+  Continuacion mantenida del ffmpeg-kit original de Arthenica (retirado
+  en 2025; sus binarios salieron de Maven Central): misma API
+  (`com.arthenica.ffmpegkit`), mismo nombre de artefacto, solo cambia
+  el groupId. Usado solo para convertir el audio descargado a MP3
+  (libmp3lame). Conforme a la LGPL: el AAR se enlaza como biblioteca
+  dinamica y puede sustituirse por otra version compatible; el codigo
+  fuente esta disponible en su repositorio publico.

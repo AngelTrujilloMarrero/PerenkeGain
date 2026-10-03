@@ -47,10 +47,10 @@ ensure(APP, 'version "3.12"',
        "            pip {\n                install \"yt-dlp\"\n"
        "                install \"certifi\"\n            }\n        }\n\\1")
 
-ensure(APP, "ffmpeg-kit-audio-lgpl",
+ensure(APP, "ffmpeg-kit-audio",
        r"(    dependencies \{\n)(    \})",
        r"\1        implementation "
-       "'com.arthenica:ffmpeg-kit-audio-lgpl:6.0'\n\2")
+       "'dev.ffmpegkit-maintained:ffmpeg-kit-audio:8.1.9'\n\2")
 
 sub_once(APP,
          r'abiFilters "armeabi-v7a", "x86", "arm64-v8a", "x86_64"',

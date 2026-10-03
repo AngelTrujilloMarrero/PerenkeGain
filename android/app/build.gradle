@@ -118,7 +118,7 @@ android {
     }
 
     dependencies {
-        implementation 'com.arthenica:ffmpeg-kit-audio-lgpl:6.0'
+        implementation 'dev.ffmpegkit-maintained:ffmpeg-kit-audio:8.1.9'
     }
 
 
