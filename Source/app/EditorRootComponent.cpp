@@ -192,7 +192,7 @@ void EditorRootComponent::layoutRows() {
   cyan.setBounds(cyanRow);
 #if JUCE_ANDROID
   if (!dockToggled)
-    dockVisible = false;
+    dockVisible = true;
 #else
   if (!dockToggled)
     dockVisible = H >= 900;
