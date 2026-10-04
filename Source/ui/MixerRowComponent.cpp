@@ -12,7 +12,7 @@ MixerRowComponent::MixerRowComponent() {
     };
     addAndMakeVisible(*strips[i]);
   }
-  startTimerHz(15);
+  startTimerHz(8); // medidores: 8 Hz basta (cada tick = 1 render completo)
 }
 
 void MixerRowComponent::resized() {

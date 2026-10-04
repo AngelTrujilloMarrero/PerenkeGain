@@ -42,7 +42,7 @@ LoadReadout::LoadReadout(AudioEngine &e) : engine(e) {
   setInterceptsMouseClicks(false, false);
   setOpaque(true);
   setText(PG_T("CPU --%  AUD --%"), juce::dontSendNotification);
-  // startTimerHz(1); // diag
+  startTimerHz(1);
 }
 
 void LoadReadout::timerCallback() {

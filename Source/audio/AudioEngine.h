@@ -46,8 +46,19 @@ public:
   void setActiveDeck(int d);
 
   BandLevelAnalyzer &bandAnalyzer() { return bands; }
-  // Carga del hilo de audio (0..1): fraccion del presupuesto del callback usada.
-  double audioLoad() const { return devices.getCpuUsage(); }
+  // Algun deck reproduciendo (transporte en marcha).
+  bool anyDeckPlaying() const {
+    for (int d = 0; d < kDecks; ++d)
+      if (isPlaying(d))
+        return true;
+    return false;
+  }
+  // Carga del hilo de audio (0..1): fraccion del presupuesto del callback
+  // usada, solo cuando hay reproduccion real. En pausa el callback corre
+  // igual (silencio) y su medida no significa nada, asi que devuelve 0.
+  double audioLoad() const {
+    return anyDeckPlaying() ? devices.getCpuUsage() : 0.0;
+  }
   void setEqState(const Eq31State &s) { eq.setState(s); }
   void setLevelerParams(const LevelerParams &p) { leveler.setParams(p); }
   LevelerParams getLevelerParams() const { return leveler.getParams(); }
