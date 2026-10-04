@@ -37,10 +37,12 @@ double processCpuSeconds() {
 LoadReadout::LoadReadout(AudioEngine &e) : engine(e) {
   setFont(juce::Font(juce::FontOptions(10.0f, juce::Font::bold)));
   setColour(juce::Label::textColourId, juce::Colour(0xFF7CFF3C));
+  setColour(juce::Label::backgroundColourId, juce::Colour(0xFF0B0C10));
   setJustificationType(juce::Justification::centred);
   setInterceptsMouseClicks(false, false);
+  setOpaque(true);
   setText(PG_T("CPU --%  AUD --%"), juce::dontSendNotification);
-  startTimerHz(2);
+  startTimerHz(1);
 }
 
 void LoadReadout::timerCallback() {
