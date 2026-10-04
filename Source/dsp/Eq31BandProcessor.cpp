@@ -32,9 +32,8 @@ void Eq31BandProcessor::updateCoefficients() {
       float eff = b.enabled ? b.gainDb * b.intensity : kMuteDb;
       if (state.bypass)
         eff = 0.0f;
-      chFilters[i].coefficients =
-          juce::dsp::IIR::Coefficients<float>::makePeakFilter(
-              sampleRate, kEq31Freqs[i], kQ, juce::Decibels::decibelsToGain(eff));
+      chFilters[i].setPeak(sampleRate, kEq31Freqs[i], kQ,
+                           juce::Decibels::decibelsToGain(eff));
     }
   }
 }
@@ -52,7 +51,7 @@ void Eq31BandProcessor::process(juce::AudioBuffer<float> &buf) {
     for (int i = 0; i < n; ++i) {
       float x = d[i];
       for (auto &f : filters[(size_t)c])
-        x = f.processSample(x);
+        x = f.process(x);
       d[i] = x * master;
     }
   }

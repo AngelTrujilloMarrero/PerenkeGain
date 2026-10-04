@@ -9,15 +9,12 @@ void BandLevelAnalyzer::prepare(double sampleRate) {
   if (rate == sampleRate)
     return;
   rate = sampleRate;
-  juce::dsp::ProcessSpec spec{sampleRate, 512, 1}; // un estado por filtro
   for (int b = 0; b < kBands; ++b) {
     // Banda de 1/3 de octava: Q ≈ 1 / (2^(1/6) - 2^(-1/6)) ≈ 4.3
-    auto coef = juce::dsp::IIR::Coefficients<float>::makeBandPass(
-        sampleRate, kEq31Freqs[(size_t)b], 4.3);
     for (int c = 0; c < 2; ++c) {
       auto &f = filters[(size_t)c][(size_t)b];
-      f.coefficients = coef;
-      f.prepare(spec);
+      f.reset();
+      f.setBandPass(sampleRate, kEq31Freqs[(size_t)b], 4.3);
     }
     levels[(size_t)b].store(-60.0f, std::memory_order_relaxed);
   }
@@ -46,7 +43,7 @@ void BandLevelAnalyzer::process(const float *const *in, int numChannels,
       auto &f = filters[(size_t)c][(size_t)b];
       double sumSq = 0.0;
       for (int i = 0; i < numSamples; ++i) {
-        double s = (double)f.processSample(in[c][i]);
+        double s = (double)f.process(in[c][i]);
         sumSq += s * s; // energía (RMS), no media de la señal
       }
       acc[(size_t)b] += sumSq / (double)numSamples;

@@ -39,6 +39,7 @@
     <GROUP id="pgg00028" name="dsp">
       <FILE id="pgf00029" name="BandLevelAnalyzer.cpp" compile="1" resource="0" file="Source/dsp/BandLevelAnalyzer.cpp"/>
       <FILE id="pgf00030" name="BandLevelAnalyzer.h" compile="0" resource="0" file="Source/dsp/BandLevelAnalyzer.h"/>
+      <FILE id="pgfbq001" name="Biquad.h" compile="0" resource="0" file="Source/dsp/Biquad.h"/>
       <FILE id="pgf00031" name="DeClicker.cpp" compile="1" resource="0" file="Source/dsp/DeClicker.cpp"/>
       <FILE id="pgf00032" name="DeClicker.h" compile="0" resource="0" file="Source/dsp/DeClicker.h"/>
       <FILE id="pgf00033" name="DeHiss.cpp" compile="1" resource="0" file="Source/dsp/DeHiss.cpp"/>

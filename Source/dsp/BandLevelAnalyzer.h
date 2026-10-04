@@ -2,6 +2,7 @@
 #include <JuceHeader.h>
 #include <array>
 #include <atomic>
+#include "dsp/Biquad.h"
 #include "types/EqTypes.h"
 
 namespace pg {
@@ -18,7 +19,7 @@ public:
   float masterLevelDb(int channel) const; // nivel general por canal (L/R)
 
 private:
-  using Filter = juce::dsp::IIR::Filter<float>;
+  using Filter = Biquad;
   std::array<std::array<Filter, kBands>, 2> filters; // [canal][banda]
   std::array<std::atomic<float>, kBands> levels{};
   std::array<std::atomic<float>, 2> masterLv{};

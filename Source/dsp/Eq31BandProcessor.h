@@ -1,6 +1,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include <array>
+#include "dsp/Biquad.h"
 #include "types/EqTypes.h"
 
 namespace pg {
@@ -16,7 +17,7 @@ public:
 
 private:
   static constexpr int kMaxChannels = 2;
-  using Filter = juce::dsp::IIR::Filter<float>;
+  using Filter = Biquad;
   Eq31State state{};
   std::array<std::array<Filter, 31>, kMaxChannels> filters; // [canal][banda]
   double sampleRate = 44100.0;
