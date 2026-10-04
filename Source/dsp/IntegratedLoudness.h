@@ -11,9 +11,9 @@ public:
   // LUFS integrado (silencio -> -100). Suma energias por canal (G=1.0).
   static float analyze(const juce::AudioBuffer<float> &buf, double sampleRate);
 
-  // Conversion a escala mp3gain (89 dB == -14 LUFS).
-  static constexpr float toMp3GainDb(float lufs) { return lufs + 103.0f; }
-  static constexpr float fromMp3GainDb(float db) { return db - 103.0f; }
+  // Conversion a escala mp3gain/ReplayGain (89 dB == -18 LUFS, spec RG 2.0).
+  static constexpr float toMp3GainDb(float lufs) { return lufs + 107.0f; }
+  static constexpr float fromMp3GainDb(float db) { return db - 107.0f; }
 };
 
 } // namespace pg

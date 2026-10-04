@@ -8,7 +8,8 @@ namespace pg {
 // calcula aparte a partir del objetivo.
 struct NormalizeAnalysis {
   juce::File file;
-  float measuredDb = 0.0f; // volumen medido (escala mp3gain, 89 dB = -14 dBFS)
+  float measuredDb = 0.0f; // volumen medido (escala mp3gain/ReplayGain,
+// 89 dB == -18 LUFS segun spec ReplayGain 2.0)
   float peakDb = -100.0f;  // pico en dBFS
   double durationSec = 0.0; // para ponderar la ganancia de album por tiempo
   bool ok = false;
@@ -20,7 +21,7 @@ struct NormalizeAnalysis {
 class BatchNormalizer {
 public:
   static constexpr float kReferenceDb = 89.0f;
-  static constexpr float kReferenceDbFs = -14.0f;
+  static constexpr float kReferenceDbFs = -18.0f;
 
   // Fichero suelto o todos los audios de una carpeta (recursivo).
   static std::vector<juce::File> collectFiles(const juce::File &source,
