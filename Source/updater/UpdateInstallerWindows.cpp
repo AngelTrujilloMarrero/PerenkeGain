@@ -2,6 +2,7 @@
 #include <cstdlib>
 
 #if JUCE_WINDOWS
+#include <windows.h>
 
 namespace pg::updater::windows {
 namespace {
