@@ -3,42 +3,38 @@
 namespace pg {
 namespace {
 
-// En Android el selector devuelve URIs content:// (Storage Access Framework),
-// que no son ficheros locales y getResults() descarta. Se copian a un fichero
-// temporal para poder abrirlos con AudioFormatManager. En escritorio es identidad.
+// En Android el selector devuelve URIs content:// (Storage Access Framework).
+// JUCE las resuelve a una ruta /storage que la app no puede abrir (scoped
+// storage), asi que copiamos el contenido a un fichero temporal propio usando
+// el ContentResolver (WebInputStream), que si tiene el permiso del selector.
+// En escritorio es identidad.
 juce::File importPickedUrl(const juce::URL &url) {
 #if JUCE_ANDROID
-  juce::Logger::writeToLog("PG: pick url scheme=" + url.getScheme() +
-                           " local=" +
-                           juce::String(url.isLocalFile() ? 1 : 0));
-  if (url.isLocalFile())
-    return url.getLocalFile();
-  if (url.getScheme() == "content") {
-    auto doc = juce::AndroidDocument::fromDocument(url);
-    juce::Logger::writeToLog("PG: pick android doc valid=" +
-                             juce::String(doc.hasValue() ? 1 : 0));
-    if (!doc.hasValue())
-      return {};
-    auto in = doc.createInputStream();
-    if (in == nullptr)
-      return {};
-    auto dir = juce::File::getSpecialLocation(juce::File::tempDirectory)
-                   .getChildFile("imports");
-    if (!dir.isDirectory() && !dir.createDirectory())
-      return {};
-    const juce::String name = doc.getInfo().getName();
-    juce::File dest =
-        dir.getChildFile(name.isNotEmpty() ? name : juce::String("audio"));
-    dest.deleteFile();
-    if (auto out = dest.createOutputStream()) {
-      out->writeFromInputStream(*in, -1);
-      out->flush();
-    }
-    juce::Logger::writeToLog("PG: pick imported " + dest.getFullPathName() +
-                             " size=" + juce::String(dest.getSize()));
-    return (dest.existsAsFile() && dest.getSize() > 0) ? dest : juce::File{};
+  if (url.getScheme() != "content")
+    return url.isLocalFile() ? url.getLocalFile() : juce::File{};
+
+  juce::WebInputStream in(url, false);
+  if (!in.connect(nullptr))
+    return {};
+
+  auto dir = juce::File::getSpecialLocation(juce::File::tempDirectory)
+                 .getChildFile("imports");
+  if (!dir.isDirectory() && !dir.createDirectory())
+    return {};
+
+  juce::String name = url.getFileName();
+  if (name.isEmpty())
+    name = "audio";
+  juce::File dest = dir.getChildFile(name);
+  dest.deleteFile();
+  if (auto out = dest.createOutputStream()) {
+    out->writeFromInputStream(in, -1);
+    out->flush();
   }
-  return {};
+  if (!dest.existsAsFile() || dest.getSize() == 0)
+    return {};
+  juce::Logger::writeToLog("PG: imported " + dest.getFullPathName());
+  return dest;
 #else
   return url.isLocalFile() ? url.getLocalFile() : juce::File{};
 #endif
