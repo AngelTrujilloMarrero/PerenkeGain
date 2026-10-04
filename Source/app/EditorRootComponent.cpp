@@ -217,10 +217,14 @@ void EditorRootComponent::setDockVisible(bool v) {
   layoutRows();
 }
 
-void EditorRootComponent::resized() { layoutRows(); }
+void EditorRootComponent::resized() {
+  juce::Logger::writeToLog("PG resized=" + getBounds().toString());
+  layoutRows();
+}
 
 void EditorRootComponent::paint(juce::Graphics &g) {
   g.fillAll(juce::Colour(0xFF0B0C10));
+  juce::Logger::writeToLog("PG clip=" + g.getClipBounds().toString());
 }
 
 } // namespace pg
