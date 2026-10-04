@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(PerenkeGain VERSION 0.9.2 LANGUAGES C CXX)
+project(PerenkeGain VERSION 0.9.3 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -71,6 +71,7 @@ target_sources(PerenkeGain PRIVATE
   Source/dsp/DeHiss.cpp
   Source/dsp/Eq31BandProcessor.cpp
   Source/dsp/LoudnessMeterRT.cpp
+  Source/dsp/IntegratedLoudness.cpp
   Source/dsp/LoudnessAnalyzer.cpp
   Source/dsp/Leveler.cpp
   Source/dsp/DspChain.cpp

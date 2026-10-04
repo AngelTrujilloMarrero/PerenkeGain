@@ -35,6 +35,7 @@ NormalizeAnalysis BatchNormalizer::analyzeFile(const juce::File &in) {
 
   const float rmsDb = LoudnessAnalyzer::rmsDbF(buf, sr);
   a.measuredDb = rmsDb + (kReferenceDb - kReferenceDbFs);
+  a.durationSec = sr > 0.0 ? (double)buf.getNumSamples() / sr : 0.0;
 
   float peak = 0.0f;
   for (int ch = 0; ch < buf.getNumChannels(); ++ch) {
@@ -67,18 +68,19 @@ bool BatchNormalizer::writeNormalized(const juce::File &in, float gainDb,
 
 float BatchNormalizer::albumGainDb(
     const std::vector<NormalizeAnalysis> &analyses, float targetDb) {
-  double meanSquare = 0.0;
-  bool any = false;
+  double weightedEnergy = 0.0;
+  double totalDur = 0.0;
   for (const auto &a : analyses) {
     if (!a.ok)
       continue;
+    const double dur = a.durationSec > 0.0 ? a.durationSec : 1.0;
     const double rmsDb = a.measuredDb - (kReferenceDb - kReferenceDbFs);
-    meanSquare += std::pow(10.0, rmsDb / 10.0);
-    any = true;
+    weightedEnergy += dur * std::pow(10.0, rmsDb / 10.0);
+    totalDur += dur;
   }
-  if (!any || meanSquare <= 0.0)
+  if (totalDur <= 0.0 || weightedEnergy <= 0.0)
     return 0.0f;
-  const double albumRms = 10.0 * std::log10(meanSquare);
+  const double albumRms = 10.0 * std::log10(weightedEnergy / totalDur);
   const double albumMeasured = albumRms + (kReferenceDb - kReferenceDbFs);
   return targetDb - (float)albumMeasured;
 }

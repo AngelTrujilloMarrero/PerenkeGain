@@ -10,6 +10,7 @@ struct NormalizeAnalysis {
   juce::File file;
   float measuredDb = 0.0f; // volumen medido (escala mp3gain, 89 dB = -14 dBFS)
   float peakDb = -100.0f;  // pico en dBFS
+  double durationSec = 0.0; // para ponderar la ganancia de album por tiempo
   bool ok = false;
 };
 

@@ -4,12 +4,13 @@
 
 namespace pg {
 
-// Analisis de sonoridad offline (aprox. ReplayGain): aplica ponderacion K al
-// audio, lo mezcla a mono y devuelve el RMS en dBFS. Sirve para normalizar
-// por volumen percibido, no por pico.
+// Analisis de sonoridad offline (BS.1770 integrado con gate): delega en
+// IntegratedLoudness. Suma energias por canal y descarta silencios, por eso
+// se aproxima a mp3gain/ReplayGain mejor que un RMS global.
+// Devuelve LUFS integrado en dBFS (silencio -> -100).
 class LoudnessAnalyzer {
 public:
-  // RMS K-weighted en dBFS (silencio -> -100).
+  // LUFS integrado (silencio -> -100). Nombre historico rmsDbF.
   static float rmsDbF(const juce::AudioBuffer<float> &buf, double sampleRate);
 };
 
