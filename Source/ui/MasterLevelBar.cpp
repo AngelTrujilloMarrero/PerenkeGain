@@ -4,7 +4,7 @@ namespace pg {
 
 MasterLevelBar::MasterLevelBar() {
   setOpaque(true);
-  startTimerHz(15);
+  startTimerHz(1);
 }
 
 void MasterLevelBar::timerCallback() {
