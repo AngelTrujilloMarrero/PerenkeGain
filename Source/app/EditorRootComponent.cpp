@@ -221,6 +221,7 @@ void EditorRootComponent::resized() { layoutRows(); }
 
 void EditorRootComponent::paint(juce::Graphics &g) {
   g.fillAll(juce::Colour(0xFF0B0C10));
+  juce::Logger::writeToLog("PG clip=" + g.getClipBounds().toString());
 }
 
 } // namespace pg
