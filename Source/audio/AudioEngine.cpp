@@ -9,8 +9,7 @@ AudioEngine::AudioEngine() {
     mixer.addInputSource(&decks[(size_t)i].transport, false);
 
   auto err = devices.initialiseWithDefaultDevices(0, 2);
-  juce::Logger::writeToLog(
-      "PG: audio init -> " + (err.isEmpty() ? juce::String("OK") : err));
+  juce::ignoreUnused(err);
 
   // El player empuja la mezcla -> dispositivo en cada callback de audio.
   player.setSource(&mixer);
@@ -43,11 +42,6 @@ void AudioEngine::loadFile(int deck, const juce::File &f) {
     d.file = f;
     d.reader = std::make_unique<juce::AudioFormatReaderSource>(r, true);
     d.transport.setSource(d.reader.get(), 0, nullptr, r->sampleRate);
-    juce::Logger::writeToLog("PG: loadFile deck " + juce::String(deck) +
-                             " OK " + f.getFullPathName());
-  } else {
-    juce::Logger::writeToLog("PG: loadFile deck " + juce::String(deck) +
-                             " FAIL " + f.getFullPathName());
   }
 }
 
@@ -62,9 +56,6 @@ void AudioEngine::clearDeck(int deck) {
 }
 
 void AudioEngine::play(int deck) {
-  juce::Logger::writeToLog("PG: play deck " + juce::String(deck) +
-                           " hasFile=" +
-                           juce::String(hasFile(deck) ? 1 : 0));
   if (deck >= 0 && deck < kDecks && hasFile(deck))
     decks[(size_t)deck].transport.start();
 }

@@ -33,7 +33,6 @@ juce::File importPickedUrl(const juce::URL &url) {
   }
   if (!dest.existsAsFile() || dest.getSize() == 0)
     return {};
-  juce::Logger::writeToLog("PG: imported " + dest.getFullPathName());
   return dest;
 #else
   return url.isLocalFile() ? url.getLocalFile() : juce::File{};

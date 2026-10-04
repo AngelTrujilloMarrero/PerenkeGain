@@ -10,8 +10,7 @@ namespace pg {
 void YouTubeSearchPanel::refreshToolStatus() {
 #if JUCE_ANDROID
   installB.setVisible(false);
-  setStatus(PG_T("Build ") + juce::String(__DATE__) + " " + __TIME__ + " - " +
-            outDir.getFullPathName());
+  setStatus(PG_T("Listo. Carpeta: ") + outDir.getFullPathName());
   return;
 #else
   const bool pending = !ToolInstaller::ready();
