@@ -15,6 +15,8 @@ public:
   void prepare(double sampleRate);
   void process(const float *const *channels, int numChannels,
                int numSamples);
+  // Sin audio: hace caer los medidores sin gastar en los 31 filtros por banda.
+  void processSilence(int numSamples);
   float levelDb(int band) const;        // -60..0 dB (lectura de la UI)
   float masterLevelDb(int channel) const; // nivel general por canal (L/R)
 

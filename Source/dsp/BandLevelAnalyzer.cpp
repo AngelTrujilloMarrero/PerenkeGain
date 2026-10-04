@@ -67,6 +67,22 @@ void BandLevelAnalyzer::process(const float *const *in, int numChannels,
   }
 }
 
+void BandLevelAnalyzer::processSilence(int numSamples) {
+  if (rate <= 0.0 || numSamples <= 0)
+    return;
+  const float decay = 45.0f * (float)numSamples / (float)rate;
+  for (auto &l : levels) {
+    const float prev = l.load(std::memory_order_relaxed);
+    l.store(juce::jmax(-60.0f, prev - decay), std::memory_order_relaxed);
+  }
+  for (auto &m : masterLv)
+    m.store(-60.0f, std::memory_order_relaxed);
+  // Limpia el estado de los filtros para no arrastrarlo al reanudar.
+  for (auto &ch : filters)
+    for (auto &f : ch)
+      f.reset();
+}
+
 float BandLevelAnalyzer::masterLevelDb(int channel) const {
   if (channel < 0 || channel >= 2)
     return -60.0f;

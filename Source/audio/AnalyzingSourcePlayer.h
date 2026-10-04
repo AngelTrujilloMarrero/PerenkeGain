@@ -1,6 +1,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include <atomic>
+#include <cmath>
 #include "dsp/BandLevelAnalyzer.h"
 #include "dsp/Eq31BandProcessor.h"
 #include "dsp/Leveler.h"
@@ -40,22 +41,49 @@ public:
     juce::AudioSourcePlayer::audioDeviceIOCallbackWithContext(
         inputChannelData, totalNumInputChannels, outputChannelData,
         totalNumOutputChannels, numSamples, context);
-    // EQ + nivelador + master sobre la salida (antes de medir).
-    if (totalNumOutputChannels > 0 &&
-        (eqProcessor != nullptr || leveler != nullptr ||
-         masterGain != nullptr)) {
+
+    if (totalNumOutputChannels <= 0) {
+      if (analyzer != nullptr)
+        analyzer->processSilence(numSamples);
+      return;
+    }
+
+    // Sin nada sonando no gastamos CPU en el EQ ni en el analizador (31
+    // biquads por banda y canal): solo dejamos caer los medidores.
+    bool silent = true;
+    for (int c = 0; c < totalNumOutputChannels && silent; ++c) {
+      const float *d = outputChannelData[c];
+      if (d == nullptr)
+        continue;
+      for (int i = 0; i < numSamples; ++i)
+        if (std::abs(d[i]) > 1.0e-6f) {
+          silent = false;
+          break;
+        }
+    }
+
+    if (silent) {
       juce::AudioBuffer<float> buf(outputChannelData, totalNumOutputChannels,
                                    numSamples);
       if (eqProcessor != nullptr)
-        eqProcessor->process(buf);
+        eqProcessor->resetState();
       if (leveler != nullptr)
         leveler->process(buf);
-      if (masterGain != nullptr)
-        buf.applyGain(juce::jlimit(0.0f, 1.0f, masterGain->load()));
+      if (analyzer != nullptr)
+        analyzer->processSilence(numSamples);
+      return;
     }
+
+    juce::AudioBuffer<float> buf(outputChannelData, totalNumOutputChannels,
+                                 numSamples);
+    if (eqProcessor != nullptr)
+      eqProcessor->process(buf);
+    if (leveler != nullptr)
+      leveler->process(buf);
+    if (masterGain != nullptr)
+      buf.applyGain(juce::jlimit(0.0f, 1.0f, masterGain->load()));
     if (analyzer != nullptr)
-      analyzer->process(outputChannelData, totalNumOutputChannels,
-                        numSamples);
+      analyzer->process(outputChannelData, totalNumOutputChannels, numSamples);
   }
 };
 

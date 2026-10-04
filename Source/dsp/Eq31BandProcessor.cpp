@@ -38,6 +38,15 @@ void Eq31BandProcessor::updateCoefficients() {
   }
 }
 
+void Eq31BandProcessor::resetState() {
+  const juce::SpinLock::ScopedTryLockType sl(lock);
+  if (!sl.isLocked())
+    return;
+  for (auto &chFilters : filters)
+    for (auto &f : chFilters)
+      f.reset();
+}
+
 void Eq31BandProcessor::process(juce::AudioBuffer<float> &buf) {
   // TryLock: si la UI está actualizando, saltamos este bloque (no bloquea audio).
   const juce::SpinLock::ScopedTryLockType sl(lock);

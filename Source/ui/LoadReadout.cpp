@@ -40,7 +40,7 @@ LoadReadout::LoadReadout(AudioEngine &e) : engine(e) {
   setJustificationType(juce::Justification::centred);
   setInterceptsMouseClicks(false, false);
   setText(PG_T("CPU --%  AUD --%"), juce::dontSendNotification);
-  startTimerHz(2);
+  startTimerHz(1);
 }
 
 void LoadReadout::timerCallback() {

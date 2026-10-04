@@ -14,6 +14,8 @@ public:
   void prepare(double sr, int ch, int blockSize);
   void setState(const Eq31State &s);
   void process(juce::AudioBuffer<float> &buf);
+  // Limpia el estado de los filtros (al pasar a silencio).
+  void resetState();
 
 private:
   static constexpr int kMaxChannels = 2;
