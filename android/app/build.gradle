@@ -67,8 +67,8 @@ android {
             }
             externalNativeBuild {
                 cmake {
-                    cFlags    "-O0"
-                    cppFlags  "-O0"
+                    cFlags    "-O2"
+                    cppFlags  "-O2"
                     arguments "-DJUCE_BUILD_CONFIGURATION=DEBUG"
                 }
             }

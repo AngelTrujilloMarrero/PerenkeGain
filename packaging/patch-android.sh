@@ -60,6 +60,8 @@ ensure(APP, '${rootDir}${File.separator}debug.keystore',
 sub_once(APP,
          r'abiFilters "armeabi-v7a", "x86", "arm64-v8a", "x86_64"',
          'abiFilters "arm64-v8a"')
+sub_once(APP, r'cFlags\s+"-O0"', 'cFlags    "-O2"')
+sub_once(APP, r'cppFlags\s+"-O0"', 'cppFlags  "-O2"')
 
 with open(APP) as f:
     app = f.read()

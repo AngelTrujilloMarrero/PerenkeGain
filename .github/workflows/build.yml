@@ -52,7 +52,7 @@ jobs:
           yes | "$SM" --licenses
           "$SM" "platform-tools" "platforms;android-35" "build-tools;35.0.0" "ndk;28.1.13356709" "cmake;3.22.1"
       - name: Assemble
-        run: cd android && ./gradlew assembleDebug --no-daemon
+        run: cd android && ./gradlew assembleDebug assembleRelease --no-daemon
       - uses: actions/upload-artifact@v4
         with:
           name: PerenkeGain-android-debug
