@@ -28,6 +28,7 @@ class EditorRootComponent : public juce::Component,
                             public juce::DragAndDropContainer {
 public:
   EditorRootComponent();
+  void paint(juce::Graphics &g) override;
   void resized() override;
 
 private:

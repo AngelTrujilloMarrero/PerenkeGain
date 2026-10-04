@@ -1,5 +1,6 @@
 #pragma once
 #include <JuceHeader.h>
+#include <vector>
 #include "audio/AudioEngine.h"
 #include "app/PlaylistModel.h"
 #include "types/Text.h"
@@ -46,6 +47,7 @@ private:
   juce::ListBox list;
   juce::TextButton upB{"Subir"}, downB{"Bajar"}, removeB{"Quitar"},
       toAB{PG_T("\u2192 A")}, toBB{PG_T("\u2192 B")};
+  std::vector<int> lastDecks; // para repintar solo si cambia la insignia
 };
 
 } // namespace pg

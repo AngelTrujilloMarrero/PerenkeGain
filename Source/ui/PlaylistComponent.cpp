@@ -32,8 +32,22 @@ void PlaylistComponent::changeListenerCallback(juce::ChangeBroadcaster *) {
 }
 
 void PlaylistComponent::timerCallback() {
-  if (isShowing())
+  if (!isShowing())
+    return;
+  // Repinta solo cuando cambia la insignia de deck de alguna fila: antes
+  // se repintaba toda la lista a 2 Hz aunque nada hubiera cambiado.
+  const int n = playlist.size();
+  bool changed = (int)lastDecks.size() != n;
+  std::vector<int> now((size_t)juce::jmax(0, n));
+  for (int i = 0; i < n; ++i) {
+    now[(size_t)i] = deckOf(playlist.at(i).file);
+    if (!changed && lastDecks[(size_t)i] != now[(size_t)i])
+      changed = true;
+  }
+  if (changed) {
+    lastDecks = std::move(now);
     list.repaint();
+  }
 }
 
 int PlaylistComponent::getNumRows() { return playlist.size(); }

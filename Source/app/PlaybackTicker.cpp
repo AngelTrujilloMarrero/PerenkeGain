@@ -6,7 +6,7 @@ namespace pg {
 PlaybackTicker::PlaybackTicker(AudioEngine &e, CyanProgressBar &p,
                                juce::Label &pct)
     : engine(e), bar(p), percent(pct) {
-  startTimerHz(1);
+  startTimerHz(20);
 }
 
 void PlaybackTicker::timerCallback() {

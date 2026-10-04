@@ -10,6 +10,7 @@ EditorRootComponent::EditorRootComponent()
     : playlistComp(engine, playlist), mixer(engine, playlist),
       controller(engine, markerModel, playlist),
       ticker(engine, cyan, progressPct) {
+  setOpaque(true);
   updateBanner.onShowDetails = [this] { openUpdateDialog(); };
   updateBanner.onDismiss = [this] {
     updateBanner.setVisible(false);
@@ -217,5 +218,9 @@ void EditorRootComponent::setDockVisible(bool v) {
 }
 
 void EditorRootComponent::resized() { layoutRows(); }
+
+void EditorRootComponent::paint(juce::Graphics &g) {
+  g.fillAll(juce::Colour(0xFF0B0C10));
+}
 
 } // namespace pg

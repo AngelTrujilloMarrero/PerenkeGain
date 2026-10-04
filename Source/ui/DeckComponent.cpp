@@ -42,7 +42,7 @@ DeckComponent::DeckComponent(AudioEngine &e, PlaylistModel &p, int deckIndex)
 
   playlist.addChangeListener(this);
   rebuild();
-  startTimerHz(1);
+  startTimerHz(5);
 }
 
 DeckComponent::~DeckComponent() {
