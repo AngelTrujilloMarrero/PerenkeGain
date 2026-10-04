@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="pegain01" name="PerenkeGain" projectType="guiapp" version="0.9.0"
+<JUCERPROJECT id="pegain01" name="PerenkeGain" projectType="guiapp" version="0.9.1"
               bundleIdentifier="com.perenkegain.editor" companyName="PerenkeGain"
-              defines="JUCE_STANDALONE_APPLICATION=1&#10;PG_VERSION=&quot;0.9.0&quot;" headerPath="../Source" cppLanguageStandard="20"
+              defines="JUCE_STANDALONE_APPLICATION=1&#10;PG_VERSION=&quot;0.9.1&quot;" headerPath="../Source" cppLanguageStandard="20"
               useAppConfig="0" addUsingNamespaceToJuceHeader="0"
               jucerFormatVersion="1">
   <MAINGROUP id="pgmain001" name="PerenkeGain">
