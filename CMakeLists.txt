@@ -102,6 +102,7 @@ target_sources(PerenkeGain PRIVATE
   Source/updater/UpdateChecker.cpp
   Source/updater/UpdateDownloader.cpp
   Source/updater/UpdateInstaller.cpp
+  Source/updater/UpdateInstallerWindows.cpp
   Source/ui/UpdateBannerComponent.cpp
   Source/ui/UpdateDialog.cpp
   Source/ui/AboutDialog.cpp

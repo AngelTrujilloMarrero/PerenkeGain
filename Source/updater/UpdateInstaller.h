@@ -5,7 +5,8 @@ namespace pg::updater {
 
 // Instalacion automatica: extrae el paquete descargado, sustituye la app
 // actual y la vuelve a lanzar. En macOS reemplaza el bundle .app; en Linux
-// sustituye el binario (o el AppImage). Funciona con un script ayudante que
+// sustituye el binario (o el AppImage); en Windows copia los ficheros nuevos
+// sobre la carpeta de instalacion. Funciona con un script ayudante que
 // espera a que este proceso termine.
 class UpdateInstaller {
 public:

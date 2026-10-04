@@ -1,4 +1,5 @@
 #include "updater/UpdateInstaller.h"
+#include "updater/UpdateInstallerWindows.h"
 #include <cstdlib>
 #if JUCE_MAC || JUCE_LINUX
 #include <unistd.h>
@@ -148,6 +149,8 @@ bool UpdateInstaller::isSelfInstallSupported() {
   // y relanzaba la version vieja.
   return target.existsAsFile() &&
          target.getParentDirectory().hasWriteAccess();
+#elif JUCE_WINDOWS
+  return windows::isSupported(target);
 #else
   return false;
 #endif
@@ -156,6 +159,11 @@ bool UpdateInstaller::isSelfInstallSupported() {
 bool UpdateInstaller::installAndRelaunch(const juce::File &archive) {
   if (!archive.existsAsFile() || !isSelfInstallSupported())
     return false;
+
+#if JUCE_WINDOWS
+  // Flujo propio (zip + .bat ayudante); lo demas de esta funcion es POSIX.
+  return windows::installAndRelaunch(archive);
+#endif
 
   auto target = currentInstallTarget();
   auto temp = newTempDir();
