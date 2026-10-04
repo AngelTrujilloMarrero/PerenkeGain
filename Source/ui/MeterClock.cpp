@@ -10,7 +10,7 @@ namespace pg {
 MeterClock::MeterClock(AudioEngine &e, MixerBarComponent &m,
                        BottomDockComponent &d, PlaybackTicker &t)
     : engine(e), mixer(m), dock(d), ticker(t) {
-  startTimerHz(8);
+  startTimerHz(5);
 }
 
 bool MeterClock::metersAtFloor() const {

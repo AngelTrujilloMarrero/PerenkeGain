@@ -10,6 +10,7 @@ EditorRootComponent::EditorRootComponent()
     : playlistComp(engine, playlist), mixer(engine, playlist),
       controller(engine, markerModel, playlist),
       ticker(engine, cyan, progressPct), meterClock(engine, mixer, dock, ticker) {
+  setOpaque(true); // paint() rellena todo: evita mezclar con el fondo
   updateBanner.onShowDetails = [this] { openUpdateDialog(); };
   updateBanner.onDismiss = [this] {
     updateBanner.setVisible(false);
