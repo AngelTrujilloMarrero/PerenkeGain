@@ -116,7 +116,8 @@ void DeckComponent::chooseFromBox() {
 
 void DeckComponent::loadIntoDeck(const juce::File &f) {
   loadedFile = f;
-  engine.setActiveDeck(index);
+  // No se toca el deck activo: la barra y la onda siguen al que suena y
+  // solo cambian cuando este deck empiece a reproducir.
   engine.loadFile(index, f);
   syncSelection();
   updateTitle();
