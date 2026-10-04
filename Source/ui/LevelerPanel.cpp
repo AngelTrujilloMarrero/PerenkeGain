@@ -65,7 +65,7 @@ LevelerPanel::LevelerPanel() {
     addAndMakeVisible(*l);
   }
 
-  startTimerHz(30);
+  startTimerHz(15);
 }
 
 void LevelerPanel::setEngine(AudioEngine *e) {

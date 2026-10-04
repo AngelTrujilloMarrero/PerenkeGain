@@ -18,7 +18,7 @@ PlaylistComponent::PlaylistComponent(AudioEngine &e, PlaylistModel &p)
   toBB.onClick = [this] { sendSelected(1); };
 
   playlist.addChangeListener(this);
-  startTimerHz(4); // refresca la insignia de deck al cambiar los decks
+  startTimerHz(2); // refresca la insignia de deck al cambiar los decks
 }
 
 PlaylistComponent::~PlaylistComponent() {

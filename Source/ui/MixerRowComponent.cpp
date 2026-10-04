@@ -12,7 +12,7 @@ MixerRowComponent::MixerRowComponent() {
     };
     addAndMakeVisible(*strips[i]);
   }
-  startTimerHz(30);
+  startTimerHz(20);
 }
 
 void MixerRowComponent::resized() {

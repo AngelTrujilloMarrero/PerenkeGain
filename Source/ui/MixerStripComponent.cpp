@@ -27,23 +27,23 @@ void MixerStripComponent::setLevelDb(float db) {
   if (std::abs(db - level) < 0.5f)
     return;
   level = db;
-  repaint();
+  repaint(meterArea().expanded(1, 0));
 }
 
 void MixerStripComponent::setGainDb(float db) {
   gain = juce::jlimit(kGainMin, kGainMax, db);
-  repaint();
+  repaint(faderArea().expanded(1, 1));
 }
 
 void MixerStripComponent::setMuted(bool m) {
   muted = m;
-  repaint();
+  repaint(muteArea().expanded(1, 1));
 }
 
 void MixerStripComponent::mouseDown(const juce::MouseEvent &e) {
   if (muteArea().contains(e.position.toInt())) {
     muted = !muted;
-    repaint();
+    repaint(muteArea().expanded(1, 1));
     if (onEdit)
       onEdit();
     return;
@@ -65,7 +65,7 @@ void MixerStripComponent::mouseDrag(const juce::MouseEvent &e) {
   g = std::round(g * 2.0f) / 2.0f; // pasos de 0.5 dB
   if (std::abs(g - gain) > 0.01f) {
     gain = g;
-    repaint();
+    repaint(faderArea().expanded(1, 1));
     if (onEdit)
       onEdit();
   }
