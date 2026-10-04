@@ -137,6 +137,9 @@ int EditorRootComponent::firstEmptyDeck() const {
 }
 
 void EditorRootComponent::enqueue(const juce::File &file) {
+  juce::Logger::writeToLog("PG: enqueue " + file.getFullPathName() +
+                           " exists=" +
+                           juce::String(file.existsAsFile() ? 1 : 0));
   if (!file.existsAsFile())
     return;
   playlist.add(file);
@@ -150,6 +153,9 @@ void EditorRootComponent::addLocalFiles() {
   picker.chooseFiles(PG_T("Añadir canciones"),
                      "*.wav;*.mp3;*.flac;*.ogg;*.aiff;*.aif", juce::File{},
                      [this](const juce::Array<juce::File> &files) {
+                       juce::Logger::writeToLog(
+                           "PG: addLocalFiles n=" +
+                           juce::String(files.size()));
                        // Llena los decks libres en orden (A, B, ...).
                        for (const auto &f : files)
                          enqueue(f);

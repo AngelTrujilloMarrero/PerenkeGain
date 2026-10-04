@@ -8,10 +8,15 @@ namespace {
 // temporal para poder abrirlos con AudioFormatManager. En escritorio es identidad.
 juce::File importPickedUrl(const juce::URL &url) {
 #if JUCE_ANDROID
+  juce::Logger::writeToLog("PG: pick url scheme=" + url.getScheme() +
+                           " local=" +
+                           juce::String(url.isLocalFile() ? 1 : 0));
   if (url.isLocalFile())
     return url.getLocalFile();
   if (url.getScheme() == "content") {
     auto doc = juce::AndroidDocument::fromDocument(url);
+    juce::Logger::writeToLog("PG: pick android doc valid=" +
+                             juce::String(doc.hasValue() ? 1 : 0));
     if (!doc.hasValue())
       return {};
     auto in = doc.createInputStream();
@@ -29,6 +34,8 @@ juce::File importPickedUrl(const juce::URL &url) {
       out->writeFromInputStream(*in, -1);
       out->flush();
     }
+    juce::Logger::writeToLog("PG: pick imported " + dest.getFullPathName() +
+                             " size=" + juce::String(dest.getSize()));
     return (dest.existsAsFile() && dest.getSize() > 0) ? dest : juce::File{};
   }
   return {};
