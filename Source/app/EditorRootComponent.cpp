@@ -10,7 +10,6 @@ EditorRootComponent::EditorRootComponent()
     : playlistComp(engine, playlist), mixer(engine, playlist),
       controller(engine, markerModel, playlist),
       ticker(engine, cyan, progressPct) {
-  setOpaque(true);
   updateBanner.onShowDetails = [this] { openUpdateDialog(); };
   updateBanner.onDismiss = [this] {
     updateBanner.setVisible(false);
