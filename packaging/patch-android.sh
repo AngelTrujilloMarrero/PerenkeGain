@@ -53,6 +53,10 @@ ensure(APP, "ffmpeg-kit-audio",
        r"\1        implementation "
        "'dev.ffmpegkit-maintained:ffmpeg-kit-audio:8.1.9'\n\2")
 
+ensure(APP, '${rootDir}${File.separator}debug.keystore',
+       r'storeFile\s+file\("\$\{System\.properties\[.user\.home.\]\}\$\{File\.separator\}\.android\$\{File\.separator\}debug\.keystore"\)',
+       'storeFile     file("${rootDir}${File.separator}debug.keystore")')
+
 sub_once(APP,
          r'abiFilters "armeabi-v7a", "x86", "arm64-v8a", "x86_64"',
          'abiFilters "arm64-v8a"')
