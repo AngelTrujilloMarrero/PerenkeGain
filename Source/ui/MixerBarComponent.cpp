@@ -107,6 +107,8 @@ void MixerBarComponent::timerCallback() {
   autoCheck();
 }
 
+void MixerBarComponent::tickMeters() { master.tickMeters(); }
+
 void MixerBarComponent::autoCheck() {
   const int source = engine.isPlaying(0) ? 0 : engine.isPlaying(1) ? 1 : -1;
   if (source < 0) {

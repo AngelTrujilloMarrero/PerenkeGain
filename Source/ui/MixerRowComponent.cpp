@@ -12,7 +12,6 @@ MixerRowComponent::MixerRowComponent() {
     };
     addAndMakeVisible(*strips[i]);
   }
-  startTimerHz(8); // medidores: 8 Hz basta (cada tick = 1 render completo)
 }
 
 void MixerRowComponent::resized() {
@@ -36,7 +35,7 @@ void MixerRowComponent::setMuted(int i, bool muted) {
   strips[(size_t)i]->setMuted(muted);
 }
 
-void MixerRowComponent::timerCallback() {
+void MixerRowComponent::tickMeters() {
   if (!isShowing() || analyzer == nullptr)
     return;
   for (int b = 0; b < BandLevelAnalyzer::kBands; ++b)

@@ -19,6 +19,9 @@ public:
 
   DeckComponent &deck(int i) { return i == 0 ? deckA : deckB; }
 
+  // Refresco del vumetro master; lo llama MeterClock.
+  void tickMeters();
+
   DeckComponent deckA, deckB;
 
 private:

@@ -6,15 +6,17 @@ namespace pg {
 
 // Nivelador de sonoridad en vivo incrustado en la bandeja inferior, debajo
 // del ecualizador. Controles compactos + lectura de medidores.
-class LevelerPanel : public juce::Component, private juce::Timer {
+class LevelerPanel : public juce::Component {
 public:
   LevelerPanel();
   void setEngine(AudioEngine *e);
   void paint(juce::Graphics &g) override;
   void resized() override;
 
+  // Refresco de medidores; lo llama MeterClock (tick unico compartido).
+  void tickMeters();
+
 private:
-  void timerCallback() override;
   void pushParams();
   float speedAttack() const;
   float speedRelease() const;

@@ -66,7 +66,6 @@ LevelerPanel::LevelerPanel() {
   }
 
   setOpaque(true);
-  startTimerHz(8);
 }
 void LevelerPanel::setEngine(AudioEngine *e) {
   engine = e;
@@ -112,7 +111,7 @@ float LevelerPanel::speedRelease() const {
   }
 }
 
-void LevelerPanel::timerCallback() {
+void LevelerPanel::tickMeters() {
   if (!isShowing() || engine == nullptr)
     return;
   const LevelerMeters m = engine->getLevelerMeters();

@@ -2,12 +2,9 @@
 
 namespace pg {
 
-MasterLevelBar::MasterLevelBar() {
-  setOpaque(true);
-  startTimerHz(8);
-}
+MasterLevelBar::MasterLevelBar() { setOpaque(true); }
 
-void MasterLevelBar::timerCallback() {
+void MasterLevelBar::tickMeters() {
   if (!isShowing() || analyzer == nullptr)
     return;
   bool changed = false;

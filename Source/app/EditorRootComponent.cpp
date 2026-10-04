@@ -9,7 +9,7 @@ namespace pg {
 EditorRootComponent::EditorRootComponent()
     : playlistComp(engine, playlist), mixer(engine, playlist),
       controller(engine, markerModel, playlist),
-      ticker(engine, cyan, progressPct) {
+      ticker(engine, cyan, progressPct), meterClock(mixer, dock, ticker) {
   updateBanner.onShowDetails = [this] { openUpdateDialog(); };
   updateBanner.onDismiss = [this] {
     updateBanner.setVisible(false);

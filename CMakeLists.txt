@@ -85,6 +85,7 @@ target_sources(PerenkeGain PRIVATE
   Source/ui/LevelerPanel.cpp
   Source/ui/LoadReadout.cpp
   Source/ui/MasterLevelBar.cpp
+  Source/ui/MeterClock.cpp
   Source/storage/ProjectStore.cpp
   Source/storage/ExportManager.cpp
   Source/storage/AudioFileLoader.cpp

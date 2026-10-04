@@ -18,4 +18,9 @@ void BottomDockComponent::resized() {
   eq.setBounds(r);
 }
 
+void BottomDockComponent::tickMeters() {
+  eq.mixer.tickMeters();
+  leveler.tickMeters();
+}
+
 } // namespace pg

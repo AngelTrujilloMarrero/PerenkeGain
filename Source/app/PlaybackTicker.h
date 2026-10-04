@@ -5,11 +5,12 @@
 
 namespace pg {
 
-// Actualiza la barra cian de progreso ~30 veces por segundo (deck activo).
-class PlaybackTicker : public juce::Timer {
+// Actualiza la barra cian de progreso (deck activo).
+// Lo llama MeterClock (tick unico compartido).
+class PlaybackTicker {
 public:
   PlaybackTicker(AudioEngine &e, CyanProgressBar &p, juce::Label &pct);
-  void timerCallback() override;
+  void tick();
 
 private:
   AudioEngine &engine;

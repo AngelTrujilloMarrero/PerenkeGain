@@ -9,6 +9,7 @@
 #include "app/WaveformWindow.h"
 #include "ui/CyanProgressBar.h"
 #include "ui/FilePicker.h"
+#include "ui/MeterClock.h"
 #include "ui/MixerBarComponent.h"
 #include "ui/PlaylistComponent.h"
 #include "ui/YouTubeSearchPanel.h"
@@ -44,6 +45,7 @@ private:
   std::unique_ptr<WaveformWindow> waveformWindow; // se crea al pedirla
   EditorController controller;
   PlaybackTicker ticker;
+  MeterClock meterClock;
   UpdateBannerComponent updateBanner;
   updater::UpdateChecker updateChecker;
   updater::UpdateInfo pendingUpdate;

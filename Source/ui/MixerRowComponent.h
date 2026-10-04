@@ -7,8 +7,7 @@ namespace pg {
 
 // Fila de 31 tiras de canal estilo mesa de sonido digital moderna:
 // cada tira = medidor LED + fader de ganancia (sube/baja) + botón MUTE.
-class MixerRowComponent : public juce::Component,
-                          private juce::Timer {
+class MixerRowComponent : public juce::Component {
 public:
   MixerRowComponent();
   void resized() override;
@@ -22,8 +21,10 @@ public:
   // Actualiza el lector LCD del EQ al editar una tira.
   std::function<void(const juce::String &)> onReadout;
 
-private:
-  void timerCallback() override;
+  // Refresco de medidores; lo llama MeterClock (tick unico compartido).
+  void tickMeters();
+
+ private:
   juce::String infoFor(int i) const;
 
   std::array<std::unique_ptr<MixerStripComponent>, 31> strips;

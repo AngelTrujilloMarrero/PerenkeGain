@@ -122,6 +122,8 @@
       <FILE id="pgfload02" name="LoadReadout.h" compile="0" resource="0" file="Source/ui/LoadReadout.h"/>
       <FILE id="pgf00104" name="MasterLevelBar.cpp" compile="1" resource="0" file="Source/ui/MasterLevelBar.cpp"/>
       <FILE id="pgf00105" name="MasterLevelBar.h" compile="0" resource="0" file="Source/ui/MasterLevelBar.h"/>
+      <FILE id="pgfmeter01" name="MeterClock.cpp" compile="1" resource="0" file="Source/ui/MeterClock.cpp"/>
+      <FILE id="pgfmeter02" name="MeterClock.h" compile="0" resource="0" file="Source/ui/MeterClock.h"/>
       <FILE id="pgf00106" name="MixerBarComponent.cpp" compile="1" resource="0" file="Source/ui/MixerBarComponent.cpp"/>
       <FILE id="pgf00107" name="MixerBarComponent.h" compile="0" resource="0" file="Source/ui/MixerBarComponent.h"/>
       <FILE id="pgf00108" name="MixerRowComponent.cpp" compile="1" resource="0" file="Source/ui/MixerRowComponent.cpp"/>

@@ -16,6 +16,9 @@ public:
   // EQ (~232 px) + nivelador (84).
   int preferredHeight() const { return 316; }
 
+  // Refresco de medidores del EQ y del nivelador; lo llama MeterClock.
+  void tickMeters();
+
   EqualizerComponent eq;
   LevelerPanel leveler;
 };

@@ -6,10 +6,9 @@ namespace pg {
 PlaybackTicker::PlaybackTicker(AudioEngine &e, CyanProgressBar &p,
                                juce::Label &pct)
     : engine(e), bar(p), percent(pct) {
-  startTimerHz(10);
 }
 
-void PlaybackTicker::timerCallback() {
+void PlaybackTicker::tick() {
   const int d = engine.activeDeck();
   const double pos = engine.getPositionSec(d);
   const double len = engine.getLengthSec(d);
