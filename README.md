@@ -42,16 +42,17 @@ vivo, y descarga de YouTube Music con normalización.
 
 ## Android (tablet 10–12")
 
-Release de prueba de concepto: **APK firmado** (minSdk 26) para
-tablets. La compila CI (`assembleDebug` en cada push; `assembleRelease`
-firmado en tags `v*`).
+Release de prueba de concepto: **APK firmado** (minSdk 26, solo
+arm64-v8a) para tablets. La compila CI en cada push (`assembleDebug` +
+`assembleRelease`) y **el APK se publica en cada release `v*`**.
 
 Limitaciones en Android:
 
 - YouTube **SÍ disponible** (buscador + descarga a MP3): yt-dlp
   corre en Python embebido (Chaquopy) y la conversión a MP3 la hace
-  ffmpeg-kit dentro del APK (~40 MB). Las descargas van a la caché
-  de la app. Respeta los términos de YouTube como en escritorio.
+  ffmpeg-kit dentro del APK (por eso pesa ~60 MB). Las descargas van a
+  la caché de la app. Respeta los términos de YouTube como en escritorio.
+- **Solo arm64-v8a** (tablets modernas; sin 32 bits).
 - **Sin normalizar lote ni actualizaciones automáticas** (dependen de
   procesos externos y de reemplazar el binario en marcha).
 - Audio: OpenSL ES (Oboe desactivado).
@@ -77,28 +78,32 @@ CMake 3.22.1) y `JUCE/` apuntando a los fuentes de JUCE 8.0.10
 cd android && ./gradlew assembleDebug    # o assembleRelease
 ```
 
-### APK firmado (releases)
+### Firma del APK (releases)
 
-Para publicar en GitHub Releases, el job `android` de `release.yml`
-necesita cuatro **repository secrets**:
+El job `android` de `release.yml` compila `assembleRelease` y publica
+`PerenkeGain-android.apk` en cada release `v*`.
 
-1. Genera un keystore (una sola vez, guárdalo):
-   ```bash
-   keytool -genkeypair -keystore release.keystore -alias perenkegain \
-     -keyalg RSA -keysize 2048 -validity 10000 \
-     -dname "CN=PerenkeGain"
-   ```
-2. Añade los secrets:
-   - `ANDROID_KEYSTORE_BASE64`: `base64 -i release.keystore`
-   - `KEYSTORE_PASSWORD`, `KEY_ALIAS` (`perenkegain`),
-     `KEY_PASSWORD`
+- **Por defecto** el APK se firma con `android/debug.keystore` (incluido
+  en el repo): válido para instalar y para que las actualizaciones se
+  instalen encima de la anterior, pero **no sirve para Google Play**.
+- Para firmarlo con tu propio keystore de release, añade estos
+  **repository secrets** (opcional):
+  1. Genera un keystore (una sola vez, guárdalo):
+     ```bash
+     keytool -genkeypair -keystore release.keystore -alias perenkegain \
+       -keyalg RSA -keysize 2048 -validity 10000 \
+       -dname "CN=PerenkeGain"
+     ```
+  2. Añade los secrets:
+     - `ANDROID_KEYSTORE_BASE64`: `base64 -i release.keystore`
+     - `KEYSTORE_PASSWORD`, `KEY_ALIAS` (`perenkegain`),
+       `KEY_PASSWORD`
 
-Sin esos secrets, el job avisa y omite el APK de release (no firma
-con el debug keystore, que no sirve para publicar).
+  Si están definidos, el APK del release se firma con ese keystore.
 
 ## Descargas
 
-Cada release publica tres paquetes desde
+Cada release publica cuatro paquetes desde
 [GitHub Releases](https://github.com/AngelTrujilloMarrero/PerenkeGain/releases):
 
 | Plataforma | Archivo | Cómo ejecutarlo |
@@ -106,7 +111,7 @@ Cada release publica tres paquetes desde
 | Windows (x64) | `PerenkeGain-windows-x64.zip` | Descomprime y ejecuta `PerenkeGain.exe` (incluye `yt-dlp` y `ffmpeg`) |
 | Linux (x86_64) | `PerenkeGain-linux-x86_64.tar.gz` | `tar -xzf … && ./PerenkeGain` |
 | macOS | `PerenkeGain-macos.zip` | Abre `PerenkeGain.app` (incluye `yt-dlp` y `ffmpeg`) |
-| Android (tablet) | `PerenkeGain-android.apk` | Instala el APK (minSdk 26) |
+| Android (tablet) | `PerenkeGain-android.apk` | Instala el APK (minSdk 26, arm64-v8a) |
 
 ## Decisiones
 
