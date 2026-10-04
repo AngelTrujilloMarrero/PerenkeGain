@@ -46,6 +46,8 @@ public:
   void setActiveDeck(int d);
 
   BandLevelAnalyzer &bandAnalyzer() { return bands; }
+  // Carga del hilo de audio (0..1): fraccion del presupuesto del callback usada.
+  double audioLoad() const { return devices.getCpuUsage(); }
   void setEqState(const Eq31State &s) { eq.setState(s); }
   void setLevelerParams(const LevelerParams &p) { leveler.setParams(p); }
   LevelerParams getLevelerParams() const { return leveler.getParams(); }

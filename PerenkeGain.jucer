@@ -117,6 +117,8 @@
       <FILE id="pgf00101" name="FilePicker.h" compile="0" resource="0" file="Source/ui/FilePicker.h"/>
       <FILE id="pgf00102" name="LevelerPanel.cpp" compile="1" resource="0" file="Source/ui/LevelerPanel.cpp"/>
       <FILE id="pgf00103" name="LevelerPanel.h" compile="0" resource="0" file="Source/ui/LevelerPanel.h"/>
+      <FILE id="pgfload01" name="LoadReadout.cpp" compile="1" resource="0" file="Source/ui/LoadReadout.cpp"/>
+      <FILE id="pgfload02" name="LoadReadout.h" compile="0" resource="0" file="Source/ui/LoadReadout.h"/>
       <FILE id="pgf00104" name="MasterLevelBar.cpp" compile="1" resource="0" file="Source/ui/MasterLevelBar.cpp"/>
       <FILE id="pgf00105" name="MasterLevelBar.h" compile="0" resource="0" file="Source/ui/MasterLevelBar.h"/>
       <FILE id="pgf00106" name="MixerBarComponent.cpp" compile="1" resource="0" file="Source/ui/MixerBarComponent.cpp"/>

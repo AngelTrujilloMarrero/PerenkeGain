@@ -3,9 +3,12 @@
 namespace pg {
 
 MixerBarComponent::MixerBarComponent(AudioEngine &e, PlaylistModel &p)
-    : deckA(e, p, 0), deckB(e, p, 1), engine(e), playlist(p) {
+    : deckA(e, p, 0), deckB(e, p, 1), engine(e), playlist(p),
+      loadReadout(e) {
   addAndMakeVisible(deckA);
   addAndMakeVisible(deckB);
+
+  addAndMakeVisible(loadReadout);
 
   addAndMakeVisible(crossfader);
   crossfader.setRange(0.0, 1.0, 0.001);
@@ -218,6 +221,8 @@ void MixerBarComponent::resized() {
   master.setBounds(meterRow.withSizeKeepingCentre(46, 66));
   mid.removeFromTop(2);
   masterVol.setBounds(mid.removeFromTop(rowH).reduced(8, 0));
+  mid.removeFromTop(2);
+  loadReadout.setBounds(mid.removeFromTop(14));
 }
 
 } // namespace pg

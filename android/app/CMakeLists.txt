@@ -140,6 +140,8 @@ add_library( ${BINARY_NAME}
     "../../Source/ui/FilePicker.h"
     "../../Source/ui/LevelerPanel.cpp"
     "../../Source/ui/LevelerPanel.h"
+    "../../Source/ui/LoadReadout.cpp"
+    "../../Source/ui/LoadReadout.h"
     "../../Source/ui/MasterLevelBar.cpp"
     "../../Source/ui/MasterLevelBar.h"
     "../../Source/ui/MixerBarComponent.cpp"

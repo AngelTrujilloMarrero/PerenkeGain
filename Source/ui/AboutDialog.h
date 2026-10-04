@@ -11,8 +11,10 @@ public:
   void resized() override;
 
 private:
+  juce::Rectangle<int> textBounds() const;
   juce::Image hero;
   juce::HyperlinkButton repo;
+  juce::TextButton closeB{"Cerrar"};
 };
 
 } // namespace pg

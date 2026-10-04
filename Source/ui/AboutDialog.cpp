@@ -16,13 +16,28 @@ AboutDialog::AboutDialog()
   repo.setFont(juce::Font(juce::FontOptions(12.0f)), false);
   repo.setColour(juce::HyperlinkButton::textColourId,
                  juce::Colour(0xFF4FA3FF));
+
+  addAndMakeVisible(closeB);
+  closeB.onClick = [this] {
+    // En Android la ventana no tiene barra de titulo con boton de cierre.
+    if (auto *dw = findParentComponentOfClass<juce::DialogWindow>())
+      dw->exitModalState(0);
+  };
+}
+
+juce::Rectangle<int> AboutDialog::textBounds() const {
+  auto r = getLocalBounds().reduced(12).removeFromBottom(168);
+  r.removeFromBottom(34); // boton Cerrar
+  r.removeFromBottom(6);
+  r.removeFromBottom(28); // enlace GitHub
+  return r;
 }
 
 void AboutDialog::resized() {
-  auto r = getLocalBounds().reduced(12);
-  auto text = r.removeFromBottom(134);
-  text.removeFromTop(102); // deja hueco para las lineas de texto
-  repo.setBounds(text.reduced(24, 4));
+  auto bottom = getLocalBounds().reduced(12).removeFromBottom(168);
+  closeB.setBounds(bottom.removeFromBottom(34).withSizeKeepingCentre(140, 28));
+  bottom.removeFromBottom(6);
+  repo.setBounds(bottom.removeFromBottom(28).reduced(24, 2));
 }
 
 void AboutDialog::paint(juce::Graphics &g) {
@@ -30,12 +45,12 @@ void AboutDialog::paint(juce::Graphics &g) {
   g.fillAll();
 
   auto r = getLocalBounds().reduced(12);
-  auto text = r.removeFromBottom(134).removeFromTop(102);
-
+  r.removeFromBottom(168);
   if (hero.isValid())
     g.drawImageWithin(hero, r.getX(), r.getY(), r.getWidth(), r.getHeight(),
                       juce::RectanglePlacement::centred);
 
+  auto text = textBounds();
   g.setColour(juce::Colour(0xFFF2F3F6));
   g.setFont(juce::Font(juce::FontOptions(18.0f, juce::Font::bold)));
   g.drawText("PerenkeGain", text.removeFromTop(26),

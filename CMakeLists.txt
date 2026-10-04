@@ -83,6 +83,7 @@ target_sources(PerenkeGain PRIVATE
   Source/ui/TrackSplitterDialog.cpp
   Source/ui/SaveTracksDialog.cpp
   Source/ui/LevelerPanel.cpp
+  Source/ui/LoadReadout.cpp
   Source/ui/MasterLevelBar.cpp
   Source/storage/ProjectStore.cpp
   Source/storage/ExportManager.cpp

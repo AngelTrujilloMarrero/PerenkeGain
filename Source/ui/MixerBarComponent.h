@@ -3,6 +3,7 @@
 #include "audio/AudioEngine.h"
 #include "app/PlaylistModel.h"
 #include "ui/DeckComponent.h"
+#include "ui/LoadReadout.h"
 #include "ui/MasterLevelBar.h"
 #include "types/Text.h"
 
@@ -36,6 +37,7 @@ private:
   MasterLevelBar master;
   juce::TextButton automixB{"Automix"};
   juce::ComboBox transition;
+  LoadReadout loadReadout;
   bool automixOn = false;
   bool animRunning = false;
   float animFrom = 0.0f, animTo = 0.0f, animPos = 0.0f, animDur = 0.0f;
