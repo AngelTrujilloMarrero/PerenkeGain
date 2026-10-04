@@ -5,6 +5,7 @@
 namespace pg {
 
 EqualizerComponent::EqualizerComponent() {
+  setOpaque(true);
   master.setRange(0.0, 100.0, 5.0);
   master.setValue(100.0);
   master.setSliderStyle(juce::Slider::LinearHorizontal);

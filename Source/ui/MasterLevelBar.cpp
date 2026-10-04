@@ -2,7 +2,10 @@
 
 namespace pg {
 
-MasterLevelBar::MasterLevelBar() { startTimerHz(30); }
+MasterLevelBar::MasterLevelBar() {
+  setOpaque(true);
+  startTimerHz(20);
+}
 
 void MasterLevelBar::timerCallback() {
   if (!isShowing() || analyzer == nullptr)

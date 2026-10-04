@@ -4,7 +4,10 @@
 namespace pg {
 
 void CyanProgressBar::setFraction(double f) {
-  fraction = juce::jlimit(0.0, 1.0, f);
+  f = juce::jlimit(0.0, 1.0, f);
+  if (std::abs(f - fraction) < 1.0e-4)
+    return;
+  fraction = f;
   repaint();
 }
 

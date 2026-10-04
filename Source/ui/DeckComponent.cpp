@@ -4,6 +4,7 @@ namespace pg {
 
 DeckComponent::DeckComponent(AudioEngine &e, PlaylistModel &p, int deckIndex)
     : engine(e), playlist(p), index(deckIndex) {
+  setOpaque(true);
   addAndMakeVisible(trackBox);
   trackBox.setTextWhenNothingSelected(PG_T("Elegir pista..."));
   trackBox.onChange = [this] { chooseFromBox(); };

@@ -4,6 +4,7 @@ namespace pg {
 
 PlaylistComponent::PlaylistComponent(AudioEngine &e, PlaylistModel &p)
     : engine(e), playlist(p) {
+  setOpaque(true);
   addAndMakeVisible(list);
   list.setModel(this);
   list.setRowHeight(24);

@@ -5,6 +5,7 @@ namespace pg {
 MixerBarComponent::MixerBarComponent(AudioEngine &e, PlaylistModel &p)
     : deckA(e, p, 0), deckB(e, p, 1), engine(e), playlist(p),
       loadReadout(e) {
+  setOpaque(true);
   addAndMakeVisible(deckA);
   addAndMakeVisible(deckB);
 

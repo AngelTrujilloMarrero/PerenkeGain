@@ -5,7 +5,9 @@ namespace pg {
 static constexpr float kGainMin = -12.0f, kGainMax = 12.0f;
 static constexpr int kMuteH = 16;
 
-MixerStripComponent::MixerStripComponent(int bandIndex) : band(bandIndex) {}
+MixerStripComponent::MixerStripComponent(int bandIndex) : band(bandIndex) {
+  setOpaque(true);
+}
 
 juce::Rectangle<int> MixerStripComponent::meterArea() const {
   return {0, 0, juce::jmin(8, getWidth()),
